@@ -1,0 +1,20 @@
+{
+  "name": "sample_hallway",
+  "map_dimensions": [50.0, 20.0],
+  "exits": [
+    {
+      "id": "exit_east",
+      "position": [50.0, 10.0],
+      "width": 2.5
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "pillar_central",
+      "bounds": [24.0, 8.0, 26.0, 12.0]
+    }
+  ],
+  "pedestrian_count": 25,
+  "timestep": 0.1,
+  "max_steps": 500
+}
