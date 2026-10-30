@@ -68,12 +68,21 @@ prediction = predictor.predict(snapshot=snapshot, agent_id="ped_01", horizon=10)
 
 ## 2. Timestamp Semantics & Irregular Intervals
 
+> [!IMPORTANT]
+> The current `SimulationEngine` exposes `current_step` (int) and `timestep` (float) but does **not** expose a `current_timestamp` property. All timestamp values used by the prediction subsystem must be derived by the caller as:
+> ```python
+> sim_time = engine.current_step * engine.timestep
+> ```
+> Do not assume an independent `current_timestamp` attribute on the engine.
+
 1. **Snapshot Timestamp (`snapshot.current_timestamp`)**:
-   - Represents the authoritative simulation clock at the moment the snapshot was captured ($t_{\text{current}} = \text{step} \times \Delta t$).
+   - Set by the caller using the derived value `engine.current_step * engine.timestep`.
+   - Represents the authoritative simulation clock at the moment the snapshot was captured.
    - It is independent of individual pedestrian update times.
 2. **Observation Timestamp (`obs.timestamp`)**:
    - Each observation preserves the exact timestamp when it was observed or recorded.
    - Observations for a specific pedestrian need not equal `snapshot.current_timestamp` if the pedestrian skipped steps or was observed asynchronously.
+   - An observation timestamp must never exceed `snapshot.current_timestamp`. The validator rejects future-dated observations with `TrajectoryValidationError(field="observation_timestamp")`.
 3. **Irregular Observation Intervals**:
    - Observations can arrive at irregular intervals (e.g., step 0 at $t=0.0\text{ s}$, step 5 at $t=0.5\text{ s}$).
    - `ConstantVelocityPredictor` computes velocity based on actual observation timestamps:

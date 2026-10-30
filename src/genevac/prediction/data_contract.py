@@ -4,6 +4,7 @@ import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
+from types import MappingProxyType
 
 
 class TrajectoryCategory(str, Enum):
@@ -149,28 +150,71 @@ class TrajectoryObservation:
 
 @dataclass(frozen=True)
 class TrajectorySnapshot:
-    """Immutable read-only view of trajectory histories at a specific simulation step."""
+    """Immutable read-only view of trajectory histories at a specific simulation step.
+
+    The ``trajectories`` mapping is always a ``MappingProxyType`` wrapping a dict
+    whose values are plain ``tuple[TrajectoryObservation, ...]``.  This is enforced
+    defensively inside ``__post_init__`` so that:
+
+    * Direct callers passing a plain ``dict`` get the same immutability guarantee as
+      callers that go through ``TrajectoryHistoryBuffer.get_snapshot()``.
+    * Mutating the original input dictionary after construction cannot affect the
+      snapshot.
+    * Every inner sequence is a ``tuple``, never a ``list`` or other mutable type.
+
+    Timestamp convention
+    --------------------
+    ``current_timestamp`` is set by the caller to ``current_step * timestep``.
+    The current ``SimulationEngine`` does **not** expose a ``current_timestamp``
+    property; callers must derive it from the engine's ``current_step`` and
+    ``timestep`` attributes::
+
+        sim_time = engine.current_step * engine.timestep
+    """
     current_step: int
     current_timestamp: float
     timestep: float
-    trajectories: Mapping[str, tuple[TrajectoryObservation, ...]]
+    trajectories: Mapping[str, tuple["TrajectoryObservation", ...]]
 
     def __post_init__(self) -> None:
+        # ----- scalar field validation -----
         if type(self.current_step) is not int or self.current_step < 0:
             raise TrajectoryValidationError(
                 f"current_step must be a non-negative integer, got {self.current_step}",
                 field="current_step",
             )
-        if type(self.current_timestamp) not in (float, int) or not math.isfinite(self.current_timestamp) or self.current_timestamp < 0.0:
+        if (
+            type(self.current_timestamp) not in (float, int)
+            or isinstance(self.current_timestamp, bool)
+            or not math.isfinite(self.current_timestamp)
+            or self.current_timestamp < 0.0
+        ):
             raise TrajectoryValidationError(
                 f"current_timestamp must be a finite non-negative number, got {self.current_timestamp}",
                 field="current_timestamp",
             )
-        if type(self.timestep) not in (float, int) or not math.isfinite(self.timestep) or self.timestep <= 0.0:
+        if (
+            type(self.timestep) not in (float, int)
+            or isinstance(self.timestep, bool)
+            or not math.isfinite(self.timestep)
+            or self.timestep <= 0.0
+        ):
             raise TrajectoryValidationError(
                 f"timestep must be a finite positive number, got {self.timestep}",
                 field="timestep",
             )
+
+        # ----- defensive copy and freeze of trajectories -----
+        # Accept either a plain dict or an existing MappingProxyType.
+        # Either way, build a fresh dict with tuple-coerced values so that
+        # mutations to any original container cannot affect this snapshot.
+        raw: Mapping = self.trajectories  # type: ignore[assignment]
+        frozen: dict[str, tuple] = {}
+        for aid, seq in raw.items():
+            if not isinstance(seq, tuple):
+                seq = tuple(seq)
+            frozen[aid] = seq
+        object.__setattr__(self, "trajectories", MappingProxyType(frozen))
 
 
 @dataclass(frozen=True)
@@ -397,18 +441,38 @@ class TrajectoryValidator:
                 expected_timestep=snapshot.timestep,
             )
 
-            if max_observation_age is not None and obs_seq:
+            if obs_seq:
                 latest_obs_time = obs_seq[-1].timestamp
-                age = snapshot.current_timestamp - latest_obs_time
-                if age > max_observation_age + 1e-6:
+                # tolerance: 1e-9 s allows for floating-point rounding on the
+                # derived timestamp (current_step * timestep) without permitting
+                # observations that are genuinely in the future.
+                _FP_TOLERANCE = 1e-9
+
+                # Reject any observation whose timestamp is in the future of the snapshot.
+                # A negative age means latest_obs_time > current_timestamp, which would
+                # allow stale-check evasion if not caught here.
+                if latest_obs_time > snapshot.current_timestamp + _FP_TOLERANCE:
                     raise TrajectoryValidationError(
-                        f"Stale observation for agent '{agent_id}': latest observation timestamp is {latest_obs_time:.6f}s, "
-                        f"which is {age:.6f}s older than snapshot timestamp {snapshot.current_timestamp:.6f}s "
-                        f"(max allowed: {max_observation_age:.6f}s)",
-                        field="observation_age",
+                        f"Future observation for agent '{agent_id}': latest observation "
+                        f"timestamp {latest_obs_time:.9f}s is after snapshot timestamp "
+                        f"{snapshot.current_timestamp:.9f}s. Observations must not be "
+                        f"in the future of the snapshot reference time.",
+                        field="observation_timestamp",
                         agent_id=agent_id,
                         step_index=obs_seq[-1].step_index,
                     )
+
+                if max_observation_age is not None:
+                    age = snapshot.current_timestamp - latest_obs_time
+                    if age > max_observation_age + 1e-6:
+                        raise TrajectoryValidationError(
+                            f"Stale observation for agent '{agent_id}': latest observation timestamp is {latest_obs_time:.6f}s, "
+                            f"which is {age:.6f}s older than snapshot timestamp {snapshot.current_timestamp:.6f}s "
+                            f"(max allowed: {max_observation_age:.6f}s)",
+                            field="observation_age",
+                            agent_id=agent_id,
+                            step_index=obs_seq[-1].step_index,
+                        )
 
     @staticmethod
     def validate_prediction(prediction: TrajectoryPrediction) -> None:

@@ -86,6 +86,30 @@ class TrajectoryHistoryBuffer:
                     field="step_index/timestamp",
                     agent_id=observation_or_agent_id,
                 )
+
+            # --- coordinate validation before conversion ---
+            agent_id_str = observation_or_agent_id
+            if not isinstance(position, (tuple, list)) or len(position) != 2:
+                raise TrajectoryValidationError(
+                    f"position must be a (x, y) tuple or list of length 2, got {position!r}",
+                    field="position",
+                    agent_id=agent_id_str,
+                )
+            for coord_name, coord_val in (("x", position[0]), ("y", position[1])):
+                if isinstance(coord_val, bool) or type(coord_val) not in (float, int):
+                    raise TrajectoryValidationError(
+                        f"position {coord_name} coordinate must be a finite float or int "
+                        f"(bool, str, and other types are not allowed), got {type(coord_val).__name__!r}",
+                        field=f"position.{coord_name}",
+                        agent_id=agent_id_str,
+                    )
+                if not math.isfinite(coord_val):
+                    raise TrajectoryValidationError(
+                        f"position {coord_name} coordinate must be finite, got {coord_val!r}",
+                        field=f"position.{coord_name}",
+                        agent_id=agent_id_str,
+                    )
+
             obs = TrajectoryObservation(
                 agent_id=observation_or_agent_id,
                 step_index=step_index,
