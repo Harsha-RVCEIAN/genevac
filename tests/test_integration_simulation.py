@@ -25,7 +25,7 @@ class TestSimulationIntegration(unittest.TestCase):
     """Integration test suite for simulation-to-prediction interface."""
 
     def test_engine_stepping_and_observation_recording(self):
-        """Verify engine stepping records observations accurately with engine-supplied time."""
+        """Verify engine stepping records observations accurately with engine-derived timestamp."""
         env = EnvironmentMap(width=50.0, height=50.0)
         engine = SimulationEngine(environment=env, timestep=0.1)
         ped1 = Pedestrian(id="ped_1", position=(10.0, 20.0), velocity=(1.0, 0.5))
