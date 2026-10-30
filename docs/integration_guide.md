@@ -53,6 +53,7 @@ for step_idx in range(10):
 
 # 4. Snapshot Generation (Read-only view)
 # The snapshot timestamp is derived from the current fixed-timestep engine state.
+# The snapshot timestamp is derived from the current fixed-timestep engine state.
 cur_sim_time = engine.current_step * engine.timestep
 snapshot = buffer.get_snapshot(
     current_step=engine.current_step,
@@ -71,7 +72,10 @@ prediction = predictor.predict(snapshot=snapshot, agent_id="ped_01", horizon=10)
 ## 2. Timestamp Semantics & Irregular Intervals
 
 1. **Snapshot Timestamp (`snapshot.current_timestamp`)**:
-   - Represents the authoritative simulation clock at the moment the snapshot was captured ($t_{\text{current}} = \text{step} \times \Delta t$).
+   - The current `SimulationEngine` exposes `current_step` and `timestep`, but does not expose an independent `current_timestamp` property.
+   - Under the current fixed-timestep engine, derive the snapshot time as $t_{\text{current}} = \text{current\_step} \times \text{timestep}$.
+   - Pass that derived value to `TrajectoryHistoryBuffer.get_snapshot(current_timestamp=...)`.
+   - This derivation is valid for the current fixed-timestep engine; if variable timesteps are introduced, the authoritative clock contract must be revised.
    - It is independent of individual pedestrian update times.
 2. **Observation Timestamp (`obs.timestamp`)**:
    - Each observation preserves the exact timestamp when it was observed or recorded.
