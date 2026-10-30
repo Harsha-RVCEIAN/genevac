@@ -86,12 +86,38 @@ class TrajectoryHistoryBuffer:
                     field="step_index/timestamp",
                     agent_id=observation_or_agent_id,
                 )
+            # Validate the original structure and scalar types before constructing
+            # TrajectoryObservation; coercion here would hide malformed input.
+            if (
+                isinstance(position, (str, bytes))
+                or not isinstance(position, Sequence)
+                or len(position) != 2
+            ):
+                raise TrajectoryValidationError(
+                    "position must be a two-element numeric sequence (x, y)",
+                    field="position",
+                    agent_id=observation_or_agent_id,
+                )
+            coordinates = (position[0], position[1])
+            for name, value in zip(("x", "y"), coordinates):
+                if (
+                    type(value) not in (int, float)
+                    or isinstance(value, bool)
+                    or not math.isfinite(value)
+                ):
+                    raise TrajectoryValidationError(
+                        f"{name} coordinate must be a finite int or float, got {value!r}",
+                        field=name,
+                        agent_id=observation_or_agent_id,
+                        step_index=step_index,
+                    )
+
             obs = TrajectoryObservation(
                 agent_id=observation_or_agent_id,
                 step_index=step_index,
                 timestamp=timestamp,
-                x=float(position[0]),
-                y=float(position[1]),
+                x=coordinates[0],
+                y=coordinates[1],
                 category=category,
             )
         else:
