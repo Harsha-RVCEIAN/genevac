@@ -36,7 +36,8 @@ for step_idx in range(10):
     # a. Advance engine state (Person A authority)
     engine.step()
 
-    # b. Compute authoritative simulation time directly from engine state
+    # b. Derive simulation time: this engine currently exposes current_step and
+    #    timestep, not a separate current_timestamp property.
     sim_time = engine.current_step * engine.timestep
 
     # c. Feed active pedestrian observations into the history buffer
@@ -51,6 +52,7 @@ for step_idx in range(10):
             )
 
 # 4. Snapshot Generation (Read-only view)
+# The snapshot timestamp is derived from the current fixed-timestep engine state.
 cur_sim_time = engine.current_step * engine.timestep
 snapshot = buffer.get_snapshot(
     current_step=engine.current_step,
