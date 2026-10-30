@@ -53,7 +53,6 @@ for step_idx in range(10):
 
 # 4. Snapshot Generation (Read-only view)
 # The snapshot timestamp is derived from the current fixed-timestep engine state.
-# The snapshot timestamp is derived from the current fixed-timestep engine state.
 cur_sim_time = engine.current_step * engine.timestep
 snapshot = buffer.get_snapshot(
     current_step=engine.current_step,
