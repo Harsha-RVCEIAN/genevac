@@ -1,5 +1,6 @@
 """AI prediction models, trajectory data contracts, and history buffer."""
 
+import math
 from collections import deque
 from collections.abc import Sequence
 from types import MappingProxyType
@@ -18,20 +19,42 @@ from genevac.prediction.data_contract import (
 
 class TrajectoryHistoryBuffer:
     """Prediction-history cache storing validated trajectory observations.
-    
+
     Maintains a rolling window of TrajectoryObservation instances per agent.
     Consumes observations from the simulation engine without independently
     advancing time or altering pedestrian state.
     """
 
-    def __init__(self, window_size: int = 20, min_history_required: int = 2):
+    def __init__(
+        self,
+        window_size: int = 20,
+        min_history_required: int = 2,
+        max_observation_age: float | None = None,
+    ):
+        """Create a new history buffer.
+
+        Args:
+            window_size: Maximum number of observations to keep per agent.
+            min_history_required: Minimum number of observations required for a
+                prediction.
+            max_observation_age: Optional maximum allowed age (in seconds) of the
+                *latest* observation relative to the reference timestamp used when
+                creating a snapshot. ``None`` disables the freshness check.
+        """
         if type(window_size) is not int or window_size <= 0:
             raise ValueError(f"window_size must be a positive integer, got {window_size}")
         if type(min_history_required) is not int or min_history_required < 1:
             raise ValueError(f"min_history_required must be an integer >= 1, got {min_history_required}")
-
+        if max_observation_age is not None:
+            if type(max_observation_age) not in (float, int) or isinstance(max_observation_age, bool):
+                raise ValueError("max_observation_age must be a finite non-negative number or None")
+            if max_observation_age < 0:
+                raise ValueError("max_observation_age cannot be negative")
+            if not math.isfinite(max_observation_age):
+                raise ValueError("max_observation_age must be finite")
         self.window_size = window_size
         self.min_history_required = min_history_required
+        self.max_observation_age = max_observation_age
         self.history: dict[str, deque[TrajectoryObservation]] = {}
 
     def record(
@@ -146,14 +169,54 @@ class TrajectoryHistoryBuffer:
         """Return list of all agent IDs currently tracked in the buffer."""
         return list(self.history.keys())
 
+    def is_latest_observation_fresh(
+        self,
+        agent_id: str,
+        reference_timestamp: float,
+        max_age: float | None = None,
+    ) -> bool:
+        """Check whether the agent's latest observation is within the permitted age.
+
+        Args:
+            agent_id: Identifier of the agent to check.
+            reference_timestamp: Timestamp representing the current snapshot or reference time.
+            max_age: Maximum allowed age in seconds. If None, uses self.max_observation_age.
+                     If that is also None, returns True (no freshness limit enforced).
+
+        Returns:
+            True if latest observation exists and (reference_timestamp - latest_obs.timestamp) <= max_age.
+            False if agent is not in buffer, has no observations, or age exceeds max_age.
+        """
+        allowed_age = max_age if max_age is not None else self.max_observation_age
+        if allowed_age is None:
+            return True
+
+        observations = self.history.get(agent_id)
+        if not observations:
+            return False
+
+        latest_obs = observations[-1]
+        age = reference_timestamp - latest_obs.timestamp
+        return age <= (allowed_age + 1e-6)
+
     def get_snapshot(
         self,
         current_step: int,
         current_timestamp: float,
         timestep: float = 0.1,
         agent_ids: Sequence[str] | None = None,
+        max_observation_age: float | None = None,
     ) -> TrajectorySnapshot:
-        """Create a read-only, immutable TrajectorySnapshot representing simulation state."""
+        """Create a read-only, immutable TrajectorySnapshot representing simulation state.
+        
+        Args:
+            current_step: Current simulation step index.
+            current_timestamp: Current simulation timestamp.
+            timestep: Simulation timestep.
+            agent_ids: Optional subset of agent IDs to include.
+            max_observation_age: Optional override for observation freshness validation.
+                                 If None, falls back to self.max_observation_age.
+        """
         target_ids = agent_ids if agent_ids is not None else list(self.history.keys())
         trajectories: dict[str, tuple[TrajectoryObservation, ...]] = {}
         for aid in target_ids:
@@ -166,7 +229,10 @@ class TrajectoryHistoryBuffer:
             timestep=timestep,
             trajectories=MappingProxyType(trajectories),
         )
-        TrajectoryValidator.validate_snapshot(snapshot)
+        effective_max_age = (
+            max_observation_age if max_observation_age is not None else self.max_observation_age
+        )
+        TrajectoryValidator.validate_snapshot(snapshot, max_observation_age=effective_max_age)
         return snapshot
 
     def clear(self, agent_id: str | None = None) -> None:

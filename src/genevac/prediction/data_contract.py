@@ -359,19 +359,56 @@ class TrajectoryValidator:
             prev_time = obs.timestamp
 
     @staticmethod
-    def validate_snapshot(snapshot: TrajectorySnapshot) -> None:
-        """Validate a TrajectorySnapshot and all contained observation sequences."""
+    def validate_snapshot(
+        snapshot: TrajectorySnapshot,
+        max_observation_age: float | None = None,
+    ) -> None:
+        """Validate a TrajectorySnapshot and all contained observation sequences.
+        
+        Args:
+            snapshot: TrajectorySnapshot instance to validate.
+            max_observation_age: Optional maximum permitted age (in seconds) between
+                snapshot.current_timestamp and the latest observation timestamp for each agent.
+                If any agent's latest observation is older than max_observation_age,
+                TrajectoryValidationError is raised.
+        """
         if not isinstance(snapshot, TrajectorySnapshot):
             raise TrajectoryValidationError(
                 f"Expected TrajectorySnapshot instance, got {type(snapshot).__name__}",
                 field="snapshot",
             )
+
+        if max_observation_age is not None:
+            if (
+                type(max_observation_age) not in (float, int)
+                or isinstance(max_observation_age, bool)
+                or not math.isfinite(max_observation_age)
+                or max_observation_age < 0.0
+            ):
+                raise TrajectoryValidationError(
+                    f"max_observation_age must be a finite non-negative number, got {max_observation_age!r}",
+                    field="max_observation_age",
+                )
+
         for agent_id, obs_seq in snapshot.trajectories.items():
             TrajectoryValidator.validate_observation_sequence(
                 obs_seq,
                 expected_agent_id=agent_id,
                 expected_timestep=snapshot.timestep,
             )
+
+            if max_observation_age is not None and obs_seq:
+                latest_obs_time = obs_seq[-1].timestamp
+                age = snapshot.current_timestamp - latest_obs_time
+                if age > max_observation_age + 1e-6:
+                    raise TrajectoryValidationError(
+                        f"Stale observation for agent '{agent_id}': latest observation timestamp is {latest_obs_time:.6f}s, "
+                        f"which is {age:.6f}s older than snapshot timestamp {snapshot.current_timestamp:.6f}s "
+                        f"(max allowed: {max_observation_age:.6f}s)",
+                        field="observation_age",
+                        agent_id=agent_id,
+                        step_index=obs_seq[-1].step_index,
+                    )
 
     @staticmethod
     def validate_prediction(prediction: TrajectoryPrediction) -> None:
