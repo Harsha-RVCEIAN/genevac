@@ -4,6 +4,7 @@ import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
+from types import MappingProxyType
 
 
 class TrajectoryCategory(str, Enum):
@@ -171,6 +172,37 @@ class TrajectorySnapshot:
                 f"timestep must be a finite positive number, got {self.timestep}",
                 field="timestep",
             )
+
+        # Freeze at the model boundary, not only in TrajectoryHistoryBuffer.
+        # A defensive copy prevents later mutation through the caller's mapping.
+        if not isinstance(self.trajectories, Mapping):
+            raise TrajectoryValidationError(
+                "trajectories must be a mapping of agent IDs to observation sequences",
+                field="trajectories",
+            )
+        frozen_trajectories: dict[str, tuple[TrajectoryObservation, ...]] = {}
+        for agent_id, observations in self.trajectories.items():
+            if not isinstance(agent_id, str) or not agent_id.strip():
+                raise TrajectoryValidationError(
+                    "trajectory mapping keys must be non-empty agent IDs",
+                    field="agent_id",
+                )
+            if isinstance(observations, (str, bytes)) or not isinstance(observations, Sequence):
+                raise TrajectoryValidationError(
+                    f"Observations for agent '{agent_id}' must be a sequence",
+                    field="trajectories",
+                    agent_id=agent_id,
+                )
+            frozen_sequence = tuple(observations)
+            for observation in frozen_sequence:
+                if not isinstance(observation, TrajectoryObservation):
+                    raise TrajectoryValidationError(
+                        f"All entries for agent '{agent_id}' must be TrajectoryObservation instances",
+                        field="trajectories",
+                        agent_id=agent_id,
+                    )
+            frozen_trajectories[agent_id] = frozen_sequence
+        object.__setattr__(self, "trajectories", MappingProxyType(frozen_trajectories))
 
 
 @dataclass(frozen=True)
@@ -397,9 +429,24 @@ class TrajectoryValidator:
                 expected_timestep=snapshot.timestep,
             )
 
+            # A snapshot cannot contain measurements from its future. Allow
+            # only 1e-9 seconds of representation noise from floating-point math.
+            timestamp_tolerance = 1e-9
+            for observation in obs_seq:
+                if observation.timestamp > snapshot.current_timestamp + timestamp_tolerance:
+                    raise TrajectoryValidationError(
+                        f"Future observation for agent '{agent_id}': observation timestamp "
+                        f"{observation.timestamp:.12g}s exceeds snapshot timestamp "
+                        f"{snapshot.current_timestamp:.12g}s",
+                        field="observation_timestamp",
+                        agent_id=agent_id,
+                        step_index=observation.step_index,
+                    )
+
             if max_observation_age is not None and obs_seq:
                 latest_obs_time = obs_seq[-1].timestamp
-                age = snapshot.current_timestamp - latest_obs_time
+                # Clamp tiny tolerated negative age to zero.
+                age = max(0.0, snapshot.current_timestamp - latest_obs_time)
                 if age > max_observation_age + 1e-6:
                     raise TrajectoryValidationError(
                         f"Stale observation for agent '{agent_id}': latest observation timestamp is {latest_obs_time:.6f}s, "
