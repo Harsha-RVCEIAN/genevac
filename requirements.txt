@@ -1,0 +1,2 @@
+# Runtime dependencies for GenEvac-Sentinel MVP (Week 1)
+pygame>=2.6.0,<3.0.0
