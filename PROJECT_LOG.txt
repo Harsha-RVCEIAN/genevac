@@ -1,0 +1,515 @@
+# PROJECT WORKSPACE LOG & CONTEXT TRACKER
+=====================================================
+Created: 2026-10-29 17:02:07 IST
+
+CORE OPERATIONAL RULES:
+1. NO GIT PUSH: Antigravity/AI must NEVER execute `git push` or push code to any remote repository under any circumstance. Only the user will review and push.
+2. CONTINUOUS LOGGING: Maintain and update this log with all chat history, architecture decisions, changes made, and next steps so future sessions can resume instantly by reading this file first.
+3. STRICT SCOPE: Only execute what is explicitly requested by the user.
+
+-----------------------------------------------------
+SESSION HISTORY & LOG ENTRIES:
+-----------------------------------------------------
+
+[2026-10-29 17:02:07 IST] - Session Initialization
+- User requested establishing this context log file to record all ongoing context and chat history across sessions.
+- User explicitly prohibited pushing to the repo: All git pushes must be done manually by the user after reviewing.
+- Log file `PROJECT_LOG.txt` established at the workspace root.
+- Awaiting user's next instructions for the project.
+
+[2026-10-29 18:22:00 IST] - Week 1, Phase 1: Design Finalization and Project Setup
+- Task: Implementation assistant for GenEvac-Sentinel MVP. Week 1, Phase 1 only.
+- Strict Constraints Enforced:
+  * NO git push executed.
+  * No Phase 2–5 implementations (no geometry modeling, no environment classes, no JSON parser/validator, no Pygame rendering/sim, no pedestrians/agents).
+- Repository Audit:
+  * Root `/Users/apple/Documents/5th sem el/main_el_5` has an uncommitted git repo.
+  * Subdirectory `genevac/` is the active Git repository (branch `pavan`, origin `https://github.com/Harsha-RVCEIAN/genevac.git`, initial commit `c26fe8d`).
+  * Symlinked root `PROJECT_LOG.txt` to `genevac/PROJECT_LOG.txt` to guarantee unified logging.
+- Environment & Python Verification:
+  * Python 3.11 confirmed and verified (`Python 3.11.15` at `/Users/apple/.local/bin/python3.11`).
+  * Virtual environment `.venv` created using Python 3.11 inside `genevac/`.
+  * Dependencies installed & verified: `pygame 2.6.1` and `pytest 9.2.0`.
+  * Smoke test `tests/test_smoke.py` executed via pytest and passed (1 passed in 0.00s).
+- Deliverables Created:
+  * `genevac/.gitignore`: Ignoring `.venv/`, `__pycache__/`, `.pytest_cache/`, etc.
+  * `genevac/requirements.txt`: Runtime dependencies (`pygame>=2.6.0,<3.0.0`).
+  * `genevac/requirements-dev.txt`: Development dependencies (`pytest>=8.0.0,<10.0.0`).
+  * `genevac/pyproject.toml`: Modern packaging setup with Python `>=3.11` and pytest config.
+  * `genevac/src/genevac/__init__.py`: Minimal package definition (`__version__ = "0.1.0"`).
+  * `genevac/tests/__init__.py`: Test package marker.
+  * `genevac/tests/test_smoke.py`: Test runner verification.
+  * `genevac/docs/design_spec_week1.md`: Full specification, coordinate conventions (top-left origin, 40m x 30m, 3m corridor, 3 exits), 5-phase Week 1 roadmap, and list of unresolved items for later phases.
+  * `genevac/docs/setup_guide.md`: Reproducible setup instructions for venv and uv.
+  * `genevac/README.md`: Updated with status, overview, and links.
+- Status: Phase 1 complete. Stopped as instructed. Awaiting project owner review and explicit approval before Phase 2.
+
+[2026-10-29 18:25:30 IST] - Week 1, Phase 1: Verification and Correction Pass
+- Inspected requirements.txt, requirements-dev.txt, pyproject.toml, and docs/setup_guide.md.
+- Verified fresh virtual environment (.venv_fresh): confirmed clean installation of pygame 2.6.1 and pytest 9.2.0 via `pip install -r requirements-dev.txt` and editable install `pip install -e ".[dev]"`. All tests passed.
+- Git Roots Inspection:
+  * Parent directory `/Users/apple/Documents/5th sem el/main_el_5` is an unconfigured, uncommitted local git root with no remotes.
+  * Child directory `/Users/apple/Documents/5th sem el/main_el_5/genevac` is the intended project repository (branch `pavan`, tracking `origin/pavan` on `https://github.com/Harsha-RVCEIAN/genevac.git`).
+  * No git remotes changed, no commits, no pushes.
+- Parent Symlink Review:
+  * `PROJECT_LOG.txt` symlink in parent directory points to `genevac/PROJECT_LOG.txt`.
+  * Not strictly required for the project itself, but convenient while the IDE workspace root remains the parent directory. Documented potential confusion for project owner decision. Kept intact pending approval.
+- Preserved approved design specification; no Phase 2-5 implementation introduced.
+- Phase 1 verification complete; ready for sign-off.
+
+[2026-10-30 13:15:00 IST] - Week 1, Phase 2: Environment Data Model Implementation
+- Task: Implement Phase 2 Environment Data Model for GenEvac-Sentinel MVP.
+- Strict Constraints Enforced:
+  * NO git push executed. No commits created.
+  * No Pygame, PyTorch, MID, pedestrian/agent, pathfinding, or JSON loader code introduced.
+  * Pure standard-library Python 3.11 implementation with dataclasses and type hints.
+- Modules Created:
+  * `src/genevac/environment/geometry.py`: Point, Rectangle, LineSegment, Wall, WallType.
+  * `src/genevac/environment/models.py`: WalkableArea, Obstacle, Exit, Building (with comprehensive validation for bounds, unique IDs, exit associations, and connectivity references).
+  * `src/genevac/environment/builder.py`: create_initial_building() constructing the approved 40m x 30m layout (4 rooms, 3m horizontal corridor, 3 boundary exits, 4 static obstacles, exterior & interior walls with exit and doorway openings).
+  * `src/genevac/environment/__init__.py`: Package exports for geometry, models, and builder.
+  * `tests/test_environment.py`: 31 focused pytest tests covering geometry, validation, connectivity, boundary placements, out-of-bounds rejection, and disallowed import isolation.
+- Verification:
+  * Total 32 pytest tests passed (31 environment tests + 1 smoke test) in 0.04s.
+- Status: Phase 2 complete. Stopped as instructed. Awaiting project owner review and explicit approval before Phase 3.
+
+[2026-10-30 13:22:00 IST] - Week 1, Phase 2: Architecture Audit & Corrections
+- Task: Perform focused Phase 2 architecture audit and minimal corrections prior to sign-off.
+- Problems Discovered & Corrections Made:
+  1. Wall Physical Footprint vs. Building Boundary: Centerline wall representation could not express inward wall thickness on outer edges (x=0, x=40, y=0, y=30) without projecting 0.1m outside the 40x30m boundary.
+     * Correction: Added `WallAlignment` enum (CENTER, POSITIVE, NEGATIVE) and `Wall.footprint` property returning the 2D physical bounding rectangle. Exterior boundary walls now use inward positive/negative alignments. `Building.validate()` enforces that wall physical footprints stay strictly within [0, 40] x [0, 30].
+  2. Explicit Doorway / Portal Representation:
+     * Correction: Introduced `Doorway` dataclass with stable ID, connected_area_ids tuple, crossing LineSegment, and physical width. Initial building now includes 4 explicit room-to-corridor doorways.
+  3. Wall & Walkable-Area Consistency:
+     * Correction: Implemented non-blocking checks in `Building.validate()` ensuring that no solid wall covers doorway or exit openings, and no static obstacle overlaps doorway or exit openings.
+  4. Connectivity & Topological Integrity:
+     * Correction: Enforced reciprocal connectivity checking (`area_a <-> area_b`), verified doorways match declared area adjacencies, and added BFS graph traversal to guarantee complete walkable-area network connectivity.
+- Verification:
+  * pytest suite expanded to 45 automated tests (44 environment tests + 1 smoke test). All 45 passed in 0.05s.
+- Status: Phase 2 Architecture Audit complete. STOPPED. Awaiting project-owner approval before Phase 3.
+
+[2026-10-30 13:35:00 IST] - Week 1, Phase 2: Final Targeted Verification
+- Task: Perform final targeted verification of Phase 2 Environment Data Model.
+- Items Verified & Enhanced:
+  1. 2D Wall Footprint Non-Blocking: Upgraded doorway and exit clearance checks to evaluate `wall.footprint` (including 0.2m thickness and alignment) via `segment_intersects_rect` rather than relying solely on centerline segment overlap.
+  2. Geometric Consistency of Portals & Exits: Enforced that doorway declared width matches crossing segment length, doorway endpoints lie on the shared boundary of connected walkable areas, exit declared width matches opening segment length, and exit endpoints lie along the boundary of its connected walkable area.
+  3. Boundary Confinement: Verified all 7 exterior wall footprints remain 100% within the [0, 40] x [0, 30] m boundary.
+  4. Graph Reachability: Verified 4 rooms and 1 corridor form a single connected walkable graph and all 3 exits connect to areas within that graph.
+  5. Floating-point Tolerance: Confirmed consistent use of EPSILON (1e-6) across boundary and point containment comparisons.
+- Test Suite: 51 automated pytest tests passed (50 environment tests + 1 smoke test) in 0.08s.
+- Status: Final targeted verification complete. STOPPED. Awaiting project-owner review and approval before Phase 3.
+
+[2026-10-30 13:40:00 IST] - Week 1, Phase 3: JSON Loading & Validation Implementation
+- Task: Implement JSON serialization and deserialization for the existing environment model.
+- Architecture Decisions & Scope Controls:
+  * Single Source of Truth: Reused existing dataclasses and enums from `genevac.environment` (Point, Rectangle, LineSegment, Wall, WallAlignment, WallType, WalkableArea, Doorway, Obstacle, Exit, Building). No second model or duplicated classes created.
+  * Standard Library Only: Built using pure standard-library `json` module. No Pygame, NumPy, PyTorch, MID, pedestrian/pathfinding, or simulation dependencies.
+  * Schema Versioning: Version "1.0" embedded in top-level JSON payload. Unsupported versions strictly rejected.
+  * Strict Validation: Reconstructs Phase 2 dataclasses and triggers `Building.validate()` to enforce boundary confinement, reciprocal connectivity, graph reachability, wall footprint clearance, and doorway/exit geometric consistency.
+- Modules Created & Updated:
+  * `src/genevac/environment/serialization.py`: Core serialization module implementing `building_to_dict`, `building_from_dict`, `save_building`, `load_building`, and schema version constants.
+  * `src/genevac/environment/__init__.py`: Exported public serialization functions and constants.
+  * `tests/test_environment_serialization.py`: 24 focused pytest tests covering round-trip dictionary and file serialization, arbitrary buildings, missing files, malformed syntax, schema versioning, invalid enums, invalid geometry, and building validation invocation.
+  * `README.md`: Documented environment model serialization usage, schema versioning, and status.
+- Verification:
+  * Complete pytest suite passing: 75 passed (50 environment tests + 24 serialization tests + 1 smoke test) in 0.07s.
+  * Git Status clean (no push, no commits).
+- Status: Phase 3 complete. STOPPED. Awaiting project-owner review and approval before Phase 4.
+
+[2026-10-30 14:17:00 IST] - Week 1, Phase 4: Static Pygame Visualization Implementation
+- Task: Implement static 2D top-down visualization of Building environments using Pygame.
+- Architecture Decisions & Scope Controls:
+  * Separation of Concerns: Created independent visualization package `src/genevac/visualization/`.
+  * Coordinate Independence: Implemented `Viewport` in `coordinates.py` for pure mathematical world-to-screen and screen-to-world conversion, enforcing uniform scaling and aspect ratio preservation with centering and margins.
+  * Model-Driven Rendering: `EnvironmentRenderer` in `renderer.py` draws actual `Building` objects without hardcoded coordinates, rendering walkable floors, 2D physical wall footprints (0.2m thickness), doorway openings, safety green exits, obstacles, and metric scale bar.
+  * Interactive App: `run_app()` in `app.py` supports default initial building or JSON-loaded buildings, dynamic window resizing with aspect ratio preservation, and keyboard controls.
+  * Strict Scope Boundary: Purely static visualization. No pedestrians, no simulation, no pathfinding, no AI/MID.
+- Modules Created:
+  * `src/genevac/visualization/coordinates.py`: Viewport coordinate conversion class.
+  * `src/genevac/visualization/renderer.py`: EnvironmentRenderer class and `draw_building()` API.
+  * `src/genevac/visualization/app.py`: Pygame application entry point and CLI runner.
+  * `src/genevac/visualization/__init__.py`: Package exports.
+  * `tests/test_visualization.py`: 14 focused tests covering coordinate mapping, aspect ratio preservation under resizing, centering, corner conversion, read-only render behavior, and JSON-loaded rendering in headless mode.
+- Verification:
+  * Complete test suite passing: 89 passed (50 environment + 24 serialization + 14 visualization + 1 smoke) in 0.46s.
+  * Git status clean (no push, no commits).
+- Status: Phase 4 complete. STOPPED. Awaiting project-owner review and approval before Phase 5.
+
+[2026-10-30 14:28:00 IST] - Week 1, Phase 5: Integration Testing & Final Sign-Off
+- Task: Comprehensive audit and integration testing across all Week 1 components (Environment, Serialization, Visualization).
+- Audits Performed:
+  1. Environment Model Audit: Verified 40m x 30m dimensions, 4 rooms, 3m corridor, 3 boundary exits, 4 doorways, 4 obstacles, 2D wall footprints strictly inside boundary, non-blocking clearances, reciprocal connectivity, and graph traversal validation.
+  2. Serialization Integration Audit: Verified dictionary and JSON file serialization/deserialization, preservation of all geometric attributes, rejection of schema versions != "1.0", and invocation of domain validation on deserialization.
+  3. Visualization Integration Audit: Verified Viewport aspect ratio preservation under resizing, centering, margins, EnvironmentRenderer rendering of floors, walls, portals, exits, and obstacles, read-only render behavior, and rendering of JSON-reconstructed environments.
+  4. Architectural & Dependency Isolation: Confirmed pure standard-library environment package. Verified zero imports of pygame, torch, or mid when importing genevac.environment via clean subprocess test.
+  5. Fresh Environment Verification: Verified clean pip installation in an isolated virtual environment (.venv_verify) with 92 passing tests.
+- Deliverables Created:
+  * `tests/test_integration.py`: 3 end-to-end integration tests covering 10-step full lifecycle, custom building geometry lifecycle, and isolated process architectural dependency check.
+  * Snapshot rendered: `docs/initial_building_render.png`.
+  * `README.md`: Updated with completed Week 1 status, quickstart instructions, and visualization controls.
+- Verification:
+  * Test Suite: 92 passed, 0 failed, 1 warning (upstream setuptools deprecation in pygame) in 0.63s.
+  * Git Status: Branch `pavan`, no git commits made, no git push executed.
+- Status: Week 1 Phase 5 complete. Week 1 is officially complete and ready for sign-off.
+- STRICT STOP CONDITION ENFORCED: Week 2 features (pedestrians, simulation, navigation, pathfinding, AI) NOT started. Awaiting explicit project owner authorization before proceeding.
+
+[2026-10-30 14:31:00 IST] - Final Week 1 Layout Consistency Audit
+- Task: Reconcile discrepancies between the Phase 5 textual report and the approved Phase 2 building specifications.
+- Investigation Findings:
+  * The actual source code in `src/genevac/environment/builder.py`, `src/genevac/environment/models.py`, `src/genevac/visualization/renderer.py`, and test suites was NEVER altered from the approved Phase 2 design.
+  * Discrepancies noted in the Phase 5 report were strictly narrative / documentation errors in the report's text summary (e.g. reporting 3m exit widths instead of 2m, cardinal labels instead of room_1..4/main_corridor/exit_left..bottom, and phantom corridor obstacles).
+  * In the codebase, the actual initial building geometry strictly adheres to:
+    - Exits: 2.0 m wide each (`exit_left`, `exit_right`, `exit_bottom` at X in [9.0, 11.0]).
+    - Obstacles: Exactly 4 room obstacles at (4,4), (24,4), (4,20), (24,20) of size 2.0 x 1.5 m (zero corridor obstacles).
+    - Identifiers: `room_1`, `room_2`, `room_3`, `room_4`, `main_corridor`, `exit_left`, `exit_right`, `exit_bottom`.
+- Source Code Corrections:
+  * None required. Source code already implements the exact approved Phase 2 geometry and identifiers.
+- Verification:
+  * Complete test suite re-verified: 92 passed, 0 failed, 1 warning in 0.61s.
+  * Zero git commits, zero git pushes.
+- Status: Audit complete. Standing by for project-owner review. Week 2 remains unopened.
+
+[2026-11-01 14:26:00 IST] - Week 2, Phase 1: Architecture Inspection and Design Corrections
+- Task: Prepare architecture for Week 2 pedestrian state and movement implementation.
+- Audits & Designs Completed:
+  1. Full repository inspection: Branch `pavan`, 92 passing tests verified, pure standard library environment models.
+  2. Pedestrian data model design: Reusing existing `Point`, finite velocity representation, status lifecycle, history tracking.
+  3. Simulation-time convention: Evaluated dt = 0.1s (10 Hz) against 2.5 Hz (0.4s) Person B trajectory datasets (exact 4-step stride). Distinguished simulation time, wall-clock time, observation time, and prediction time.
+  4. Design corrections incorporated: Single authoritative clock in SimulationEngine, timestamped trajectory history `(step, timestamp, x, y)`, permanent retention of evacuated pedestrians, wall-respecting waypoint navigation, and movement safety checks.
+- Status: Phase 1 design completed and approved.
+
+[2026-11-01 14:31:00 IST] - Week 2, Phase 2: Pedestrian State Model & Registry Implementation
+- Task: Implement pedestrian domain model and population registry without simulation engine or Pygame integration.
+- Strict Constraints Enforced:
+  * NO git push executed. No commits created.
+  * No simulation engine, clock loop, movement controller, collision detection, route generator, observation snapshot, or Pygame code introduced.
+  * Pure standard-library Python 3.11 implementation reusing `genevac.environment.geometry.Point`.
+- Modules Created:
+  * `src/genevac/pedestrian/models.py`:
+    - `PedestrianStatus`: Enum (`ACTIVE`, `EVACUATED`, `BLOCKED`, `INACTIVE`).
+    - `Velocity2D`: Immutable 2D velocity vector in m/s with finite validation, scalar speed, and tuple conversion.
+    - `TimestampedTrajectoryPoint`: Historical coordinate sample with external step, timestamp, x, and y.
+    - `PedestrianState`: Authoritative pedestrian state with position `Point`, `Velocity2D`, `PedestrianStatus`, optional `target_exit_id` and `current_area_id`, waypoint storage, radius ($0.25$ m), preferred speed ($1.3$ m/s), bounded trajectory history (default capacity 100), `record_history_sample(step, timestamp)`, and `freeze_at_evacuation()`.
+  * `src/genevac/pedestrian/registry.py`:
+    - `PedestrianRegistry`: Stores pedestrians by ID, rejects duplicates, provides deterministic insertion-order iteration, ID lookups (`get`, `__getitem__`, `__contains__`), status filtering (`get_active`, `get_evacuated`, `get_blocked`, `get_inactive`, `get_by_status`), dynamic population counts (`total_count`, `active_count`, `evacuated_count`, `blocked_count`, `inactive_count`), and permanent retention of evacuated agents.
+  * `src/genevac/pedestrian/__init__.py`: Public package exports.
+  * `tests/test_pedestrian_models.py`: 22 unit tests for models, types, finite coordinates, radius, speed, history FIFO, and evacuation freezing.
+  * `tests/test_pedestrian_registry.py`: 7 unit tests for registry, duplicate rejection, lookup, deterministic ordering, filtering, dynamic count updates, and clean-process architectural isolation.
+- Verification:
+  * Complete test suite passing: 121 passed, 0 failed, 1 warning in 0.66s (92 Week 1 tests + 29 Week 2 Phase 2 tests).
+  * Subprocess isolation confirmed: `genevac.pedestrian` imports zero `pygame`, `torch`, `mid`, or `numpy`.
+- Status: Phase 2 complete. STOPPED. Standing by for project-owner review and approval before Phase 3.
+
+[2026-11-01 14:42:00 IST] - Week 2, Phase 3: Simulation Clock, Kinematics, Exits & Observation Snapshots
+- Task: Implement simulation clock, deterministic movement, exit handling, and observation snapshots without Pygame or AI integration.
+- Strict Constraints Enforced:
+  * NO git push executed. No commits created.
+  * No Pygame rendering, PyTorch, MID, diffusion, or webcam integration code introduced.
+  * Pure standard-library Python 3.11 implementation with architectural isolation.
+- Modules Created:
+  * `src/genevac/simulation/clock.py`:
+    - `SimulationClock`: Authoritative temporal progression with integer step counter, derived timestamp ($t = \text{step} \times \Delta t$), strict validation of $\Delta t$ and observation interval, non-integral ratio rejection, and cadence checking.
+  * `src/genevac/simulation/movement.py`:
+    - `generate_deterministic_route`: Deterministic waypoint routing through building doorways and corridor spine to target exits.
+    - `check_collision`: Radius-aware continuous clearance check against wall 2D footprints, static obstacles, and exterior boundaries, permitting entrance through assigned exit openings.
+    - `detect_exit_crossing`: Segment intersection detecting exit crossing within usable opening ($[\text{start} + r, \text{end} - r]$) without midpoint teleportation.
+    - `advance_pedestrian_step`: Kinematic step advancement for ACTIVE pedestrians, applying speed, waypoint progression, collision detection, and freeze on evacuation.
+  * `src/genevac/simulation/observation.py`:
+    - `PedestrianObservation`: Immutable snapshot representation of pedestrian state with timestamped history.
+    - `SimulationObservationSnapshot`: Immutable system-wide snapshot with active, evacuated, blocked, inactive, and total counts.
+    - `create_observation_snapshot`: Pure factory function creating immutable snapshots.
+  * `src/genevac/simulation/engine.py`:
+    - `SimulationEngine`: Authoritative coordinator linking building, registry, clock, kinematics, and snapshot generation.
+  * `src/genevac/simulation/__init__.py`: Public package exports.
+  * Tests Created:
+    - `tests/test_simulation_clock.py`: 8 tests covering defaults, timing validation, ratio checks, drift-free timestamp progression, and reset.
+    - `tests/test_simulation_movement.py`: 12 tests covering clearance, 15 room-to-exit routes, doorway alignment, wall/obstacle collisions, and narrow doorway blocking.
+    - `tests/test_simulation_observation.py`: 5 tests covering snapshot fields, count invariants, evacuated retention, immutability, and serialization.
+    - `tests/test_simulation_engine.py`: 14 tests covering initialization, validation, cadence, pause/resume, exit crossing, cohort evacuation, and clean-process isolation.
+- Verification:
+  * Complete test suite passing: 160 passed, 0 failed, 1 warning in 0.72s (92 Week 1 + 29 Week 2 Phase 2 + 39 Week 2 Phase 3 tests).
+  * Subprocess isolation confirmed: `genevac.simulation` imports zero `pygame`, `torch`, `mid`, or `numpy`.
+- Status: Phase 3 complete. STOPPED. Standing by for project-owner review and approval before Phase 4.
+[2026-11-01 14:57:00 IST] - Phase 3: Collision and Route Audit Implementation & Verification
+- Task: Source-level collision and route audit; replace sampled collision detection with continuous minimum-distance checks; audit all route combinations and exit crossing edge cases.
+- Actions & Implementations:
+  1. Continuous Collision Detection (`src/genevac/simulation/movement.py`):
+     * Replaced 5-point discrete sampling with closed-form continuous distance between movement segment and axis-aligned bounding box (AABB).
+     * Implemented `distance_segment_to_segment(p0, p1, q0, q1)`: Exact analytical minimum Euclidean distance between two arbitrary 2D line segments, handling parallel, collinear, endpoint-clamped, and degenerate zero-length cases via projection onto parametric lines clamped to $[0, 1] \times [0, 1]$.
+     * Implemented `distance_segment_to_rect(seg, rect)` (aliased to `segment_distance_to_rect`): Checks endpoint containment (distance = 0 if start or end is inside rect) and evaluates exact distance against all 4 boundary edges of the rectangle.
+     * Documented strict tangency contact policy: penetration is flagged strictly when $\text{distance} < \text{radius} - \epsilon$ ($\epsilon = 10^{-6}$). Tangent/grazing contact ($\text{distance} \ge \text{radius} - \epsilon$) is permitted and non-penetrating.
+     * Zero-length segments starting inside or within radius of obstacle/wall geometry are immediately rejected.
+     * Wall openings and doorways: Doorways preserve walkable openings without false collisions. Boundary exits permit pedestrians assigned to that exit to cross within usable opening width $[start + r, end - r]$.
+  2. Adversarial Collision Tests (`tests/test_simulation_movement.py`):
+     * Test 1: Detected collisions occurring strictly between former 5-sample positions ($t=0.125$).
+     * Test 2: Accepted segments passing just outside radius-expanded obstacle geometry ($d = r + 0.001$).
+     * Test 3: Verified tangent contact policy ($d = r \pm \epsilon$).
+     * Test 4: Confirmed zero-length segment inside obstacle is rejected.
+     * Test 5: Confirmed zero-thickness / paper-thin walls ($0.001$ m) cannot be penetrated.
+     * Test 6: Valid doorway crossings remain accepted without false collisions.
+  3. Route Validity Audit (`src/genevac/simulation/movement.py`):
+     * Inspected all 15 room-to-exit combinations.
+     * Discovered geometric flaw: When pedestrians in room corners (e.g., $(2.0, 11.5)$ in `room_1` or $(2.0, 28.0)$ in `room_3`) navigate toward a doorway or exit midpoint on an acute diagonal, the finite swept circle ($r=0.25$ m) clipped the interior door jamb corner.
+     * Implemented architectural fix: Portal approach waypoints (doorway standoff points) positioned perpendicular to the doorway centerline ($1.5$ m standoff inside rooms). Pedestrians first navigate to the approach point (navigating around any room obstacles via `_get_room_obstacle_bypass`), then enter the doorway perpendicularly with $0.75$ m clearance on both jambs.
+     * Audited all 15 area-to-exit combinations across dense grids (1,290 grid tests across all walkable areas), confirming 100% collision-free route segments.
+  4. Exit Crossing Edge Case Audit (`src/genevac/simulation/movement.py`):
+     * Enforced directional outward velocity check in `detect_exit_crossing`:
+       - Assigned exit crossing: Detected and preserves exact crossing intersection point.
+       - Unassigned exit crossing: Blocked by wall footprint clearance.
+       - Exact usable-opening boundary: Accepted ($[start + r, end - r]$ inclusive).
+       - Outside usable opening: Rejected.
+       - Zero-length movement: Does not evacuate.
+       - Starting on boundary: Moving inward is rejected; moving outward is accepted.
+       - Evacuation preserves exact crossing point without teleporting to exit midpoint.
+- Verification & Test Results:
+  * Full test suite executed with `./.venv/bin/pytest -v`: 167 passed, 0 failed, 1 warning in 0.76s.
+  * 17 focused movement and collision audit tests verified in `tests/test_simulation_movement.py`.
+  * Pure Python 3.11 standard library architecture maintained (zero Pygame, PyTorch, MID, diffusion dependencies in simulation domain).
+- Git State:
+  * Branch: `pavan`. Zero commits created. Zero pushes executed.
+[2026-11-01 15:52:00 IST] - Phase 3 Final Near-Parallel Verification & Full Regression Coverage
+- Task: Audit near-parallel threshold in `distance_segment_to_segment()`, replace scale-sensitive determinant branching with exact 2D continuous segment-to-segment algorithm, and add permanent regression tests for all 12 edge cases.
+- Mathematical Resolution:
+  * Identified limitation in absolute threshold `denom < 1e-12`: near-parallel segments crossing internally could trigger the endpoint fallback and return positive distance instead of 0.0 m.
+  * Formulated exact, scale-invariant 2D distance algorithm:
+    1. Cross-product straddle check (`ccw`) detects strict interior intersections and returns 0.0 m.
+    2. Non-intersecting or touching segments in 2D strictly achieve their minimum Euclidean distance at one of the 4 endpoints projected onto the opposing segment (`point_to_segment_distance`).
+  * Handles truly parallel, near-parallel intersecting, near-parallel non-intersecting, collinear overlapping, collinear disjoint, reversed endpoint ordering, and degenerate zero-length segments without determinant division.
+- Permanent Regression Coverage (`tests/test_simulation_movement.py`):
+  * Added 12 separate descriptive tests:
+    1. `test_distance_parallel_overlapping_segments` (expected 3.0 m).
+    2. `test_distance_parallel_separated_segments` (expected 3.605551275463989 m).
+    3. `test_distance_collinear_overlapping_segments` (expected 0.0 m).
+    4. `test_distance_collinear_disjoint_segments` (expected 3.0 m).
+    5. `test_distance_reversed_endpoint_order` (expected 3.0 m).
+    6. `test_distance_zero_length_first_segment` (expected 4.0 m).
+    7. `test_distance_zero_length_second_segment` (expected 4.0 m).
+    8. `test_distance_both_segments_zero_length` (expected 5.0 m).
+    9. `test_distance_near_parallel_intersecting_internally` (expected 0.0 m).
+    10. `test_distance_near_parallel_non_intersecting` (expected 2.0 m).
+    11. `test_obstacle_tangency_at_exact_pedestrian_radius` (expected 0.25 m, accepted).
+    12. `test_obstacle_penetration_just_inside_pedestrian_radius` (expected 0.249 m, rejected).
+- Verification & Test Results:
+  * Full test suite: 179 passed, 0 failed, 1 warning in 0.81s (`./.venv/bin/pytest -v`).
+  * Supplementary scratch route audit (1,290 sampled configurations across 15 room-exit pairs): 1,290 passed, 0 failed.
+- Git State:
+  * Branch `pavan`. Zero commits created. Zero pushes executed.
+[2026-11-01 16:00:00 IST] - Phase 3 Final Degenerate-Segment Numerical Correction
+- Task: Replace scale-dependent length-squared threshold in `point_to_segment_distance()` with exact endpoint coincidence check, and add permanent regression tests for sub-micrometre segments (< 1e-6 m).
+- Mathematical Resolution:
+  * Replaced `if length_sq < 1e-12:` with exact coincident endpoint check: `if ax == bx and ay == by: return math.hypot(px - ax, py - ay)`.
+  * Preserved safe handling of genuinely zero-length segments and underflow via `if length_sq == 0.0: return math.hypot(px - ax, py - ay)`.
+  * Removed all arbitrary thresholds that misclassified valid short segments (< 1e-6 m) as points.
+- Permanent Regression Coverage (`tests/test_simulation_movement.py`):
+  * Added tests covering sub-micrometre segments ($2 \times 10^{-7}\text{ m} < 10^{-6}\text{ m}$):
+    1. `test_distance_short_segments_intersecting_internally` (expected 0.0 m).
+    2. `test_distance_short_segment_and_point_segment` (expected 3.0 m).
+    3. `test_distance_two_distinct_zero_length_segments` (expected 5.0 m).
+    4. `test_distance_short_segments_non_intersecting_analytical` (expected 4.0 m).
+- Verification & Test Results:
+  * Focused movement tests: 35 passed in 0.14s (`./.venv/bin/pytest tests/test_simulation_movement.py -v`).
+  * Full pytest suite: 183 passed, 0 failed, 1 warning in 0.83s (`./.venv/bin/pytest -v`).
+  * Supplementary scratch route audit (1,290 sampled configurations across 15 room-exit pairs): 1,290 passed, 0 failed.
+- Git State:
+  * Branch `pavan`. Zero commits created. Zero pushes executed.
+[2026-11-01 16:45:00 IST] - Week 2, Phase 4: Simulation Visualization Integration
+- Task: Implement Phase 4 Visualization Integration connecting authoritative SimulationEngine into Pygame EnvironmentRenderer and interactive SimulationApp.
+- Core Mandatory Conditions Satisfied:
+  1. Authoritative Engine Ownership: `SimulationEngine` remains the sole owner of simulation state, clock, movement, routes, collision detection, and exit handling. `EnvironmentRenderer` is strictly read-only.
+  2. Deterministic Reset: Built deterministic population factory `create_default_pedestrian_cohort()`. `SimulationApp.reset()` creates brand-new `PedestrianState` instances, populating a new `PedestrianRegistry` and initializing a fresh `SimulationEngine`. Mutated pedestrian objects are never reused.
+  3. Decoupled Timing & Accumulator: Implemented fixed-timestep accumulator with 5-step catch-up ceiling, residual fractional time retention, and wall-clock delta clamping (`max_dt_wall = 0.25s`).
+  4. Backward Compatibility: Maintained existing `draw(surface, building, viewport)` and `draw_building(surface, building, viewport)` interfaces. When engine/registry is omitted, static environment is rendered identically to Week 1. When engine/registry is provided, active simulation pedestrians and live HUD are rendered.
+  5. Testability: Timing and accumulator behavior are fully testable deterministically without `time.sleep()`. Pause, resume, and deterministic reset are verified via automated unit tests.
+  6. Unit Separation: Physical simulation units (meters, m/s) are strictly separated from screen pixel rendering (`viewport.world_to_screen_dim()`).
+  7. Interactive Controls: Supported [SPACE] (pause/resume toggle), [R] (deterministic reset), [Q/ESC] (quit), and window resizing with aspect-ratio preservation.
+- Files Modified:
+  * `src/genevac/visualization/renderer.py`:
+    - Added pedestrian state colors (`COLOR_PED_ACTIVE`, `COLOR_PED_ACTIVE_CORE`, `COLOR_PED_EVACUATED`, `COLOR_PED_BLOCKED`, `COLOR_PED_BLOCKED_BORDER`, `COLOR_PED_INACTIVE`, `COLOR_PED_BADGE_BG`, `COLOR_PED_BADGE_TEXT`, `COLOR_HUD_RUNNING`, `COLOR_HUD_PAUSED`).
+    - Added `_draw_pedestrians()` method displaying circular status-coded markers and centered ID badges.
+    - Updated `_draw_header()` to render sim time, step, pause/run status pill, population counts, and control hints when engine/registry is provided.
+    - Updated `_draw_legend()` to include pedestrian status swatches when pedestrians are rendered.
+    - Preserved backward compatibility in `draw()` and `draw_building()`.
+  * `src/genevac/visualization/app.py`:
+    - Defined `create_default_pedestrian_cohort()` creating 8 pedestrians across 4 rooms and corridor targeting valid exits without obstacle collisions.
+    - Implemented `SimulationApp` managing `SimulationEngine`, `EnvironmentRenderer`, decoupled time accumulator, event handling, and display loops.
+    - Supported programmatic headless frame limits via `SimulationApp.run(max_frames=...)`.
+    - Preserved CLI entry point and backward-compatible `run_app()` function.
+  * `tests/test_visualization.py`:
+    - Expanded test suite from 14 tests to 24 tests covering pedestrian rendering, visual status distinctions, read-only state preservation, accumulator timing without sleep, catch-up limit, 0.25s wall-clock clamping, pause/resume, deterministic reset, interactive event handling, headless run, and cohort factory independence.
+- Verification & Test Results:
+  * Focused visualization tests: 24 passed in 0.58s (`./.venv/bin/pytest tests/test_visualization.py -v`).
+  * Full pytest suite: 193 passed, 0 failed, 1 warning in 1.10s (`./.venv/bin/pytest -v`).
+  * Headless smoke test: 10 frames successfully rendered via `run_app(max_frames=10)` with `SDL_VIDEODRIVER="dummy"`.
+- Git State:
+  * Branch `pavan`. Zero commits created. Zero pushes executed.
+- Status: Phase 4 complete. STOPPED. Standing by for project-owner review and explicit approval before Phase 5.
+
+[2026-11-01 17:15:00 IST] - Week 2, Phase 5: Group 1 Integration Verification
+- Task: Implement Group 1 Integration Test `test_json_reloaded_building_simulation_lifecycle` in `tests/test_integration.py`.
+- Integration Scope Verified:
+  1. Canonical Building Serialization: Saved initial 40m x 30m building to temporary JSON file via `save_building()`.
+  2. JSON Model Reconstruction: Reloaded via `load_building()`, validated schema and geometric connectivity.
+  3. Cohort Initialization: Created 3 pedestrians targeting distinct boundary exits:
+     - `ped_room1_west` (Room 1 -> exit_left)
+     - `ped_corridor_east` (Corridor -> exit_right)
+     - `ped_room3_south` (Room 3 -> exit_bottom)
+  4. Authoritative Engine Progression: Verified step-0 snapshot, automatic route generation to exit midpoints, and active-to-evacuated transitions.
+  5. Evacuation Invariants:
+     - All 3 pedestrians evacuated cleanly before timeout (step count < 250).
+     - Final statuses are `EVACUATED` with velocity $(0, 0)$.
+     - Exit positions lie strictly on assigned exit segments and within usable openings.
+     - Final population counts: total = 3, active = 0, evacuated = 3, blocked = 0.
+     - Kinematic continuity verified along trajectory histories: steps and timestamps strictly monotonic, no teleportation through obstacles or walls.
+     - Reloaded building model remained valid and unmutated after complete simulation run.
+- Files Modified:
+  * `tests/test_integration.py`: Added `test_json_reloaded_building_simulation_lifecycle` while preserving all 3 existing Week 1 tests.
+- Verification & Test Results:
+  * Focused integration tests: 4 passed in 0.44s (`./.venv/bin/pytest tests/test_integration.py -v`).
+  * Full pytest suite: 194 passed, 0 failed, 1 warning in 1.15s (`./.venv/bin/pytest -v`).
+- Git State:
+  * Branch `pavan`. Zero commits created. Zero pushes executed.
+- Status: Phase 5 Group 1 complete. STOPPED. Awaiting project-owner review and approval before Group 2.
+
+[2026-11-01 17:25:00 IST] - Week 2, Phase 5: Group 2 Integration Verification
+- Task: Implement Group 2 Integration Tests in `tests/test_integration.py`:
+  1. `test_simultaneous_three_exit_cohort_evacuation`
+  2. `test_mixed_status_population_dynamics`
+- Scope & Verification Details:
+  * Test A (`test_simultaneous_three_exit_cohort_evacuation`):
+    - Configured deterministic cohort of 6 pedestrians across 3 boundary exits:
+      * `p_left_1` (Room 1) & `p_left_2` (Corridor) -> `exit_left`
+      * `p_right_1` (Room 2) & `p_right_2` (Corridor) -> `exit_right`
+      * `p_bottom_1` (Room 3) & `p_bottom_2` (Room 3) -> `exit_bottom`
+    - All 6 pedestrians evacuated deterministically within 155 steps (bounded ceiling 250 steps).
+    - Invariants verified:
+      * All 6 retained in registry with status `EVACUATED` and zero velocity `Velocity2D(0.0, 0.0)`.
+      * Every pedestrian reached strictly their assigned exit.
+      * Final positions lie strictly on outer building boundaries: $x=0.0$ for `exit_left`, $x=40.0$ for `exit_right`, $y=30.0$ for `exit_bottom`.
+      * Final coordinates lie within usable exit openings (usable width $w - 2r = 1.5$ m, clamped between $[y_1+r, y_2-r]$ or $[x_1+r, x_2-r]$).
+      * Final population counts verified: total=6, active=0, evacuated=6, blocked=0, inactive=0.
+      * Kinematic continuity verified across all trajectory histories: timestamps and steps strictly monotonic, distance step-to-step bounded by $v_{\text{pref}} \times \Delta t_{\text{elapsed}} + \epsilon$.
+      * Zero penetration of walls or obstacles.
+      * Building geometry remained completely unmodified and valid.
+  * Test B (`test_mixed_status_population_dynamics`):
+    - Constructed controlled population exercising all 4 pedestrian statuses:
+      * `p_active`: Point(5.0, 15.0), corridor to `exit_left`. Evacuated cleanly at step 50.
+      * `p_no_exit`: Point(15.0, 8.0), `target_exit_id=None`. Engine verified unassigned exit handling: no route assigned, remained stationary at initial position with zero velocity and `ACTIVE` status throughout.
+      * `p_collision`: Point(3.6, 4.75), waypoints directed into `obstacle_room1`. Clearance check triggered collision detection at step 2, transitioning status to `BLOCKED` with zero velocity; remained stationary at step 2 position for all subsequent steps.
+      * `p_wrong_exit`: Point(0.5, 15.0), radius 0.25, preferred_speed 7.0, target `exit_right`, waypoint Point(-0.2, 15.0). Starts fully inside corridor with 0.25m clearance from exterior wall boundary (x=0). Proposed movement segment in step 1 is (0.5, 15.0) -> (-0.2, 15.0), intersecting exit_left at (0.0, 15.0) within usable opening [14.25, 15.75]. Detected unassigned exit crossing at step 1, transitioned to `BLOCKED` with zero velocity; remained stationary at (0.5, 15.0) for all subsequent steps.
+      * `p_inactive`: Point(30.0, 8.0), `PedestrianStatus.INACTIVE`. Maintained zero velocity and `INACTIVE` status; never advanced or reactivated.
+    - Verified snapshot counts match registry ground truth at every observation tick.
+    - Verified final population counts: total=5, active=1 (`p_no_exit`), evacuated=1 (`p_active`), blocked=2 (`p_collision`, `p_wrong_exit`), inactive=1 (`p_inactive`).
+- Files Modified:
+  * `tests/test_integration.py`: Added `test_simultaneous_three_exit_cohort_evacuation` and `test_mixed_status_population_dynamics` (with exterior wall clearance correction for `p_wrong_exit`). Preserved all existing integration tests.
+  * `PROJECT_LOG.txt`: Updated context log.
+- Verification & Test Results:
+  * Focused integration tests: 6 passed in 0.61s (`./.venv/bin/pytest tests/test_integration.py -v`).
+  * Full pytest suite: 196 passed, 0 failed, 1 warning in 1.30s (`./.venv/bin/pytest -v`).
+- Git Safety:
+  * Current branch: `pavan`.
+  * Zero files staged (`git diff --cached --stat` empty).
+  * Zero git commits created. Zero git pushes executed.
+  * All untracked files preserved.
+- Status: Phase 5 Group 2 complete (targeted correction verified). STOPPED. Awaiting project-owner review and approval before Group 3.
+
+[2026-11-01 17:28:00 IST] - Week 2, Phase 5: Group 2 Targeted Test Correction
+- Task: Correct `p_wrong_exit` in `test_mixed_status_population_dynamics` so it starts fully inside the building with exterior wall clearance.
+- Details of Correction:
+  * Starting Position: `Point(0.5, 15.0)` with radius `0.25` in `main_corridor`.
+    - Distance to exterior boundary $X=0.0$ is $0.5$ m, giving $0.5 - 0.25 = 0.25$ m of clear interior margin.
+    - Explicitly asserted: `p_wrong_exit.position.x - p_wrong_exit.radius >= 0.25` and `not check_collision(...)` at start.
+  * Movement Segment: `(0.5, 15.0) -> (-0.2, 15.0)` via waypoint `Point(-0.2, 15.0)` and `preferred_speed = 7.0` ($dt=0.1$, step distance $0.7$ m).
+  * Crossing Point: Line intersection at $(0.0, 15.0)$, which lies strictly inside `exit_left`'s usable opening $[14.25, 15.75]$ ($y_{\text{min}}+r \le 15.0 \le y_{\text{max}}-r$).
+  * Blocking Reason: Unassigned exit crossing in `advance_pedestrian_step` (`other_exit.id != ped.target_exit_id`), triggering `BLOCKED` before obstacle/wall collision checks.
+  * Immutability: Verified `p_wrong_exit.position` remains `Point(0.5, 15.0)` and `velocity == Velocity2D(0.0, 0.0)` for all remaining simulation steps.
+- Verification:
+  * Focused: 6 passed, 1 warning in 0.61s (`./.venv/bin/pytest tests/test_integration.py -v`).
+  * Full suite: 196 passed, 1 warning in 1.30s (`./.venv/bin/pytest -v`).
+- Git Safety:
+  * Branch `pavan`, no files staged, no commits, no pushes. Untracked files preserved.
+- Status: Group 2 targeted correction complete. STOPPED. Awaiting review.
+
+[2026-11-01 17:35:00 IST] - Week 2, Phase 5: Group 3 Integration Verification
+- Task: Implement Group 3 Integration Tests in `tests/test_integration.py`:
+  1. `test_observation_snapshot_cadence_and_immutability`
+  2. `test_trajectory_history_over_complete_evacuation`
+  3. `test_evacuated_pedestrians_retained_in_later_snapshots`
+- Scope & Verification Details:
+  * Test A (`test_observation_snapshot_cadence_and_immutability`):
+    - Timing parameters: `dt=0.1s`, `observation_interval=0.4s` (stride = 4 steps).
+    - Step-0 Snapshot: Verified emitted on initialization at step 0 (`timestamp=0.0`, `simulation_step=0`, `dt=0.1`, `obs_interval=0.4`).
+    - Cadence Progression: Stepped 20 steps; intermediate steps (1, 2, 3) emit `None`; exact stride steps (4, 8, 12, 16, 20) emit `SimulationObservationSnapshot` with `step_count` and `timestamp` matching clock ground truth. Total emitted snapshots = `num_steps // stride` = 5.
+    - Immutability: Verified `FrozenInstanceError` on mutating snapshot fields (`step_count`, `total_count`), pedestrian observation fields (`x`, `status`), and tuple structures. Verified past snapshot instances remain decoupled from live simulation progression.
+    - Serialization: Verified `to_dict()` accurately captures all snapshot and pedestrian observation fields, and successfully serializes to valid JSON via `json.dumps()`.
+    - Status Counts: Verified `total_count`, `active_count`, `evacuated_count`, `blocked_count`, `inactive_count` match registry ground truth at every cadence tick.
+  * Test B (`test_trajectory_history_over_complete_evacuation`):
+    - Configured deterministic cohort: `p_full_history` (`max_history_len=100`) and `p_bounded_history` (`max_history_len=5`), starting at $x=4.0\,\text{m}$ in corridor, evacuating to `exit_left` ($x=0.0\,\text{m}$) in exactly 40 steps ($4.0\,\text{s}$).
+    - Verified fields: Each sample contains `step`, `timestamp`, `x`, `y`.
+    - Verified strict monotonicity: `step` and `timestamp` strictly increase along history.
+    - Kinematic Bound: Step-to-step distance strictly bounded by $v_{\text{pref}} \times \Delta t_{\text{elapsed}} + \epsilon$.
+    - Evacuation Crossing: Final history sample at step 40 exactly matches evacuation position $(0.0, 15.0)$. Pedestrian status is `EVACUATED` and velocity is `Velocity2D(0.0, 0.0)`.
+    - Bounded FIFO Capacity: Verified `p_bounded_history` drops oldest samples, retaining exactly the 5 most recent observation samples (steps 24, 28, 32, 36, 40).
+  * Test C (`test_evacuated_pedestrians_retained_in_later_snapshots`):
+    - Cohort with staggered evacuation times: `p_early` ($2.0\,\text{m} \implies 20$ steps) and `p_late` ($6.0\,\text{m} \implies 60$ steps).
+    - At step 20: `p_early` reaches `EVACUATED` while `p_late` remains `ACTIVE`.
+    - Intermediate Snapshots (steps 24, 28, 32, 36, 40, 44, 48, 52, 56):
+      * `p_early` is retained in `snapshot.pedestrians` with `status="evacuated"`, frozen at crossing point $(0.0, 15.0)$, velocity zero.
+      * `p_late` is retained with `status="active"`, speed $> 0$.
+      * Snapshot counts accurately report: total=2, active=1, evacuated=1, blocked=0, inactive=0.
+    - At step 60: `p_late` evacuates. Snapshot and registry report total=2, active=0, evacuated=2.
+    - Registry permanently retains all pedestrians and ground-truth counts.
+- Files Modified:
+  * `tests/test_integration.py`: Added Group 3 integration tests. Preserved all existing integration tests.
+  * `PROJECT_LOG.txt`: Updated context log.
+- Verification & Test Results:
+  * Focused integration tests: 9 passed, 1 warning in 0.71s (`./.venv/bin/pytest tests/test_integration.py -v`).
+  * Full pytest suite: 199 passed, 0 failed, 1 warning in 1.34s (`./.venv/bin/pytest -v`).
+- Git Safety:
+  * Branch `pavan`. Zero files staged (`git diff --cached --stat` empty).
+  * Zero git commits created. Zero git pushes executed.
+  * All untracked files preserved.
+- Status: Phase 5 Group 3 complete. STOPPED. Awaiting project-owner review and approval before Group 4.
+
+[2026-11-01 17:40:00 IST] - Week 2, Phase 5: Group 4 Integration Verification
+- Task: Implement Group 4 Integration Tests in `tests/test_integration.py`:
+  1. `test_simulation_app_headless_full_evacuation`
+  2. `test_deterministic_resimulation_after_reset`
+- Scope & Verification Details:
+  * Test A (`test_simulation_app_headless_full_evacuation`):
+    - App Headless Execution: Initialized `SimulationApp` with deterministic `make_cohort()` factory (3 pedestrians targeting `exit_left`, `exit_right`, `exit_bottom`), executed with headless `pygame.Surface((1200, 800))`.
+    - Render Mutation Guard: Verified calling `app.render(surface)` at step 0 and post-evacuation produces zero state mutation in the underlying simulation engine or registry.
+    - Decoupled Timing & Evacuation: Drove 80 frames with controlled delta $\Delta t_{\text{wall}} = 0.05\,\text{s}$ (2 frames per $0.1\,\text{s}$ engine step). Exactly 40 simulation steps executed ($4.0\,\text{s}$ sim time), completely independent of render frame count.
+    - Evacuation Verification: All 3 pedestrians cleanly evacuated to their assigned boundary exits (`exit_left`, `exit_right`, `exit_bottom`) within the 120-frame ceiling. Final statuses are `EVACUATED` with velocity $(0, 0)$. Final counts: total=3, active=0, evacuated=3, blocked=0.
+    - Accumulator & Clamping: Verified large delta clamp ($\Delta t_{\text{wall}} = 1.0\,\text{s}$ clamped to $0.25\,\text{s}$) executing 2 steps ($0.2\,\text{s}$) with $0.05\,\text{s}$ remainder.
+    - Deterministic Reset: Verified `app.reset()` resets clock, step count, and accumulator to 0, cleanly reinstantiating the population without state or resource leaks.
+  * Test B (`test_deterministic_resimulation_after_reset`):
+    - Re-simulation Verification: Executed Run 1 with a fixed irregular sequence of 30 frame deltas (`[0.033, 0.05, 0.04, 0.08, 0.12, 0.05, 0.02, 0.06, 0.15, 0.05] * 3`), rendering on each frame.
+    - State Capture: Captured step count, simulation timestamp, accumulator remainder, population counts, pedestrian positions, velocities, statuses, and full timestamped trajectory histories.
+    - Reset Verification: Called `app.reset()`. Verified clock and accumulator zeroed, and verified fresh `PedestrianState` instances were created rather than reusing mutated objects.
+    - Run 2 Replay & Comparison: Executed Run 2 with the identical sequence of frame deltas and rendering calls.
+    - Bitwise Determinism: Verified 100% exact match between Run 1 and Run 2 across:
+      * Clock step count and simulation timestamp.
+      * Accumulator remainder ($< 10^{-9}$ difference).
+      * Registry population counts (total, active, evacuated, blocked, inactive).
+      * Pedestrian coordinates, velocities, and statuses.
+      * Full sample-by-sample trajectory histories (step, timestamp, x, y) for all cohort agents.
+- Files Modified:
+  * `tests/test_integration.py`: Added Group 4 integration tests (`test_simulation_app_headless_full_evacuation`, `test_deterministic_resimulation_after_reset`). Preserved all existing integration tests.
+  * `PROJECT_LOG.txt`: Updated context log.
+- Verification & Test Results:
+  * Focused integration tests: 11 passed, 1 warning in 0.85s (`./.venv/bin/pytest tests/test_integration.py -v`).
+  * Visualization tests: 24 passed, 1 warning in 0.62s (`./.venv/bin/pytest tests/test_visualization.py -v`).
+  * Full pytest suite: 201 passed, 0 failed, 1 warning in 1.47s (`./.venv/bin/pytest -v`).
+- Git Safety:
+  * Current branch: `pavan`.
+  * Zero files staged (`git diff --cached --stat` empty).
+  * Zero git commits created. Zero git pushes executed.
+  * All untracked files preserved.
+- Status: Phase 5 Group 4 complete. Full Phase 5 Integration Verification Complete! STOPPED. Awaiting project-owner final sign-off.
+
+
+
+
+
+
+
