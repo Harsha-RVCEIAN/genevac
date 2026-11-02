@@ -5,6 +5,7 @@ from collections import deque
 from collections.abc import Sequence
 from types import MappingProxyType
 
+from genevac.prediction.adapter import SimulationTrajectoryAdapter
 from genevac.prediction.baseline import ConstantVelocityPredictor
 from genevac.prediction.data_contract import (
     PredictedPosition,
@@ -290,6 +291,7 @@ __all__ = [
     "ConstantVelocityPredictor",
     "LinearTrajectoryPredictor",
     "PredictedPosition",
+    "SimulationTrajectoryAdapter",
     "TrajectoryCategory",
     "TrajectoryHistoryBuffer",
     "TrajectoryObservation",

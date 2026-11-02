@@ -133,3 +133,49 @@ To prevent stale observations from silently producing seemingly valid prediction
 - It never accesses or mutates `SimulationEngine`, `Pedestrian`, or `EnvironmentMap` instances.
 - Prediction results are tagged with `TrajectoryCategory.PREDICTED` and are strictly forbidden from being fed back into the authoritative history buffer.
 
+---
+
+## 6. SimulationTrajectoryAdapter: Automated Cadence & Lifecycle Bridge
+
+To decouple manual feed loops from prediction consumers, GenEvac provides [`SimulationTrajectoryAdapter`](file:///c:/Users/harsh/projects/genevac/src/genevac/prediction/adapter.py):
+
+```python
+from genevac.prediction import SimulationTrajectoryAdapter, ConstantVelocityPredictor
+
+# Initialize adapter with nominal 0.4s cadence (every 4 steps of 0.1s simulation)
+adapter = SimulationTrajectoryAdapter(
+    observation_interval=0.4,
+    max_observation_age=0.45,  # 0.4s cadence + 0.05s tolerance
+)
+
+# In simulation loop:
+for step in range(100):
+    engine.step()
+    adapter.update_from_simulation(engine)
+
+# Obtain prediction-history snapshot (clearly distinct from simulation state snapshots)
+pred_snapshot = adapter.get_prediction_snapshot(
+    current_step=engine.current_step,
+    timestep=engine.timestep,
+    cohort="active",  # 'active', 'blocked', or 'all_tracked'
+)
+
+predictor = ConstantVelocityPredictor()
+prediction = predictor.predict(snapshot=pred_snapshot, agent_id="ped_01", horizon=12)
+```
+
+### Key Adapter Invariants:
+1. **Simulation Reset Detection**:
+   - Because Person A's engine does not provide a synthetic `run_id`, the adapter detects resets using two physical signals:
+     - **Step Rollback**: `engine.current_step < last_observed_step`.
+     - **Engine Replacement**: `id(engine) != last_engine_id`.
+   - Upon reset, all previous run history and cohort sets are purged to prevent cross-run pollution.
+   - *Limitation*: Two successive runs using the exact same engine instance where the second starts at a step $\ge$ the first run's termination step cannot be detected without an explicit `adapter.reset()` call.
+2. **Cohort Isolation**:
+   - `BLOCKED` agents are tracked in a dedicated cohort set inside the adapter and are **never** mixed into the `"active"` prediction cohort.
+   - `INACTIVE` agents are ignored.
+   - `EVACUATED` is terminal for the current run: prior observations are preserved for retrospective evaluation, but all subsequent recording attempts are rejected.
+3. **Prediction-History Snapshot Distinctness**:
+   - Method `get_prediction_snapshot()` returns a `TrajectorySnapshot` reflecting historical prediction buffer observations, explicitly distinct from any authoritative simulation state snapshot.
+
+
