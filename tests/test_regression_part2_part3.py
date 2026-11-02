@@ -369,5 +369,51 @@ class TestValidRecordingBehaviour(unittest.TestCase):
         self.assertIsInstance(snap.trajectories["p1"], tuple)
 
 
+# ---------------------------------------------------------------------------
+# 7. Part 3 Predictor: Future-dated obs, non-finite velocities & outputs
+# ---------------------------------------------------------------------------
+
+class TestPredictorStrengthenedValidation(unittest.TestCase):
+    """Regression tests for ConstantVelocityPredictor edge-case validations."""
+
+    def test_predictor_rejects_future_dated_observation(self):
+        """Predictor rejects observation whose timestamp exceeds snapshot.current_timestamp."""
+        from genevac.prediction.baseline import ConstantVelocityPredictor
+
+        obs1 = _obs("p1", 0, 0.0)
+        obs2 = _obs("p1", 1, 1.5)  # timestamp=1.5 > snapshot timestamp=1.0
+
+        snap = TrajectorySnapshot(
+            current_step=10,
+            current_timestamp=1.0,
+            timestep=0.1,
+            trajectories={"p1": (obs1, obs2)},
+        )
+        predictor = ConstantVelocityPredictor()
+
+        with self.assertRaises(TrajectoryValidationError) as ctx:
+            predictor.predict(snap, "p1")
+        self.assertEqual(ctx.exception.field, "observation_timestamp")
+
+    def test_predictor_rejects_non_finite_velocity(self):
+        """Predictor rejects observations resulting in non-finite velocity."""
+        from genevac.prediction.baseline import ConstantVelocityPredictor
+
+        obs1 = _obs("p1", 0, 0.0, x=1e308)
+        obs2 = _obs("p1", 1, 1e-300, x=-1e308)  # dt near zero, dx huge -> overflow to inf
+
+        snap = TrajectorySnapshot(
+            current_step=1,
+            current_timestamp=1.0,
+            timestep=0.1,
+            trajectories={"p1": (obs1, obs2)},
+        )
+        predictor = ConstantVelocityPredictor()
+
+        with self.assertRaises(TrajectoryValidationError) as ctx:
+            predictor.predict(snap, "p1")
+        self.assertEqual(ctx.exception.field, "velocity")
+
+
 if __name__ == "__main__":
     unittest.main()

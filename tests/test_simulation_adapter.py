@@ -248,6 +248,119 @@ class TestSimulationTrajectoryAdapter(unittest.TestCase):
         self.assertAlmostEqual(prediction.predictions[0].x, 2.5)
         self.assertAlmostEqual(prediction.predictions[0].y, 5.0)
 
+    def test_incapacitated_status_handling(self):
+        """INCAPACITATED status is tracked, stops new observations, and remains separate from ACTIVE."""
+        engine = MockEngine(current_step=0, timestep=0.1)
+        p = MockPedestrian("p_inc", (0.0, 0.0), status="active")
+        engine.pedestrians = [p]
+        adapter = SimulationTrajectoryAdapter(observation_interval=0.4)
+
+        adapter.update_from_simulation(engine)
+        self.assertEqual(len(adapter.buffer.get_observations("p_inc")), 1)
+
+        # Transition to incapacitated
+        engine.current_step = 4
+        p.status = "incapacitated"
+        p.position = (1.0, 1.0)
+        rec = adapter.update_from_simulation(engine)
+
+        self.assertEqual(rec, 0)
+        self.assertIn("p_inc", adapter.incapacitated_agents)
+        self.assertNotIn("p_inc", adapter.active_agents)
+        self.assertEqual(len(adapter.buffer.get_observations("p_inc")), 1)
+
+    def test_unknown_status_raises_validation_error(self):
+        """Unknown status must NOT silently become ACTIVE; it must raise TrajectoryValidationError."""
+        engine = MockEngine(current_step=0, timestep=0.1)
+        engine.pedestrians = [MockPedestrian("p_unk", (0.0, 0.0), status="confused_status")]
+        adapter = SimulationTrajectoryAdapter(observation_interval=0.4)
+
+        with self.assertRaises(TrajectoryValidationError) as ctx:
+            adapter.update_from_simulation(engine)
+        self.assertEqual(ctx.exception.field, "status")
+        self.assertEqual(ctx.exception.agent_id, "p_unk")
+
+    def test_missing_status_attribute_raises_validation_error(self):
+        """A pedestrian with status=None must raise TrajectoryValidationError."""
+        engine = MockEngine(current_step=0, timestep=0.1)
+        p = MockPedestrian("p_none", (0.0, 0.0))
+        p.status = None  # type: ignore
+        engine.pedestrians = [p]
+        adapter = SimulationTrajectoryAdapter(observation_interval=0.4)
+
+        with self.assertRaises(TrajectoryValidationError) as ctx:
+            adapter.update_from_simulation(engine)
+        self.assertEqual(ctx.exception.field, "status")
+
+    def test_invalid_adapter_constructor_arguments(self):
+        """Constructor rejects invalid observation_interval and max_observation_age."""
+        with self.assertRaises(ValueError):
+            SimulationTrajectoryAdapter(observation_interval=-0.1)
+        with self.assertRaises(ValueError):
+            SimulationTrajectoryAdapter(observation_interval=float("nan"))
+        with self.assertRaises(ValueError):
+            SimulationTrajectoryAdapter(observation_interval="0.4")  # type: ignore
+        with self.assertRaises(ValueError):
+            SimulationTrajectoryAdapter(max_observation_age=-1.0)
+        with self.assertRaises(ValueError):
+            SimulationTrajectoryAdapter(max_observation_age=float("inf"))
+
+    def test_invalid_engine_timestep_and_current_step(self):
+        """update_from_simulation validates engine.current_step and engine.timestep."""
+        adapter = SimulationTrajectoryAdapter()
+
+        bad_step_engine = MockEngine(current_step=-5, timestep=0.1)
+        with self.assertRaises(TrajectoryValidationError) as ctx:
+            adapter.update_from_simulation(bad_step_engine)
+        self.assertEqual(ctx.exception.field, "current_step")
+
+        bad_step_engine2 = MockEngine(current_step="5", timestep=0.1)  # type: ignore
+        with self.assertRaises(TrajectoryValidationError) as ctx:
+            adapter.update_from_simulation(bad_step_engine2)
+        self.assertEqual(ctx.exception.field, "current_step")
+
+        bad_timestep_engine = MockEngine(current_step=0, timestep=-0.1)
+        with self.assertRaises(TrajectoryValidationError) as ctx:
+            adapter.update_from_simulation(bad_timestep_engine)
+        self.assertEqual(ctx.exception.field, "timestep")
+
+        bad_timestep_engine2 = MockEngine(current_step=0, timestep=float("nan"))
+        with self.assertRaises(TrajectoryValidationError) as ctx:
+            adapter.update_from_simulation(bad_timestep_engine2)
+        self.assertEqual(ctx.exception.field, "timestep")
+
+    def test_reset_clears_all_adapter_state(self):
+        """Explicit reset() clears last_engine_id, observed/recorded steps, and all cohorts."""
+        engine = MockEngine(current_step=0, timestep=0.1)
+        engine.pedestrians = [
+            MockPedestrian("p_act", (0.0, 0.0), status="active"),
+            MockPedestrian("p_blk", (1.0, 1.0), status="blocked"),
+            MockPedestrian("p_evac", (2.0, 2.0), status="evacuated"),
+            MockPedestrian("p_inc", (3.0, 3.0), status="incapacitated"),
+            MockPedestrian("p_inact", (4.0, 4.0), status="inactive"),
+        ]
+        adapter = SimulationTrajectoryAdapter(observation_interval=0.4)
+        adapter.update_from_simulation(engine)
+
+        self.assertIsNotNone(adapter._last_engine_id)
+        self.assertEqual(adapter._last_observed_step, 0)
+        self.assertEqual(adapter._last_recorded_step, 0)
+
+        adapter.reset()
+
+        self.assertIsNone(adapter._last_engine_id)
+        self.assertEqual(adapter._last_observed_step, -1)
+        self.assertEqual(adapter._last_recorded_step, -1)
+        self.assertEqual(adapter._last_recorded_timestamp, -1.0)
+        self.assertEqual(len(adapter.active_agents), 0)
+        self.assertEqual(len(adapter.blocked_agents), 0)
+        self.assertEqual(len(adapter.evacuated_agents), 0)
+        self.assertEqual(len(adapter.incapacitated_agents), 0)
+        self.assertEqual(len(adapter.inactive_agents), 0)
+        self.assertEqual(len(adapter._agent_last_recorded_step), 0)
+        self.assertEqual(len(adapter._agent_last_recorded_time), 0)
+        self.assertEqual(len(adapter.buffer.get_agent_ids()), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

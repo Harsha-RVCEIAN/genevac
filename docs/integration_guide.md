@@ -137,7 +137,7 @@ To prevent stale observations from silently producing seemingly valid prediction
 
 ## 6. SimulationTrajectoryAdapter: Automated Cadence & Lifecycle Bridge
 
-To decouple manual feed loops from prediction consumers, GenEvac provides [`SimulationTrajectoryAdapter`](file:///c:/Users/harsh/projects/genevac/src/genevac/prediction/adapter.py):
+To decouple manual feed loops from prediction consumers, GenEvac provides [`SimulationTrajectoryAdapter`](../src/genevac/prediction/adapter.py):
 
 ```python
 from genevac.prediction import SimulationTrajectoryAdapter, ConstantVelocityPredictor

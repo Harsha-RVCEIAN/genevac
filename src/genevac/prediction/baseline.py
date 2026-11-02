@@ -103,6 +103,17 @@ class ConstantVelocityPredictor:
                 agent_id=agent_id,
             )
 
+        # Validate full observation sequence against snapshot reference timestamp
+        for obs in observations:
+            if obs.timestamp > snapshot.current_timestamp + 1e-9:
+                raise TrajectoryValidationError(
+                    f"Future observation for agent '{agent_id}': observation timestamp {obs.timestamp:.9f}s "
+                    f"at step {obs.step_index} is after snapshot timestamp {snapshot.current_timestamp:.9f}s.",
+                    field="observation_timestamp",
+                    agent_id=agent_id,
+                    step_index=obs.step_index,
+                )
+
         obs_prev = observations[-2]
         obs_last = observations[-1]
 
@@ -129,6 +140,13 @@ class ConstantVelocityPredictor:
         vx = (obs_last.x - obs_prev.x) / dt
         vy = (obs_last.y - obs_prev.y) / dt
 
+        if not (math.isfinite(vx) and math.isfinite(vy)):
+            raise TrajectoryValidationError(
+                f"Non-finite velocity computed for agent '{agent_id}': vx={vx!r}, vy={vy!r}.",
+                field="velocity",
+                agent_id=agent_id,
+            )
+
         source_timestamp = snapshot.current_timestamp
         predicted_positions: list[PredictedPosition] = []
 
@@ -136,6 +154,12 @@ class ConstantVelocityPredictor:
             t_future = source_timestamp + k * interval
             x_future = obs_last.x + vx * (t_future - obs_last.timestamp)
             y_future = obs_last.y + vy * (t_future - obs_last.timestamp)
+            if not (math.isfinite(t_future) and math.isfinite(x_future) and math.isfinite(y_future)):
+                raise TrajectoryValidationError(
+                    f"Non-finite prediction output computed for agent '{agent_id}' at step {k}.",
+                    field="prediction_output",
+                    agent_id=agent_id,
+                )
             predicted_positions.append(
                 PredictedPosition(timestamp=t_future, x=x_future, y=y_future)
             )

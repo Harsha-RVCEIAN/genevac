@@ -14,7 +14,7 @@ Bridges Person A's simulation engine and Person B's prediction subsystem:
 
 from __future__ import annotations
 
-import weakref
+import math
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any
 
@@ -25,6 +25,7 @@ from genevac.prediction.data_contract import (
     TrajectoryCategory,
     TrajectoryObservation,
     TrajectorySnapshot,
+    TrajectoryValidationError,
 )
 
 
@@ -68,6 +69,25 @@ class SimulationTrajectoryAdapter:
             window_size: Buffer window size if creating a new buffer.
             min_history_required: Buffer min history if creating a new buffer.
         """
+        # Validate observation_interval
+        if (
+            type(observation_interval) not in (float, int)
+            or isinstance(observation_interval, bool)
+            or not math.isfinite(observation_interval)
+            or observation_interval <= 0.0
+        ):
+            raise ValueError(f"observation_interval must be a finite positive number, got {observation_interval!r}")
+
+        # Validate max_observation_age if supplied
+        if max_observation_age is not None:
+            if (
+                type(max_observation_age) not in (float, int)
+                or isinstance(max_observation_age, bool)
+                or not math.isfinite(max_observation_age)
+                or max_observation_age < 0.0
+            ):
+                raise ValueError(f"max_observation_age must be a finite non-negative number or None, got {max_observation_age!r}")
+
         if buffer is not None:
             self.buffer = buffer
         else:
@@ -83,7 +103,6 @@ class SimulationTrajectoryAdapter:
         self.max_observation_age = float(max_observation_age) if max_observation_age is not None else None
 
         # Reset & Run tracking (without inventing synthetic run IDs)
-        self._last_engine_ref: weakref.ref[Any] | None = None
         self._last_engine_id: int | None = None
         self._last_observed_step: int = -1
         self._last_recorded_step: int = -1
@@ -93,6 +112,7 @@ class SimulationTrajectoryAdapter:
         self._active_agents: set[str] = set()
         self._blocked_agents: set[str] = set()
         self._evacuated_agents: set[str] = set()
+        self._incapacitated_agents: set[str] = set()
         self._inactive_agents: set[str] = set()
 
         # Per-agent last recorded step/time to guard irregular or out-of-order calls
@@ -100,14 +120,19 @@ class SimulationTrajectoryAdapter:
         self._agent_last_recorded_time: dict[str, float] = {}
 
     def reset(self) -> None:
-        """Explicitly reset adapter state and clear the underlying prediction buffer."""
+        """Explicitly reset adapter state and clear the underlying prediction buffer.
+        
+        Clears all run-tracking state, cached cohorts, step markers, and recorded timestamps.
+        """
         self.buffer.clear()
+        self._last_engine_id = None
         self._last_observed_step = -1
         self._last_recorded_step = -1
         self._last_recorded_timestamp = -1.0
         self._active_agents.clear()
         self._blocked_agents.clear()
         self._evacuated_agents.clear()
+        self._incapacitated_agents.clear()
         self._inactive_agents.clear()
         self._agent_last_recorded_step.clear()
         self._agent_last_recorded_time.clear()
@@ -122,9 +147,33 @@ class SimulationTrajectoryAdapter:
         Returns:
             Number of pedestrian observations recorded in this update (0 if cadence not met or duplicate).
         """
-        current_step: int = engine.current_step
-        timestep: float = getattr(engine, "timestep", 0.1)
+        # Validate current_step
+        current_step = getattr(engine, "current_step", None)
+        if type(current_step) is not int or current_step < 0:
+            raise TrajectoryValidationError(
+                f"engine.current_step must be a non-negative integer, got {current_step!r}",
+                field="current_step",
+            )
+
+        # Validate timestep
+        timestep = getattr(engine, "timestep", 0.1)
+        if (
+            type(timestep) not in (float, int)
+            or isinstance(timestep, bool)
+            or not math.isfinite(timestep)
+            or timestep <= 0.0
+        ):
+            raise TrajectoryValidationError(
+                f"engine.timestep must be a finite positive number, got {timestep!r}",
+                field="timestep",
+            )
+        timestep = float(timestep)
         current_timestamp: float = current_step * timestep
+        if not math.isfinite(current_timestamp) or current_timestamp < 0.0:
+            raise TrajectoryValidationError(
+                f"derived current_timestamp must be a finite non-negative number, got {current_timestamp!r}",
+                field="current_timestamp",
+            )
 
         # --- Reset Signal Detection ---
         # 1. Engine instance identity changed
@@ -138,7 +187,6 @@ class SimulationTrajectoryAdapter:
             self.reset()
 
         self._last_engine_id = current_engine_id
-        self._last_engine_ref = weakref.ref(engine)
         self._last_observed_step = current_step
 
         # --- Cadence & Duplicate Step Check ---
@@ -157,20 +205,33 @@ class SimulationTrajectoryAdapter:
         pedestrians = getattr(engine, "pedestrians", ())
         recorded_count = 0
 
-        current_step_active: set[str] = set()
-        current_step_blocked: set[str] = set()
-
         for ped in pedestrians:
             ped_id = str(ped.id)
-            raw_status = getattr(ped, "status", "active")
-            status_str = raw_status.value if hasattr(raw_status, "value") else str(raw_status).lower()
+            raw_status = getattr(ped, "status", None)
+            if raw_status is None:
+                raise TrajectoryValidationError(
+                    f"Pedestrian '{ped_id}' has no status attribute.",
+                    field="status",
+                    agent_id=ped_id,
+                    step_index=current_step,
+                )
+            status_val = raw_status.value if hasattr(raw_status, "value") else raw_status
+            status_str = str(status_val).strip().lower()
 
             # Handle EVACUATED: terminal for remainder of run
             if status_str == "evacuated" or ped_id in self._evacuated_agents:
                 self._evacuated_agents.add(ped_id)
                 self._active_agents.discard(ped_id)
                 self._blocked_agents.discard(ped_id)
+                self._incapacitated_agents.discard(ped_id)
                 # Terminal: preserve historical observations, but reject further recording
+                continue
+
+            # Handle INCAPACITATED: non-active, preserves history, terminal/frozen for predictions
+            if status_str == "incapacitated" or ped_id in self._incapacitated_agents:
+                self._incapacitated_agents.add(ped_id)
+                self._active_agents.discard(ped_id)
+                self._blocked_agents.discard(ped_id)
                 continue
 
             # Handle INACTIVE: ignore completely
@@ -178,17 +239,25 @@ class SimulationTrajectoryAdapter:
                 self._inactive_agents.add(ped_id)
                 self._active_agents.discard(ped_id)
                 self._blocked_agents.discard(ped_id)
+                self._incapacitated_agents.discard(ped_id)
                 continue
 
             # Handle BLOCKED vs ACTIVE
             if status_str == "blocked":
-                current_step_blocked.add(ped_id)
                 self._blocked_agents.add(ped_id)
                 self._active_agents.discard(ped_id)
-            else:
-                current_step_active.add(ped_id)
+            elif status_str == "active":
                 self._active_agents.add(ped_id)
                 self._blocked_agents.discard(ped_id)
+            else:
+                # Unknown status must NOT silently become ACTIVE
+                raise TrajectoryValidationError(
+                    f"Unknown pedestrian status '{raw_status!r}' for agent '{ped_id}'. "
+                    f"Allowed statuses: 'active', 'blocked', 'evacuated', 'incapacitated', 'inactive'.",
+                    field="status",
+                    agent_id=ped_id,
+                    step_index=current_step,
+                )
 
             # Guard against per-agent duplicate/out-of-order steps
             last_agent_step = self._agent_last_recorded_step.get(ped_id, -1)
@@ -286,6 +355,11 @@ class SimulationTrajectoryAdapter:
     def evacuated_agents(self) -> frozenset[str]:
         """Set of evacuated agent IDs (terminal for the current run)."""
         return frozenset(self._evacuated_agents)
+
+    @property
+    def incapacitated_agents(self) -> frozenset[str]:
+        """Set of incapacitated agent IDs tracked by the adapter."""
+        return frozenset(self._incapacitated_agents)
 
     @property
     def inactive_agents(self) -> frozenset[str]:

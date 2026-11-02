@@ -7,6 +7,14 @@ from types import MappingProxyType
 
 from genevac.prediction.adapter import SimulationTrajectoryAdapter
 from genevac.prediction.baseline import ConstantVelocityPredictor
+from genevac.prediction.dataset_adapter import DatasetAdapter, SimulationEvaluationAdapter
+from genevac.prediction.evaluation import (
+    AggregateEvaluationReport,
+    EvaluationSample,
+    PredictionEvaluator,
+    SampleGenerator,
+    TrajectoryEvaluationResult,
+)
 from genevac.prediction.data_contract import (
     PredictedPosition,
     TrajectoryCategory,
@@ -288,11 +296,18 @@ class LinearTrajectoryPredictor:
 
 
 __all__ = [
+    "AggregateEvaluationReport",
     "ConstantVelocityPredictor",
+    "DatasetAdapter",
+    "EvaluationSample",
     "LinearTrajectoryPredictor",
     "PredictedPosition",
+    "PredictionEvaluator",
+    "SampleGenerator",
+    "SimulationEvaluationAdapter",
     "SimulationTrajectoryAdapter",
     "TrajectoryCategory",
+    "TrajectoryEvaluationResult",
     "TrajectoryHistoryBuffer",
     "TrajectoryObservation",
     "TrajectoryPrediction",
