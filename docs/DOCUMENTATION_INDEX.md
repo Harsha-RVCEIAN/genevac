@@ -27,7 +27,7 @@ This index organizes all architecture specifications, domain models, simulation 
 
 ### For Person B (ML / Prediction Engineers)
 Begin with:
-1. **[PERSON_B_HANDOVER.md](file:///Users/apple/Documents/5th%20sem%20el/main_el_5/genevac/docs/PERSON_B_HANDOVER.md)** — Master handover specification, boundaries, verified observation contract, and execution blueprint.
+1. **[PERSON_B_HANDOVER.md](file:///Users/apple/Documents/5th%20sem%20el/main_el_5/genevac/docs/PERSON_B_HANDOVER.md)** — Master handover specification, boundaries, verified observation contract, and execution demo (`examples/person_b_integration_demo.py`).
 2. **[PROJECT_OVERVIEW.md](file:///Users/apple/Documents/5th%20sem%20el/main_el_5/genevac/docs/PROJECT_OVERVIEW.md)** — High-level architecture, ownership scope, and simulation truth invariants.
 3. **[SIMULATION_OBSERVATION_CONTRACT.md](file:///Users/apple/Documents/5th%20sem%20el/main_el_5/genevac/docs/SIMULATION_OBSERVATION_CONTRACT.md)** — Exhaustive field definitions, SI units, and immutability guarantees.
 4. **[PERSON_B_INTEGRATION_GUIDE.md](file:///Users/apple/Documents/5th%20sem%20el/main_el_5/genevac/docs/PERSON_B_INTEGRATION_GUIDE.md)** — Practical ingestion workflow, constant-velocity baseline example, and checklist.

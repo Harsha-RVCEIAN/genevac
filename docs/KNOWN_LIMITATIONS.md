@@ -18,10 +18,11 @@ Through rigorous end-to-end verification and regression testing, the following f
 - **Engine Behavior**: Collision safety takes absolute precedence. Both agents decelerate to $v = 0.0\text{ m/s}$ and enter a safe, stationary halt rather than penetrating each other's body volume or tunneling through walls.
 - **Accepted Trade-off**: The engine prefers a safe physical standstill over unphysical collision or clipping. Social yielding conventions (e.g. stepping aside or reverse negotiation) are not implemented in this prototype.
 
-### 2.2 Absence of Run / Session Identifier in Snapshot Schema
-- **Description**: `SimulationObservationSnapshot` contains `snapshot_id` (e.g., `"snap_000004"`), `step_count`, and `timestamp`, but does not contain an independent `run_id` or `session_id`.
-- **Downstream Impact**: In isolation, an emitted snapshot cannot identify which execution session or Monte Carlo iteration produced it if multiple runs are written to a flat directory.
-- **Accepted Solution**: Downstream consumers (Person B) must track execution sessions externally, either by prefixing output file paths or wrapping snapshot ingestion in run-aware containers.
+### 2.2 Snapshot ID Run-Locality & Absence of Run Identifier
+- **Description**: `SimulationObservationSnapshot` contains `snapshot_id` formatted as `f"snap_{step_count:06d}"` (e.g., `"snap_000004"`), `step_count`, and `timestamp`. It is monotonic and unique **only within a single continuous simulation run**.
+- **Reset Repetition**: Upon engine reset or when launching a new simulation instance, `step_count` resets to `0`, regenerating identical snapshot IDs (`"snap_000000"`, `"snap_000004"`). The schema does not contain an independent `run_id` or `session_id`.
+- **Downstream Impact**: In isolation, snapshot IDs are not globally unique across distinct runs or Monte Carlo iterations.
+- **Accepted Solution**: Downstream consumers (Person B) must track execution sessions externally, either by prefixing output file paths, organizing files into run-specific directories, or wrapping snapshot ingestion in run-aware containers.
 
 ### 2.3 Upstream Pygame `pkg_resources` Deprecation Warning
 - **Description**: Upon initializing Pygame 2.6.1, the Python runtime emits an upstream deprecation warning:

@@ -91,7 +91,7 @@ All observation models are defined in [`src/genevac/simulation/observation.py`](
 #### `SimulationObservationSnapshot` (`@dataclass(frozen=True)`)
 | Field Name | Type | SI Units | Description & Guarantees |
 | :--- | :--- | :--- | :--- |
-| `snapshot_id` | `str` | N/A | Monotonic identifier string, e.g. `"snap_000004"`. |
+| `snapshot_id` | `str` | N/A | Run-local step-derived identifier string: `f"{snapshot_prefix}_{step_count:06d}"` (e.g. `"snap_000004"`). Monotonic within a single run; resets to `"snap_000000"` on reset. Not globally unique across separate runs. |
 | `step_count` | `int` | dimensionless | Simulation physics step counter ($\ge 0$). |
 | `simulation_step` | `int` | dimensionless | Property alias for `step_count`. |
 | `timestamp` | `float` | seconds ($\text{s}$) | Elapsed simulation time ($t = \text{step\_count} \times \Delta t$, rounded to 9 decimal places). |
@@ -135,8 +135,14 @@ All observation models are defined in [`src/genevac/simulation/observation.py`](
    - Recorded strictly on observation ticks ($0.4\text{ s}$ intervals) and at step 0 ($t = 0.0\text{ s}$).
    - Bounded by `max_history_len = 100`.
    - 100 samples cover 99 observation steps ($99 \times 0.4\text{ s} = 39.6\text{ s}$, approximately $40.0\text{ s}$ of recent history). If full lifetime history across longer simulations is required, Person B must record snapshots sequentially.
-4. **Deterministic Reset**: Invoking `engine.reset()` resets `step_count` to 0, $t$ to $0.0\text{ s}$, and re-instantiates an unmutated population cohort.
-5. **Absence of `run_id`**: The snapshot schema does not contain an independent `run_id` field. Person B must manage trial/run identifiers externally.
+4. **Snapshot ID Generation and Reset Semantics**:
+   - `snapshot_id` is generated deterministically from the integer simulation step: `f"{snapshot_prefix}_{step_count:06d}"` (default prefix `"snap"`, e.g. `"snap_000000"`, `"snap_000004"`).
+   - It is strictly monotonic and unique **only within a single continuous simulation run**.
+   - Upon engine reset or when creating a new `SimulationEngine` instance, `step_count` restarts at `0`, generating identical snapshot IDs (`"snap_000000"`, `"snap_000004"`, etc.).
+   - `snapshot_id` is **NOT globally unique** across multiple runs or experiment trials.
+5. **Absence of `run_id`**:
+   - `SimulationObservationSnapshot` does **not** contain an independent `run_id` or `session_id` field.
+   - Downstream experiment runners must explicitly track execution session/trial identifiers externally (e.g. by wrapping snapshots in session containers or saving outputs into run-specific directories).
 
 ---
 
@@ -283,7 +289,7 @@ All commands below have been tested and verified in the repository:
 | **Headless Smoke Test** | `SDL_VIDEODRIVER=dummy PYTHONPATH=src .venv/bin/python3 -c "from genevac.visualization.app import SimulationApp; app = SimulationApp(width=800, height=600); app.run(max_frames=30); print('Headless OK')"` |
 | **Interactive GUI Launch** | `PYTHONPATH=src .venv/bin/python3 -m genevac.visualization.app` |
 | **Launch with Custom Step**| `PYTHONPATH=src .venv/bin/python3 -m genevac.visualization.app --dt 0.05 --width 1400 --height 900` |
-| **Person B Ingestion Script**| `PYTHONPATH=src .venv/bin/python3 docs/PERSON_B_HANDOVER.md` (or inline script) |
+| **Person B Ingestion Demo** | `PYTHONPATH=src .venv/bin/python3 examples/person_b_integration_demo.py` |
 
 ---
 

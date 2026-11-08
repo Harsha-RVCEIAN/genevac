@@ -51,7 +51,7 @@ class SimulationObservationSnapshot:
 
 | Field Name | Type | SI Units | Description & Invariants |
 | :--- | :--- | :--- | :--- |
-| `snapshot_id` | `str` | N/A | Monotonically formatted identifier, e.g. `"snap_000004"`. |
+| `snapshot_id` | `str` | N/A | Run-local step-derived identifier string: `f"{snapshot_prefix}_{step_count:06d}"` (e.g. `"snap_000004"`). Monotonic within a single run; resets to `"snap_000000"` on reset. Not globally unique across separate runs. |
 | `step_count` | `int` | dimensionless | Simulation physics step index ($\ge 0$). |
 | `simulation_step`| `int` | dimensionless | Property alias for `step_count`. |
 | `timestamp` | `float` | seconds ($\text{s}$) | Elapsed simulation time ($\ge 0.0\text{ s}$). |
@@ -139,9 +139,13 @@ A critical contract guarantee:
 
 ## 6. Documented Limitations for Downstream Integration
 
-### 6.1 Lack of `run_id` in Snapshot Schema
-- `SimulationObservationSnapshot` contains `snapshot_id` (e.g. `"snap_000004"`), `step_count`, and `timestamp`, but does **not** include an independent `run_id` or `session_id`.
-- **Integration Requirement**: If Person B runs multiple simulation experiments or Monte Carlo trials, Person B must manage the run identifier externally (e.g., in their own wrapper class or directory structure).
+### 6.1 Snapshot ID Semantics & Lack of `run_id`
+- `snapshot_id` is generated deterministically from the integer simulation step: `f"{snapshot_prefix}_{step_count:06d}"` (default prefix `"snap"`).
+- It is strictly monotonic and unique **only within a single continuous simulation run**.
+- Upon engine reset or when instantiating a new simulation run, `step_count` restarts at `0`, regenerating identical snapshot IDs (`"snap_000000"`, `"snap_000004"`, etc.).
+- It is **not** globally unique across multiple runs or experiment trials.
+- `SimulationObservationSnapshot` does **not** include an independent `run_id` or `session_id`.
+- **Integration Requirement**: If Person B runs multiple simulation experiments or Monte Carlo trials, Person B must manage the run identifier externally (e.g., in their own wrapper class, file naming, or directory structure).
 
 ### 6.2 Rolling Trajectory Window vs Lifetime History
 - Samples are appended to `trajectory_history` only on observation ticks ($0.4\text{ s}$ cadence) and at step 0 ($t=0.0\text{ s}$), NOT on intermediate $0.1\text{ s}$ physics steps.

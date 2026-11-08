@@ -803,3 +803,18 @@ SESSION HISTORY & LOG ENTRIES:
 - Verification:
   * Full pytest suite: 286 passed, 0 failed, 1 warning in 7.90s.
   * Git status: Branch `pavan`, zero staged files, zero commits, zero pushes.
+
+[2026-11-08 13:20:00 IST] - Final Handover Documentation Corrections
+- Task: Correct Person B execution command and clarify snapshot ID generation/reset semantics.
+- Corrections Implemented:
+  1. Person B Integration Demo:
+     - Created standalone script `examples/person_b_integration_demo.py` containing the verified Person B ingestion and FDE baseline prediction pipeline.
+     - Updated `docs/PERSON_B_HANDOVER.md` command from invalid markdown target to `PYTHONPATH=src .venv/bin/python3 examples/person_b_integration_demo.py`.
+     - Verified execution: executed with exit code 0, evaluating Agent 1 and Agent 2 with FDE = 0.000m.
+  2. Snapshot ID Semantics:
+     - Clarified in `docs/PERSON_B_HANDOVER.md`, `docs/SIMULATION_OBSERVATION_CONTRACT.md`, `docs/DOCUMENTATION_INDEX.md`, and `docs/KNOWN_LIMITATIONS.md` that `snapshot_id` is derived from the step index (`f"{snapshot_prefix}_{step_count:06d}"`), is monotonic and unique only within a single continuous run, restarts upon reset, and is NOT globally unique across separate runs.
+     - Re-emphasized the absence of an independent `run_id` field.
+- Validation:
+  * Full pytest suite: 286 passed, 1 warning (upstream pygame pkg_resources) in 7.75s.
+  * Zero changes to production source or test files.
+  * Git status: branch `pavan`, zero staged files, zero commits, zero pushes.
