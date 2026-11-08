@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+import random
 import subprocess
 import sys
 import pytest
@@ -12,6 +13,7 @@ from genevac.environment.models import Building
 from genevac.pedestrian.models import PedestrianState, PedestrianStatus, Velocity2D
 from genevac.pedestrian.registry import PedestrianRegistry
 from genevac.simulation.engine import SimulationEngine
+from genevac.simulation.events import SimulationEventType
 
 
 @pytest.fixture
@@ -60,7 +62,7 @@ def test_engine_validates_initial_pedestrian_positions(initial_building: Buildin
 def test_engine_validates_initial_target_exit(initial_building: Building):
     """Verify engine rejects non-existent target exit references."""
     reg = PedestrianRegistry()
-    reg.register(PedestrianState(id="p1", position=Point(5.0, 5.0), target_exit_id="exit_nonexistent"))
+    reg.register(PedestrianState(id="p1", position=Point(2.0, 5.0), target_exit_id="exit_nonexistent"))
     with pytest.raises(ValueError, match="references non-existent target exit"):
         SimulationEngine(initial_building, reg)
 
@@ -70,7 +72,7 @@ def test_engine_automatic_route_initialization(initial_building: Building):
     reg = PedestrianRegistry()
     ped = PedestrianState(
         id="p_auto",
-        position=Point(5.0, 5.0),
+        position=Point(2.0, 5.0),
         current_area_id="room_1",
         target_exit_id="exit_left",
     )
@@ -115,7 +117,7 @@ def test_engine_pause_and_resume(initial_building: Building):
         waypoints=[Point(20.0, 15.0)],
     )
     reg.register(ped)
-    engine = SimulationEngine(initial_building, reg)
+    engine = SimulationEngine(initial_building, reg, block_unassigned_exits=False)
 
     engine.pause()
     assert engine.is_paused is True
@@ -196,15 +198,16 @@ def test_crossing_outside_usable_opening_is_blocked(initial_building: Building):
     """Verify pedestrian crossing boundary outside usable opening (door jamb collision) is blocked."""
     # exit_left opening is y in [14.0, 16.0].
     # With radius 0.25, usable opening is y in [14.25, 15.75].
-    # Attempting to cross at y = 14.10 (only 0.10m from north jamb) must collide with wall and be blocked.
+    # Starts safely inside corridor at (0.5, 14.10) with full wall/boundary clearance,
+    # then attempts to cross outward at y = 14.10 (only 0.10m from north jamb) -> must collide with wall and be blocked.
     reg = PedestrianRegistry()
     ped = PedestrianState(
         id="p_jamb_col",
-        position=Point(0.05, 14.10),
+        position=Point(0.5, 14.10),
         radius=0.25,
-        preferred_speed=1.0,
+        preferred_speed=7.0,
         target_exit_id="exit_left",
-        waypoints=[Point(-1.0, 14.10)],
+        waypoints=[Point(-0.2, 14.10)],
     )
     reg.register(ped)
     engine = SimulationEngine(initial_building, reg, dt=0.1)
@@ -239,15 +242,16 @@ def test_approaching_exit_without_crossing_remains_active(initial_building: Buil
 
 def test_crossing_unassigned_exit_is_blocked(initial_building: Building):
     """Verify pedestrian attempting to cross an exit not matching target_exit_id is blocked."""
-    # Moving toward exit_left at x=0.0, but assigned target is exit_right
+    # Moving toward exit_left at x=0.0, but assigned target is exit_right.
+    # Starts safely inside corridor at (0.5, 15.0) with full wall/boundary clearance.
     reg = PedestrianRegistry()
     ped = PedestrianState(
         id="p_wrong_exit",
-        position=Point(0.05, 15.0),
+        position=Point(0.5, 15.0),
         radius=0.25,
-        preferred_speed=1.0,
+        preferred_speed=7.0,
         target_exit_id="exit_right",
-        waypoints=[Point(-1.0, 15.0)],
+        waypoints=[Point(-0.2, 15.0)],
     )
     reg.register(ped)
     engine = SimulationEngine(initial_building, reg, dt=0.1)
@@ -288,6 +292,138 @@ def test_cohort_evacuation_end_to_end(initial_building: Building):
     assert engine.registry.evacuated_count == 2
 
 
+def test_engine_unassigned_exit_default_blocks_and_records_event(initial_building: Building):
+    """Verify that by default, an unassigned-exit pedestrian transitions to BLOCKED and records NO_ROUTE."""
+    reg = PedestrianRegistry()
+    ped_unassigned = PedestrianState(
+        id="p_unassigned",
+        position=Point(10.0, 15.0),
+        current_area_id="main_corridor",
+        target_exit_id=None,
+        waypoints=[Point(12.0, 15.0)],  # Invalid waypoints without an assigned exit
+    )
+    ped_valid = PedestrianState(
+        id="p_valid",
+        position=Point(2.0, 15.0),
+        current_area_id="main_corridor",
+        target_exit_id="exit_left",
+        preferred_speed=1.0,
+    )
+    reg.register(ped_unassigned)
+    reg.register(ped_valid)
+
+    # Default constructor has block_unassigned_exits=True
+    engine = SimulationEngine(initial_building, reg)
+
+    # Unassigned pedestrian is immediately BLOCKED with zero velocity and cleared waypoints
+    assert ped_unassigned.status == PedestrianStatus.BLOCKED
+    assert ped_unassigned.velocity == Velocity2D(0.0, 0.0)
+    assert len(ped_unassigned.waypoints) == 0
+
+    # Valid pedestrian remains ACTIVE
+    assert ped_valid.status == PedestrianStatus.ACTIVE
+
+    # Exactly one NO_ROUTE event recorded for the unassigned pedestrian
+    unassigned_events = [e for e in engine.events if e.pedestrian_id == "p_unassigned"]
+    assert len(unassigned_events) == 1
+    assert unassigned_events[0].event_type == SimulationEventType.NO_ROUTE
+    assert unassigned_events[0].details["reason"] == "unassigned_exit"
+
+    # Other pedestrians continue simulating normally
+    engine.step()
+    assert ped_valid.status == PedestrianStatus.ACTIVE
+    assert ped_unassigned.status == PedestrianStatus.BLOCKED
+
+
+def test_engine_get_snapshot_repeated_calls_are_side_effect_free(initial_building: Building):
+    """Verify that calling get_snapshot() repeatedly has zero side effects on clock, pedestrians, cadence, history, or randomness."""
+    reg = PedestrianRegistry()
+    ped = PedestrianState(
+        id="ped_snap_invariance",
+        position=Point(5.0, 15.0),
+        current_area_id="main_corridor",
+        target_exit_id="exit_left",
+        preferred_speed=1.0,
+    )
+    reg.register(ped)
+    engine = SimulationEngine(initial_building, reg, dt=0.1, observation_interval=0.4)
+
+    # Step to step 2 (intermediate non-observation step)
+    engine.step()
+    engine.step()
+
+    step_before = engine.clock.step_count
+    time_before = engine.clock.timestamp
+    ped_pos_before = Point(ped.position.x, ped.position.y)
+    ped_vel_before = Velocity2D(ped.velocity.vx, ped.velocity.vy)
+    ped_status_before = ped.status
+    ped_hist_len_before = len(ped.trajectory_history)
+    events_len_before = len(engine.events)
+    latest_snapshot_before = engine.latest_snapshot
+    rng_state_before = random.getstate()
+
+    # Call get_snapshot() repeatedly
+    snapshots = [engine.get_snapshot() for _ in range(5)]
+
+    # 1. Clock step and timestamp unchanged
+    assert engine.clock.step_count == step_before
+    assert engine.clock.timestamp == time_before
+
+    # 2. Pedestrian positions, velocities, and statuses unchanged
+    assert ped.position == ped_pos_before
+    assert ped.velocity == ped_vel_before
+    assert ped.status == ped_status_before
+    assert len(ped.trajectory_history) == ped_hist_len_before
+
+    # 3. Events unchanged
+    assert len(engine.events) == events_len_before
+
+    # 4. Simulation randomness not consumed
+    assert random.getstate() == rng_state_before
+
+    # 5. Existing snapshot history / latest_snapshot unchanged
+    assert engine.latest_snapshot is latest_snapshot_before
+
+    # 6. Snapshots returned are identical in content
+    for s in snapshots:
+        assert s.step_count == step_before
+        assert s.timestamp == time_before
+        assert s.total_count == 1
+        assert s.pedestrians[0].pedestrian_id == "ped_snap_invariance"
+
+    # 7. Observation cadence unchanged
+    step3 = engine.step()
+    assert step3 is None
+    step4 = engine.step()
+    assert step4 is not None
+    assert step4.step_count == 4
+
+
+def test_engine_open_exit_updates_state_and_tracking(initial_building: Building):
+    """Verify open_exit() updates exit model state and engine tracking consistently."""
+    engine = SimulationEngine(initial_building)
+    ex = initial_building.get_exit("exit_left")
+    assert ex is not None
+    assert ex.is_open is True
+    assert "exit_left" in engine._open_exit_ids
+
+    # Close exit
+    assert engine.close_exit("exit_left") is True
+    assert ex.is_open is False
+    assert "exit_left" not in engine._open_exit_ids
+
+    # Reopen exit
+    assert engine.open_exit("exit_left") is True
+    assert ex.is_open is True
+    assert "exit_left" in engine._open_exit_ids
+
+    # Reopening already open exit returns True safely
+    assert engine.open_exit("exit_left") is True
+
+    # Non-existent exit returns False
+    assert engine.open_exit("non_existent_exit") is False
+
+
 def test_simulation_architectural_isolation():
     """Verify that importing genevac.simulation in a clean process does not import pygame, torch, mid, or numpy."""
     cmd = [
@@ -306,3 +442,266 @@ def test_simulation_architectural_isolation():
     env["PYTHONPATH"] = str(Path(__file__).resolve().parent.parent / "src")
     res = subprocess.run(cmd, env=env, capture_output=True, text=True)
     assert res.returncode == 0, f"Simulation architectural isolation violation: {res.stderr}"
+
+
+# =============================================================================
+# Week 3 Final Corrections — Task 1: Radius-Aware Initial Pedestrian Validation
+# =============================================================================
+
+
+def test_task1_valid_initial_position_open_room(initial_building: Building):
+    """1. Valid initial position in an open room initializes successfully."""
+    reg = PedestrianRegistry()
+    reg.register(
+        PedestrianState(
+            id="p_valid_room",
+            position=Point(2.0, 5.0),
+            radius=0.25,
+            current_area_id="room_1",
+            target_exit_id="exit_left",
+        )
+    )
+    engine = SimulationEngine(initial_building, reg)
+    assert engine.registry.total_count == 1
+    assert engine.registry.get("p_valid_room").status == PedestrianStatus.ACTIVE
+
+
+def test_task1_initial_position_inside_obstacle(initial_building: Building):
+    """2. Initial position inside an obstacle raises ValueError identifying pedestrian."""
+    # obstacle_room1 is [4.0, 6.0] x [4.0, 5.5]
+    reg = PedestrianRegistry()
+    reg.register(
+        PedestrianState(
+            id="p_in_obs",
+            position=Point(5.0, 4.75),
+            radius=0.25,
+            current_area_id="room_1",
+            target_exit_id="exit_left",
+        )
+    )
+    with pytest.raises(ValueError, match=r"Pedestrian 'p_in_obs'.*violates walkable space clearance"):
+        SimulationEngine(initial_building, reg)
+
+
+def test_task1_initial_position_intersecting_wall(initial_building: Building):
+    """3. Initial position intersecting a wall raises ValueError identifying pedestrian."""
+    # Dividing wall wall_int_div_north is [19.8, 20.2] x [0.0, 10.0]
+    reg = PedestrianRegistry()
+    reg.register(
+        PedestrianState(
+            id="p_in_wall",
+            position=Point(20.0, 5.0),
+            radius=0.25,
+            current_area_id="room_1",
+            target_exit_id="exit_left",
+        )
+    )
+    with pytest.raises(ValueError, match=r"Pedestrian 'p_in_wall'.*violates walkable space clearance"):
+        SimulationEngine(initial_building, reg)
+
+
+def test_task1_initial_position_violating_radius_clearance(initial_building: Building):
+    """4. Initial position violating pedestrian-radius clearance to a wall raises ValueError."""
+    # Room 1 left wall is at x=0.0. A pedestrian with radius=0.25 at x=0.1 penetrates the wall boundary.
+    reg = PedestrianRegistry()
+    reg.register(
+        PedestrianState(
+            id="p_wall_clearance",
+            position=Point(0.1, 5.0),
+            radius=0.25,
+            current_area_id="room_1",
+            target_exit_id="exit_left",
+        )
+    )
+    with pytest.raises(ValueError, match=r"Pedestrian 'p_wall_clearance'.*violates walkable space clearance"):
+        SimulationEngine(initial_building, reg)
+
+
+def test_task1_valid_initial_position_near_doorway(initial_building: Building):
+    """5. Valid initial position near/in a doorway initializes successfully."""
+    # doorway door_room1_corridor is at y=13.5, spanning x in [9.0, 11.0]
+    reg = PedestrianRegistry()
+    reg.register(
+        PedestrianState(
+            id="p_doorway",
+            position=Point(10.0, 13.5),
+            radius=0.25,
+            current_area_id="room_1",
+            target_exit_id="exit_left",
+        )
+    )
+    engine = SimulationEngine(initial_building, reg)
+    assert engine.registry.get("p_doorway").status == PedestrianStatus.ACTIVE
+
+
+def test_task1_valid_initial_position_in_corridor(initial_building: Building):
+    """6. Valid initial position in a corridor initializes successfully."""
+    reg = PedestrianRegistry()
+    reg.register(
+        PedestrianState(
+            id="p_corridor",
+            position=Point(15.0, 15.0),
+            radius=0.25,
+            current_area_id="main_corridor",
+            target_exit_id="exit_left",
+        )
+    )
+    engine = SimulationEngine(initial_building, reg)
+    assert engine.registry.get("p_corridor").status == PedestrianStatus.ACTIVE
+
+
+def test_task1_invalid_position_outside_walkable_space(initial_building: Building):
+    """7. Invalid position outside walkable space raises ValueError."""
+    reg = PedestrianRegistry()
+    reg.register(
+        PedestrianState(
+            id="p_out_of_bounds",
+            position=Point(45.0, 15.0),
+            radius=0.25,
+        )
+    )
+    with pytest.raises(ValueError, match="is outside building bounds"):
+        SimulationEngine(initial_building, reg)
+
+
+def test_task1_multiple_pedestrians_one_invalid_fails_safely(initial_building: Building):
+    """8. Multiple pedestrians where one initial position is invalid fails safely without partial state."""
+    reg = PedestrianRegistry()
+    reg.register(PedestrianState(id="p1_valid", position=Point(2.0, 5.0), radius=0.25, target_exit_id="exit_left"))
+    reg.register(PedestrianState(id="p2_valid", position=Point(10.0, 15.0), radius=0.25, target_exit_id="exit_left"))
+    reg.register(PedestrianState(id="p3_bad", position=Point(5.0, 4.75), radius=0.25, target_exit_id="exit_left"))  # inside obstacle
+
+    with pytest.raises(ValueError, match=r"Pedestrian 'p3_bad'.*violates walkable space clearance"):
+        SimulationEngine(initial_building, reg)
+
+
+# =============================================================================
+# Week 3 Final Corrections — Task 2: Initial Overlap Population Validation
+# =============================================================================
+
+
+def test_task2_identical_starting_positions_rejected(initial_building: Building):
+    """1. Two pedestrians starting with identical coordinates are rejected with both IDs."""
+    reg = PedestrianRegistry()
+    reg.register(PedestrianState(id="ped_alpha", position=Point(10.0, 15.0), radius=0.25, target_exit_id="exit_left"))
+    reg.register(PedestrianState(id="ped_beta", position=Point(10.0, 15.0), radius=0.25, target_exit_id="exit_left"))
+
+    with pytest.raises(ValueError) as excinfo:
+        SimulationEngine(initial_building, reg)
+    assert "Initial pedestrian overlap detected" in str(excinfo.value)
+    assert "ped_alpha" in str(excinfo.value)
+    assert "ped_beta" in str(excinfo.value)
+
+
+def test_task2_overlapping_starting_positions_rejected(initial_building: Building):
+    """2. Two pedestrians starting in physical overlap (distance < r1 + r2) are rejected."""
+    reg = PedestrianRegistry()
+    # Distance = 0.3m, sum of radii = 0.5m -> overlap
+    reg.register(PedestrianState(id="ped_1", position=Point(10.0, 15.0), radius=0.25, target_exit_id="exit_left"))
+    reg.register(PedestrianState(id="ped_2", position=Point(10.3, 15.0), radius=0.25, target_exit_id="exit_left"))
+
+    with pytest.raises(ValueError) as excinfo:
+        SimulationEngine(initial_building, reg)
+    assert "Initial pedestrian overlap detected" in str(excinfo.value)
+    assert "ped_1" in str(excinfo.value)
+    assert "ped_2" in str(excinfo.value)
+
+
+def test_task2_contact_threshold_starting_positions_allowed(initial_building: Building):
+    """3. Two pedestrians starting exactly at contact threshold (dist == r1 + r2) are permitted."""
+    reg = PedestrianRegistry()
+    # Distance = 0.5m, sum of radii = 0.5m
+    reg.register(PedestrianState(id="ped_touch1", position=Point(10.0, 15.0), radius=0.25, target_exit_id="exit_left"))
+    reg.register(PedestrianState(id="ped_touch2", position=Point(10.5, 15.0), radius=0.25, target_exit_id="exit_left"))
+
+    engine = SimulationEngine(initial_building, reg)
+    assert engine.registry.total_count == 2
+
+
+def test_task2_separated_valid_distance_allowed(initial_building: Building):
+    """4. Two pedestrians separated by valid clearance are permitted."""
+    reg = PedestrianRegistry()
+    reg.register(PedestrianState(id="ped_sep1", position=Point(10.0, 15.0), radius=0.25, target_exit_id="exit_left"))
+    reg.register(PedestrianState(id="ped_sep2", position=Point(12.0, 15.0), radius=0.25, target_exit_id="exit_left"))
+
+    engine = SimulationEngine(initial_building, reg)
+    assert engine.registry.total_count == 2
+
+
+def test_task2_multiple_overlapping_pedestrians_identified(initial_building: Building):
+    """5. Multiple overlapping pedestrians clearly identify the offending IDs."""
+    reg = PedestrianRegistry()
+    reg.register(PedestrianState(id="ped_safe", position=Point(2.0, 5.0), radius=0.25, target_exit_id="exit_left"))
+    reg.register(PedestrianState(id="ped_clash_a", position=Point(10.0, 15.0), radius=0.25, target_exit_id="exit_left"))
+    reg.register(PedestrianState(id="ped_clash_b", position=Point(10.2, 15.0), radius=0.25, target_exit_id="exit_left"))
+
+    with pytest.raises(ValueError) as excinfo:
+        SimulationEngine(initial_building, reg)
+    assert "ped_clash_a" in str(excinfo.value)
+    assert "ped_clash_b" in str(excinfo.value)
+
+
+def test_task2_initial_separation_mandatory(initial_building: Building):
+    """6. Initial separation validation is mandatory in SimulationEngine with no bypass mechanism."""
+    reg = PedestrianRegistry()
+    reg.register(PedestrianState(id="ped_m1", position=Point(10.0, 15.0), radius=0.25, target_exit_id="exit_left"))
+    reg.register(PedestrianState(id="ped_m2", position=Point(10.0, 15.0), radius=0.25, target_exit_id="exit_left"))
+
+    with pytest.raises(ValueError, match="Initial pedestrian overlap detected"):
+        SimulationEngine(initial_building, reg)
+
+
+# =============================================================================
+# Additional Boundary Validation Tests (Room boundaries, doorway edges, exits)
+# =============================================================================
+
+
+def test_task1_initial_position_near_room_boundary_edges(initial_building: Building):
+    """Verify valid clearance vs invalid intrusion near room boundaries."""
+    # Left wall footprint is [0.0, 0.2] x [0.0, 14.0]. Radius = 0.25m.
+    # Valid: Point(0.5, 5.0) -> left edge at 0.25m > 0.2m (clearance = 0.05m)
+    reg_valid = PedestrianRegistry()
+    reg_valid.register(PedestrianState(id="p_valid_edge", position=Point(0.5, 5.0), radius=0.25, current_area_id="room_1", target_exit_id="exit_left"))
+    engine = SimulationEngine(initial_building, reg_valid)
+    assert engine.registry.get("p_valid_edge").status == PedestrianStatus.ACTIVE
+
+    # Invalid: Point(0.35, 5.0) -> left edge at 0.10m < 0.2m (penetrates left exterior wall [0, 0.2])
+    reg_invalid = PedestrianRegistry()
+    reg_invalid.register(PedestrianState(id="p_invalid_edge", position=Point(0.35, 5.0), radius=0.25, current_area_id="room_1", target_exit_id="exit_left"))
+    with pytest.raises(ValueError, match="violates walkable space clearance"):
+        SimulationEngine(initial_building, reg_invalid)
+
+
+def test_task1_initial_position_near_doorway_edges(initial_building: Building):
+    """Verify valid opening clearance vs invalid wall-jamb intrusion near doorways."""
+    # door_room1_corridor is at y=13.5 with opening x in [9.0, 11.0]
+    # Valid: centered at x=10.0, y=13.5 (clears jambs by 0.75m on both sides)
+    reg_valid = PedestrianRegistry()
+    reg_valid.register(PedestrianState(id="p_door_center", position=Point(10.0, 13.5), radius=0.25, current_area_id="room_1", target_exit_id="exit_left"))
+    engine = SimulationEngine(initial_building, reg_valid)
+    assert engine.registry.get("p_door_center").status == PedestrianStatus.ACTIVE
+
+    # Invalid: at x=9.1, y=13.5 with radius 0.25, left edge reaches x=8.85 which penetrates solid wall [0, 9.0]
+    reg_invalid = PedestrianRegistry()
+    reg_invalid.register(PedestrianState(id="p_door_jamb", position=Point(9.1, 13.5), radius=0.25, current_area_id="room_1", target_exit_id="exit_left"))
+    with pytest.raises(ValueError, match="violates walkable space clearance"):
+        SimulationEngine(initial_building, reg_invalid)
+
+
+def test_task1_initial_position_near_exit_boundaries(initial_building: Building):
+    """Verify exit boundary clearance rules for assigned vs unassigned exits."""
+    # exit_left is at x=0.0, opening y in [13.5, 16.5]
+    # Valid for assigned exit: Point(0.3, 15.0) heading to exit_left
+    reg_assigned = PedestrianRegistry()
+    reg_assigned.register(PedestrianState(id="p_exit_assigned", position=Point(0.3, 15.0), radius=0.25, current_area_id="main_corridor", target_exit_id="exit_left"))
+    engine = SimulationEngine(initial_building, reg_assigned)
+    assert engine.registry.get("p_exit_assigned").status == PedestrianStatus.ACTIVE
+
+    # Invalid for unassigned exit: Point(0.2, 15.0) with target_exit_id="exit_right"
+    # For exit_right, the boundary at x=0 is a solid exterior wall!
+    reg_unassigned = PedestrianRegistry()
+    reg_unassigned.register(PedestrianState(id="p_exit_unassigned", position=Point(0.2, 15.0), radius=0.25, current_area_id="main_corridor", target_exit_id="exit_right"))
+    with pytest.raises(ValueError, match="violates walkable space clearance"):
+        SimulationEngine(initial_building, reg_unassigned)
+
+

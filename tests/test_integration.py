@@ -530,7 +530,13 @@ def test_simultaneous_three_exit_cohort_evacuation():
     assert registry.active_count == 6
     assert registry.evacuated_count == 0
 
-    engine = SimulationEngine(building=building, registry=registry, dt=0.1, observation_interval=0.4)
+    engine = SimulationEngine(
+        building=building,
+        registry=registry,
+        dt=0.1,
+        observation_interval=0.4,
+        block_unassigned_exits=False,
+    )
 
     # 2. Advance simulation until all pedestrians evacuate
     max_steps = 250
@@ -680,7 +686,13 @@ def test_mixed_status_population_dynamics():
     assert cross_pt.y == pytest.approx(15.0)
     assert (exit_left.segment.start.y + p_wrong_exit.radius) <= cross_pt.y <= (exit_left.segment.end.y - p_wrong_exit.radius)
 
-    engine = SimulationEngine(building=building, registry=registry, dt=0.1, observation_interval=0.4)
+    engine = SimulationEngine(
+        building=building,
+        registry=registry,
+        dt=0.1,
+        observation_interval=0.4,
+        block_unassigned_exits=False,
+    )
 
     # Verify initial population counts
     assert registry.total_count == 5
@@ -796,7 +808,13 @@ def test_observation_snapshot_cadence_and_immutability():
     registry.register(p1)
     registry.register(p2)
 
-    engine = SimulationEngine(building=building, registry=registry, dt=0.1, observation_interval=0.4)
+    engine = SimulationEngine(
+        building=building,
+        registry=registry,
+        dt=0.1,
+        observation_interval=0.4,
+        block_unassigned_exits=False,
+    )
     stride = engine.clock.observation_stride
     assert stride == 4
 
@@ -921,10 +939,25 @@ def test_trajectory_history_over_complete_evacuation():
         max_history_len=5,
     )
 
-    registry.register(p_full)
-    registry.register(p_bounded)
+    reg_full = PedestrianRegistry()
+    reg_full.register(p_full)
+    engine_full = SimulationEngine(
+        building=create_initial_building(),
+        registry=reg_full,
+        dt=0.1,
+        observation_interval=0.4,
+        block_unassigned_exits=False,
+    )
 
-    engine = SimulationEngine(building=building, registry=registry, dt=0.1, observation_interval=0.4)
+    reg_bounded = PedestrianRegistry()
+    reg_bounded.register(p_bounded)
+    engine_bounded = SimulationEngine(
+        building=create_initial_building(),
+        registry=reg_bounded,
+        dt=0.1,
+        observation_interval=0.4,
+        block_unassigned_exits=False,
+    )
 
     # Initially step 0 sample is recorded
     assert len(p_full.trajectory_history) == 1
@@ -934,7 +967,8 @@ def test_trajectory_history_over_complete_evacuation():
     assert p_full.trajectory_history[0].y == pytest.approx(15.0)
 
     # Run 40 steps to complete evacuation
-    engine.run_steps(40)
+    engine_full.run_steps(40)
+    engine_bounded.run_steps(40)
 
     # Verify both evacuated
     assert p_full.status == PedestrianStatus.EVACUATED
@@ -1025,7 +1059,13 @@ def test_evacuated_pedestrians_retained_in_later_snapshots():
     registry.register(p_early)
     registry.register(p_late)
 
-    engine = SimulationEngine(building=building, registry=registry, dt=0.1, observation_interval=0.4)
+    engine = SimulationEngine(
+        building=building,
+        registry=registry,
+        dt=0.1,
+        observation_interval=0.4,
+        block_unassigned_exits=False,
+    )
 
     # 1. Step to step 20 where p_early evacuates
     snaps_phase1 = engine.run_steps(20)

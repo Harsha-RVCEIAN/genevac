@@ -268,6 +268,7 @@ def exit_to_dict(ex: Exit) -> dict[str, Any]:
         "width": ex.width,
         "boundary": ex.boundary,
         "connected_area_id": ex.connected_area_id,
+        "is_open": ex.is_open,
     }
 
 
@@ -293,6 +294,7 @@ def exit_from_dict(data: Any) -> Exit:
 
     boundary = str(data["boundary"])
     connected_area_id = str(data["connected_area_id"])
+    is_open = bool(data.get("is_open", True))
 
     return Exit(
         id=exit_id,
@@ -300,6 +302,7 @@ def exit_from_dict(data: Any) -> Exit:
         width=width,
         boundary=boundary,
         connected_area_id=connected_area_id,
+        is_open=is_open,
     )
 
 

@@ -141,6 +141,7 @@ class Exit:
     width: float
     boundary: str  # "left", "right", "bottom", "top"
     connected_area_id: str
+    is_open: bool = True
 
     def __post_init__(self) -> None:
         if not self.id or not isinstance(self.id, str):
@@ -154,6 +155,15 @@ class Exit:
             raise ValueError(f"connected_area_id must be a non-empty string, got {self.connected_area_id!r}")
         if not self.boundary or not isinstance(self.boundary, str):
             raise ValueError(f"boundary must be a non-empty string, got {self.boundary!r}")
+        self.is_open = bool(self.is_open)
+
+    def close(self) -> None:
+        """Mark this exit as closed."""
+        self.is_open = False
+
+    def open(self) -> None:
+        """Mark this exit as open."""
+        self.is_open = True
 
 
 @dataclass

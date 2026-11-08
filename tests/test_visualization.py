@@ -279,7 +279,7 @@ def test_renderer_with_simulation_engine_draws_pedestrians():
     )
     registry = PedestrianRegistry()
     registry.register(ped)
-    engine = SimulationEngine(building=building, registry=registry, dt=0.1)
+    engine = SimulationEngine(building=building, registry=registry, dt=0.1, block_unassigned_exits=False)
 
     surface = pygame.Surface((1200, 800))
     vp = Viewport(
