@@ -2,7 +2,7 @@
 
 **Document Version:** 1.0  
 **Phase:** Person A Phase 4 Final Handover  
-**Repository Working Directory:** `/Users/apple/Documents/5th sem el/main_el_5/genevac`  
+**Repository Working Directory:** Repository Root (`genevac/`)  
 **Git Branch:** `pavan`  
 **Python Runtime:** Python 3.11 (tested on 3.11.15)  
 **Dependencies:** `pygame==2.6.1`, `pytest==9.2.0`, `setuptools==79.0.1`
@@ -66,7 +66,7 @@ flowchart LR
 
 ## 2. Authoritative Observation Contract (Verified in Source)
 
-All observation models are defined in [`src/genevac/simulation/observation.py`](file:///Users/apple/Documents/5th%20sem%20el/main_el_5/genevac/src/genevac/simulation/observation.py) and [`src/genevac/pedestrian/models.py`](file:///Users/apple/Documents/5th%20sem%20el/main_el_5/genevac/src/genevac/pedestrian/models.py).
+All observation models are defined in [`src/genevac/simulation/observation.py`](../src/genevac/simulation/observation.py) and [`src/genevac/pedestrian/models.py`](../src/genevac/pedestrian/models.py).
 
 ### 2.1 Coordinate Frame and Physical Units
 - **Origin**: Continuous 2D Euclidean space with $(0.0, 0.0)$ at the **top-left corner**.
@@ -91,7 +91,7 @@ All observation models are defined in [`src/genevac/simulation/observation.py`](
 #### `SimulationObservationSnapshot` (`@dataclass(frozen=True)`)
 | Field Name | Type | SI Units | Description & Guarantees |
 | :--- | :--- | :--- | :--- |
-| `snapshot_id` | `str` | N/A | Run-local step-derived identifier string: `f"{snapshot_prefix}_{step_count:06d}"` (e.g. `"snap_000004"`). Monotonic within a single run; resets to `"snap_000000"` on reset. Not globally unique across separate runs. |
+| `snapshot_id` | `str` | N/A | Step-derived identifier string: `f"{snapshot_prefix}_{step_count:06d}"` (e.g. `"snap_000004"`). Monotonic and unique within a continuous run; repeats from step zero upon application reset. Not globally unique across separate runs. |
 | `step_count` | `int` | dimensionless | Simulation physics step counter ($\ge 0$). |
 | `simulation_step` | `int` | dimensionless | Property alias for `step_count`. |
 | `timestamp` | `float` | seconds ($\text{s}$) | Elapsed simulation time ($t = \text{step\_count} \times \Delta t$, rounded to 9 decimal places). |
@@ -136,13 +136,14 @@ All observation models are defined in [`src/genevac/simulation/observation.py`](
    - Bounded by `max_history_len = 100`.
    - 100 samples cover 99 observation steps ($99 \times 0.4\text{ s} = 39.6\text{ s}$, approximately $40.0\text{ s}$ of recent history). If full lifetime history across longer simulations is required, Person B must record snapshots sequentially.
 4. **Snapshot ID Generation and Reset Semantics**:
-   - `snapshot_id` is generated deterministically from the integer simulation step: `f"{snapshot_prefix}_{step_count:06d}"` (default prefix `"snap"`, e.g. `"snap_000000"`, `"snap_000004"`).
-   - It is strictly monotonic and unique **only within a single continuous simulation run**.
-   - Upon engine reset or when creating a new `SimulationEngine` instance, `step_count` restarts at `0`, generating identical snapshot IDs (`"snap_000000"`, `"snap_000004"`, etc.).
-   - `snapshot_id` is **NOT globally unique** across multiple runs or experiment trials.
+   - `snapshot_id` is derived from the configured snapshot prefix (default `"snap"`) and the simulation step count: `f"{snapshot_prefix}_{step_count:06d}"` (e.g. `"snap_000000"`, `"snap_000004"`).
+   - It is strictly monotonic and unique within a continuous simulation run when the step count advances.
+   - `SimulationEngine` itself does not expose a public reset method. Application reset is implemented via `SimulationApp.reset()`, which instantiates a fresh `SimulationEngine` with a new population.
+   - Because a newly created engine instance initializes at step zero, snapshot IDs can repeat from step zero (`"snap_000000"`) across runs.
+   - Consequently, `snapshot_id` is **not globally unique** across multiple runs or separate engine instances.
 5. **Absence of `run_id`**:
-   - `SimulationObservationSnapshot` does **not** contain an independent `run_id` or `session_id` field.
-   - Downstream experiment runners must explicitly track execution session/trial identifiers externally (e.g. by wrapping snapshots in session containers or saving outputs into run-specific directories).
+   - There is no independent `run_id` or `session_id` in the observation schema.
+   - Downstream experiment runners must explicitly manage execution session/trial identifiers externally (e.g. by wrapping snapshots in session containers or saving outputs into run-specific directories).
 
 ---
 
@@ -297,7 +298,7 @@ All commands below have been tested and verified in the repository:
 
 Before beginning model training or architecture integration, Person B should confirm:
 
-- [ ] Read [`docs/PROJECT_OVERVIEW.md`](file:///Users/apple/Documents/5th%20sem%20el/main_el_5/genevac/docs/PROJECT_OVERVIEW.md) and [`docs/SIMULATION_OBSERVATION_CONTRACT.md`](file:///Users/apple/Documents/5th%20sem%20el/main_el_5/genevac/docs/SIMULATION_OBSERVATION_CONTRACT.md).
+- [ ] Read [`PROJECT_OVERVIEW.md`](PROJECT_OVERVIEW.md) and [`SIMULATION_OBSERVATION_CONTRACT.md`](SIMULATION_OBSERVATION_CONTRACT.md).
 - [ ] Ensure that `PYTHONPATH=src` is set when running custom Python scripts directly from the workspace root.
 - [ ] Verify that your ingestion loop handles intermediate `None` returns from `engine.step()`.
 - [ ] Verify that initial pedestrian cohorts are passed to `SimulationEngine(building=..., registry=cohort)` during construction.

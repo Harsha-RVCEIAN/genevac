@@ -128,6 +128,3 @@ for step in range(40):
 ```
 
 For full details, consult [`docs/PERSON_B_HANDOVER.md`](docs/PERSON_B_HANDOVER.md).
-
-
-For full details, consult [`docs/PERSON_B_HANDOVER.md`](docs/PERSON_B_HANDOVER.md).

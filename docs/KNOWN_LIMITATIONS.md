@@ -19,8 +19,8 @@ Through rigorous end-to-end verification and regression testing, the following f
 - **Accepted Trade-off**: The engine prefers a safe physical standstill over unphysical collision or clipping. Social yielding conventions (e.g. stepping aside or reverse negotiation) are not implemented in this prototype.
 
 ### 2.2 Snapshot ID Run-Locality & Absence of Run Identifier
-- **Description**: `SimulationObservationSnapshot` contains `snapshot_id` formatted as `f"snap_{step_count:06d}"` (e.g., `"snap_000004"`), `step_count`, and `timestamp`. It is monotonic and unique **only within a single continuous simulation run**.
-- **Reset Repetition**: Upon engine reset or when launching a new simulation instance, `step_count` resets to `0`, regenerating identical snapshot IDs (`"snap_000000"`, `"snap_000004"`). The schema does not contain an independent `run_id` or `session_id`.
+- **Description**: `SimulationObservationSnapshot` contains `snapshot_id` derived from the configured prefix and simulation step count: `f"snap_{step_count:06d}"` (e.g., `"snap_000004"`). It is strictly monotonic and unique within a continuous simulation run when the step count advances.
+- **Reset Repetition**: `SimulationEngine` itself exposes no public reset method. Application reset in `SimulationApp.reset()` creates a new `SimulationEngine` instance with a fresh population. Because a newly instantiated engine starts from step zero, snapshot IDs repeat from step zero (`"snap_000000"`). There is no independent `run_id` or `session_id` in the observation schema.
 - **Downstream Impact**: In isolation, snapshot IDs are not globally unique across distinct runs or Monte Carlo iterations.
 - **Accepted Solution**: Downstream consumers (Person B) must track execution sessions externally, either by prefixing output file paths, organizing files into run-specific directories, or wrapping snapshot ingestion in run-aware containers.
 

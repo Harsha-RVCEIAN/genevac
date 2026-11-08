@@ -2,7 +2,7 @@
 
 ## 1. Engine Architecture & Temporal Model
 
-The `SimulationEngine` (located in [`src/genevac/simulation/engine.py`](file:///Users/apple/Documents/5th%20sem%20el/main_el_5/genevac/src/genevac/simulation/engine.py)) is the authoritative simulation driver for Person A's scope. It coordinates environment models, pedestrian kinematics, exit states, collision avoidance, structured events, and observation snapshot generation.
+The `SimulationEngine` (located in [`src/genevac/simulation/engine.py`](../src/genevac/simulation/engine.py)) is the authoritative simulation driver for Person A's scope. It coordinates environment models, pedestrian kinematics, exit states, collision avoidance, structured events, and observation snapshot generation.
 
 ```mermaid
 flowchart TD
@@ -24,7 +24,7 @@ flowchart TD
 
 ## 2. Clock Advancement & Time Model
 
-The temporal model is governed exclusively by `SimulationClock` ([`src/genevac/simulation/clock.py`](file:///Users/apple/Documents/5th%20sem%20el/main_el_5/genevac/src/genevac/simulation/clock.py)):
+The temporal model is governed exclusively by `SimulationClock` ([`src/genevac/simulation/clock.py`](../src/genevac/simulation/clock.py)):
 
 | Parameter | Default Value | Contract / Meaning |
 | :--- | :--- | :--- |
@@ -64,7 +64,7 @@ Before any physics steps occur, `_initialize_simulation()` executes mandatory va
 
 ## 4. Route Planning & Obstacle Navigation
 
-Route planning is handled deterministically by `generate_deterministic_route()` in [`src/genevac/simulation/movement.py`](file:///Users/apple/Documents/5th%20sem%20el/main_el_5/genevac/src/genevac/simulation/movement.py) via a two-tiered routing architecture:
+Route planning is handled deterministically by `generate_deterministic_route()` in [`src/genevac/simulation/movement.py`](../src/genevac/simulation/movement.py) via a two-tiered routing architecture:
 
 ### Tier 1: Canonical Topological Routing
 1. `_generate_canonical_route(building, start_pos, start_area_id, target_exit, radius)`:
@@ -97,7 +97,7 @@ If the canonical route is blocked or custom obstacles are encountered, the engin
 
 ## 5. Movement Kinematics & Collision Resolution
 
-Population advancement is handled by `advance_population_step()` in [`src/genevac/simulation/movement.py`](file:///Users/apple/Documents/5th%20sem%20el/main_el_5/genevac/src/genevac/simulation/movement.py):
+Population advancement is handled by `advance_population_step()` in [`src/genevac/simulation/movement.py`](../src/genevac/simulation/movement.py):
 
 ### Step Ordering
 Pedestrians are sorted strictly by stable `ped.id` (`sorted(pedestrians, key=lambda p: p.id)`). Iteration order is deterministic and invariant across all platforms.

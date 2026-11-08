@@ -51,7 +51,7 @@ class SimulationObservationSnapshot:
 
 | Field Name | Type | SI Units | Description & Invariants |
 | :--- | :--- | :--- | :--- |
-| `snapshot_id` | `str` | N/A | Run-local step-derived identifier string: `f"{snapshot_prefix}_{step_count:06d}"` (e.g. `"snap_000004"`). Monotonic within a single run; resets to `"snap_000000"` on reset. Not globally unique across separate runs. |
+| `snapshot_id` | `str` | N/A | Step-derived identifier string: `f"{snapshot_prefix}_{step_count:06d}"` (e.g. `"snap_000004"`). Monotonic and unique within a continuous run; repeats from step zero upon application reset. Not globally unique across separate runs. |
 | `step_count` | `int` | dimensionless | Simulation physics step index ($\ge 0$). |
 | `simulation_step`| `int` | dimensionless | Property alias for `step_count`. |
 | `timestamp` | `float` | seconds ($\text{s}$) | Elapsed simulation time ($\ge 0.0\text{ s}$). |
@@ -140,11 +140,11 @@ A critical contract guarantee:
 ## 6. Documented Limitations for Downstream Integration
 
 ### 6.1 Snapshot ID Semantics & Lack of `run_id`
-- `snapshot_id` is generated deterministically from the integer simulation step: `f"{snapshot_prefix}_{step_count:06d}"` (default prefix `"snap"`).
-- It is strictly monotonic and unique **only within a single continuous simulation run**.
-- Upon engine reset or when instantiating a new simulation run, `step_count` restarts at `0`, regenerating identical snapshot IDs (`"snap_000000"`, `"snap_000004"`, etc.).
-- It is **not** globally unique across multiple runs or experiment trials.
-- `SimulationObservationSnapshot` does **not** include an independent `run_id` or `session_id`.
+- `snapshot_id` is derived from the configured snapshot prefix (default `"snap"`) and the simulation step count: `f"{snapshot_prefix}_{step_count:06d}"`.
+- It is strictly monotonic and unique within a continuous simulation run when the step count advances.
+- `SimulationEngine` itself does not expose a public reset method. Application reset is implemented via `SimulationApp.reset()`, which creates a new `SimulationEngine` instance with a fresh population.
+- Because a newly created engine instance starts from step zero, snapshot IDs can repeat from step zero (`"snap_000000"`, `"snap_000004"`) across runs.
+- There is no independent `run_id` or `session_id` in the observation schema.
 - **Integration Requirement**: If Person B runs multiple simulation experiments or Monte Carlo trials, Person B must manage the run identifier externally (e.g., in their own wrapper class, file naming, or directory structure).
 
 ### 6.2 Rolling Trajectory Window vs Lifetime History
