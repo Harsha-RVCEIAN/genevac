@@ -154,7 +154,7 @@ class LiveAnalyticsPipeline:
         """Reset all pipeline state, adapter, heatmap engine, and series."""
         if new_run_id is not None:
             self.run_id = str(new_run_id)
-        self.adapter.reset()
+        self.adapter.reset(run_id=self.run_id)
         self.heatmap_engine.reset(new_run_id=self.run_id)
         self._last_processed_step = -1
         self._last_processed_timestamp = -1.0
@@ -189,7 +189,7 @@ class LiveAnalyticsPipeline:
             self.reset(new_run_id=current_run_id)
 
         # Update adapter (returns number of newly accepted observations)
-        new_obs_count = self.adapter.update_from_simulation(engine, force=force)
+        new_obs_count = self.adapter.update_from_simulation(engine, force=force, run_id=self.run_id)
         has_new_data = (step != self._last_processed_step) and (new_obs_count > 0 or force)
 
         if has_new_data:
@@ -276,6 +276,10 @@ class LiveAnalyticsPipeline:
             ),
             "clearance_time": MetricRecord(
                 "clearance_time", "Total Elapsed Simulation Time", clear_time, "s",
+                base_status, 1, step, sim_time
+            ),
+            "total_elapsed_time": MetricRecord(
+                "total_elapsed_time", "Total Elapsed Simulation Time", sim_time, "s",
                 base_status, 1, step, sim_time
             ),
             "min_separation": MetricRecord(

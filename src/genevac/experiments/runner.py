@@ -57,6 +57,7 @@ class ComparisonStudyResult:
     metric_deltas: Dict[Tuple[str, str], MetricDelta]  # (variant_id, metric_id) -> Delta
     executed_at: str
     reproducibility_notes: str
+    repetition_sample_type: str = "deterministic_duplicate"
 
 
 class ScenarioComparisonRunner:
@@ -99,39 +100,7 @@ class ScenarioComparisonRunner:
                 all_run_records.append(run_rec)
                 all_per_run_results.extend(metrics)
 
-        # 2. Audit Comparability across baseline and variants
-        base_sc = scenario_map[comparison.baseline_scenario_id]
-        base_meta_common = {
-            "environment_bounds": (0.0, 0.0, base_sc.engine_config.get("width", 50.0), base_sc.engine_config.get("height", 20.0)),
-            "agent_count": base_sc.agent_count,
-            "simulated_duration": base_sc.engine_config.get("max_steps", 100) * base_sc.engine_config.get("timestep", 0.1),
-        }
-
-        comparability_results: Dict[Tuple[str, str], ComparabilityResult] = {}
-        for s_id in comparison.scenario_ids:
-            if s_id == comparison.baseline_scenario_id:
-                continue
-            var_sc = scenario_map[s_id]
-            var_meta_common = {
-                "environment_bounds": (0.0, 0.0, var_sc.engine_config.get("width", 50.0), var_sc.engine_config.get("height", 20.0)),
-                "agent_count": var_sc.agent_count,
-                "simulated_duration": var_sc.engine_config.get("max_steps", 100) * var_sc.engine_config.get("timestep", 0.1),
-            }
-
-            for m_id in comparison.dependent_metrics:
-                # Infer unit from metrics catalogue conventions
-                unit = cls._get_metric_unit(m_id)
-                base_meta = {**base_meta_common, "unit": unit}
-                var_meta = {**var_meta_common, "unit": unit}
-                comp_res = ComparabilityGate.evaluate_metric_comparability(
-                    metric_id=m_id,
-                    baseline_meta=base_meta,
-                    variant_meta=var_meta,
-                    comparability_policy=comparison.comparability_policy,
-                )
-                comparability_results[(s_id, m_id)] = comp_res
-
-        # 3. Deterministic Aggregation
+        # 2. Deterministic Aggregation (Per-run first)
         aggregates: Dict[Tuple[str, str], AggregateMetricResult] = {}
         for s_id in comparison.scenario_ids:
             for m_id in comparison.dependent_metrics:
@@ -144,6 +113,49 @@ class ScenarioComparisonRunner:
                     unit=unit,
                 )
                 aggregates[(s_id, m_id)] = agg
+
+        # 3. Audit Comparability across baseline and variants
+        base_sc = scenario_map[comparison.baseline_scenario_id]
+        comparability_results: Dict[Tuple[str, str], ComparabilityResult] = {}
+        for s_id in comparison.scenario_ids:
+            if s_id == comparison.baseline_scenario_id:
+                continue
+            var_sc = scenario_map[s_id]
+
+            for m_id in comparison.dependent_metrics:
+                unit = cls._get_metric_unit(m_id)
+                base_agg = aggregates[(comparison.baseline_scenario_id, m_id)]
+                var_agg = aggregates[(s_id, m_id)]
+
+                base_data_avail = (base_agg.eligible_run_count > 0 and base_agg.mean is not None)
+                var_data_avail = (var_agg.eligible_run_count > 0 and var_agg.mean is not None)
+
+                base_meta = {
+                    "environment_bounds": (0.0, 0.0, base_sc.engine_config.get("width", 50.0), base_sc.engine_config.get("height", 20.0)),
+                    "agent_count": base_sc.agent_count,
+                    "simulated_duration": base_sc.engine_config.get("max_steps", 100) * base_sc.engine_config.get("timestep", 0.1),
+                    "unit": unit,
+                    "data_available": base_data_avail,
+                    "status": "VALID" if base_data_avail else "UNAVAILABLE",
+                    "exit_events_available": False if m_id == "exit_throughput" else True,
+                }
+                var_meta = {
+                    "environment_bounds": (0.0, 0.0, var_sc.engine_config.get("width", 50.0), var_sc.engine_config.get("height", 20.0)),
+                    "agent_count": var_sc.agent_count,
+                    "simulated_duration": var_sc.engine_config.get("max_steps", 100) * var_sc.engine_config.get("timestep", 0.1),
+                    "unit": unit,
+                    "data_available": var_data_avail,
+                    "status": "VALID" if var_data_avail else "UNAVAILABLE",
+                    "exit_events_available": False if m_id == "exit_throughput" else True,
+                }
+
+                comp_res = ComparabilityGate.evaluate_metric_comparability(
+                    metric_id=m_id,
+                    baseline_meta=base_meta,
+                    variant_meta=var_meta,
+                    comparability_policy=comparison.comparability_policy,
+                )
+                comparability_results[(s_id, m_id)] = comp_res
 
         # 4. Compute Baseline Deltas
         metric_deltas: Dict[Tuple[str, str], MetricDelta] = {}
@@ -175,10 +187,17 @@ class ScenarioComparisonRunner:
                 )
 
         now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
-        repro_notes = (
-            "Runs executed with deterministic simulation dynamics. "
-            f"Repetition count: {repetitions}. Config fingerprinting enforced."
-        )
+        has_determ_reps = any(agg.is_deterministic_repetition for agg in aggregates.values() if agg.eligible_run_count > 1)
+        if has_determ_reps and repetitions > 1:
+            sample_type = "deterministic_duplicate"
+            repro_notes = (
+                f"Executed {repetitions} repetitions per scenario. "
+                "All multi-run metrics produced zero variance (std_dev = 0.0) due to deterministic simulation kinematics. "
+                "These are deterministic duplicates and must not be treated as independent stochastic samples."
+            )
+        else:
+            sample_type = "single_or_stochastic"
+            repro_notes = f"Executed {repetitions} repetitions per scenario. Config fingerprinting enforced."
 
         return ComparisonStudyResult(
             comparison=comparison,
@@ -190,6 +209,7 @@ class ScenarioComparisonRunner:
             metric_deltas=metric_deltas,
             executed_at=now_iso,
             reproducibility_notes=repro_notes,
+            repetition_sample_type=sample_type,
         )
 
     @classmethod
@@ -201,6 +221,42 @@ class ScenarioComparisonRunner:
     ) -> Tuple[RunRecord, List[PerRunMetricResult]]:
         """Run a single execution of a scenario using the simulation engine without mutating engine state."""
         start_time_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+        # 0. Validate Configuration before execution
+        is_valid, validation_errors = scenario.validate_configuration()
+        if not is_valid:
+            failure_msg = "; ".join(validation_errors)
+            run_rec = RunRecord(
+                run_id=run_id,
+                scenario_id=scenario.scenario_id,
+                scenario_version=scenario.version,
+                started_at=start_time_iso,
+                ended_at=start_time_iso,
+                seed=scenario.seed,
+                initial_agent_count=scenario.agent_count,
+                final_step=0,
+                simulated_duration=0.0,
+                termination_reason=TerminationReason.ERROR,
+                run_status=RunStatus.FAILED,
+                failure_reason=failure_msg,
+                config_fingerprint=scenario.compute_fingerprint(),
+                source_provenance={"engine": "genevac.simulation.SimulationEngine", "version": "1.0.0"},
+            )
+            failed_metrics = [
+                PerRunMetricResult(
+                    run_id=run_id,
+                    scenario_id=scenario.scenario_id,
+                    metric_id=m_id,
+                    display_name=m_id,
+                    value=None,
+                    unit=cls._get_metric_unit(m_id),
+                    status="FAILED",
+                    reason=failure_msg,
+                )
+                for m_id in ("total_elapsed_time", "clearance_time", "mean_speed", "area_density", "minimum_separation", "exit_throughput")
+            ]
+            return run_rec, failed_metrics
+
         cfg = scenario.engine_config
 
         # 1. Build Environment
@@ -293,7 +349,7 @@ class ScenarioComparisonRunner:
         # 5. Compute Phase 02 per-run metrics
         metrics: List[PerRunMetricResult] = []
         if run_status == RunStatus.SUCCESS:
-            # Metric: Total Elapsed Simulation Time (Clearance Time)
+            # Metric: Total Elapsed Simulation Time (Distinct from evacuation clearance time)
             metrics.append(
                 PerRunMetricResult(
                     run_id=run_id,
@@ -306,6 +362,35 @@ class ScenarioComparisonRunner:
                     time_window=(0.0, sim_duration),
                     source_step_range=(0, final_step),
                     valid_sample_count=1,
+                )
+            )
+
+            # Metric: Evacuation Clearance Time (Only VALID if all agents evacuated)
+            evacuated_peds = [p for p in engine.pedestrians if p.status == PedestrianStatus.EVACUATED]
+            if len(evacuated_peds) == initial_count and initial_count > 0:
+                clearance_val = sim_duration
+                clearance_status = "VALID"
+                clearance_reason = ""
+            else:
+                clearance_val = None
+                clearance_status = "UNAVAILABLE"
+                clearance_reason = (
+                    f"Evacuation incomplete: {len(evacuated_peds)}/{initial_count} evacuated before simulation end."
+                )
+
+            metrics.append(
+                PerRunMetricResult(
+                    run_id=run_id,
+                    scenario_id=scenario.scenario_id,
+                    metric_id="clearance_time",
+                    display_name="Evacuation Clearance Time",
+                    value=clearance_val,
+                    unit="seconds",
+                    status=clearance_status,
+                    reason=clearance_reason,
+                    time_window=(0.0, sim_duration),
+                    source_step_range=(0, final_step),
+                    valid_sample_count=1 if clearance_val is not None else 0,
                 )
             )
 
@@ -363,7 +448,7 @@ class ScenarioComparisonRunner:
                 )
             )
 
-            # Metric: Exit Throughput (Engine does not emit discrete exit event log -> UNAVAILABLE)
+            # Metric: Exit Throughput (Discrete exit events not emitted by engine -> UNAVAILABLE)
             metrics.append(
                 PerRunMetricResult(
                     run_id=run_id,
@@ -379,7 +464,7 @@ class ScenarioComparisonRunner:
             )
         else:
             # Record failed metric entries
-            for m_id in ("total_elapsed_time", "mean_speed", "area_density", "minimum_separation", "exit_throughput"):
+            for m_id in ("total_elapsed_time", "clearance_time", "mean_speed", "area_density", "minimum_separation", "exit_throughput"):
                 metrics.append(
                     PerRunMetricResult(
                         run_id=run_id,

@@ -74,6 +74,29 @@ class ComparabilityGate:
                     explanation=f"Metric '{metric_id}' lacks an authoritative specification and is blocked from comparison.",
                 )
 
+        # 2. Check Data Availability (A metric must not be marked comparable when underlying data does not exist)
+        base_status = baseline_meta.get("status")
+        var_status = variant_meta.get("status")
+        base_avail = baseline_meta.get("data_available", True)
+        var_avail = variant_meta.get("data_available", True)
+        base_exit_avail = baseline_meta.get("exit_events_available", True)
+        var_exit_avail = variant_meta.get("exit_events_available", True)
+
+        if (
+            base_avail is False
+            or var_avail is False
+            or base_status in ("UNAVAILABLE", "NOT_COMPUTED", "FAILED")
+            or var_status in ("UNAVAILABLE", "NOT_COMPUTED", "FAILED")
+            or (("exit_throughput" in metric_lower) and (base_exit_avail is False or var_exit_avail is False))
+        ):
+            return ComparabilityResult(
+                metric_id=metric_id,
+                decision=ComparabilityDecision.NOT_COMPARABLE,
+                reason_codes=("DATA_UNAVAILABLE",),
+                explanation=f"Underlying observation data for metric '{metric_id}' is unavailable in one or both scenarios.",
+                caveats=("Authoritative measurements or exit events absent; cross-scenario comparison cannot be made.",),
+            )
+
         # 2. Check Unit Compatibility
         base_unit = baseline_meta.get("unit", "").strip()
         var_unit = variant_meta.get("unit", "").strip()

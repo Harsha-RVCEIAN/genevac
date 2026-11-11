@@ -77,6 +77,70 @@ class ScenarioDefinition:
         serialized = json.dumps(canonical_dict, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
+    def validate_configuration(self) -> Tuple[bool, List[str]]:
+        """Validate engine configuration parameters against supported ranges and geometries."""
+        errors: List[str] = []
+        cfg = self.engine_config or {}
+
+        width = cfg.get("width", 50.0)
+        if not (isinstance(width, (int, float)) and math.isfinite(width) and width > 0):
+            errors.append(f"width must be a finite positive number, got {width!r}")
+
+        height = cfg.get("height", 20.0)
+        if not (isinstance(height, (int, float)) and math.isfinite(height) and height > 0):
+            errors.append(f"height must be a finite positive number, got {height!r}")
+
+        max_steps = cfg.get("max_steps", 100)
+        if not (isinstance(max_steps, int) and not isinstance(max_steps, bool) and max_steps >= 1):
+            errors.append(f"max_steps must be a positive integer, got {max_steps!r}")
+
+        timestep = cfg.get("timestep", 0.1)
+        if not (isinstance(timestep, (int, float)) and math.isfinite(timestep) and timestep > 0):
+            errors.append(f"timestep must be a finite positive number, got {timestep!r}")
+
+        if self.agent_count < 0:
+            errors.append(f"agent_count cannot be negative, got {self.agent_count}")
+
+        # Check exits
+        exits = cfg.get("exits", [])
+        if not isinstance(exits, list):
+            errors.append(f"exits must be a list of exit specifications, got {type(exits).__name__}")
+        else:
+            for i, ex in enumerate(exits):
+                if not isinstance(ex, dict) or not ex.get("id"):
+                    errors.append(f"exit[{i}] missing required 'id'")
+                pos = ex.get("position")
+                if not (isinstance(pos, (list, tuple)) and len(pos) == 2):
+                    errors.append(f"exit[{i}] position must be a 2-tuple (x, y)")
+                else:
+                    ex_x, ex_y = pos
+                    if not (math.isfinite(ex_x) and math.isfinite(ex_y)):
+                        errors.append(f"exit[{i}] position coordinates must be finite, got {pos!r}")
+                    elif not (0.0 <= ex_x <= width and 0.0 <= ex_y <= height):
+                        errors.append(f"exit[{i}] out-of-bounds: ({ex_x}, {ex_y}) outside room dimensions ({width}, {height})")
+
+        # Check obstacles
+        obstacles = cfg.get("obstacles", [])
+        if not isinstance(obstacles, list):
+            errors.append(f"obstacles must be a list of obstacle specifications, got {type(obstacles).__name__}")
+        else:
+            for i, obs in enumerate(obstacles):
+                if not isinstance(obs, dict) or not obs.get("id"):
+                    errors.append(f"obstacle[{i}] missing required 'id'")
+                bounds = obs.get("bounds")
+                if not (isinstance(bounds, (list, tuple)) and len(bounds) == 4):
+                    errors.append(f"obstacle[{i}] bounds must be a 4-tuple (min_x, min_y, max_x, max_y)")
+                else:
+                    min_x, min_y, max_x, max_y = bounds
+                    if not (math.isfinite(min_x) and math.isfinite(min_y) and math.isfinite(max_x) and math.isfinite(max_y)):
+                        errors.append(f"obstacle[{i}] coordinates must be finite, got {bounds!r}")
+                    elif min_x >= max_x or min_y >= max_y:
+                        errors.append(f"obstacle[{i}] has invalid degenerate geometry: min bounds must be strictly less than max bounds ({bounds!r})")
+                    elif min_x < 0.0 or max_x > width or min_y < 0.0 or max_y > height:
+                        errors.append(f"obstacle[{i}] out-of-bounds: bounds {bounds!r} exceed room dimensions ({width}, {height})")
+
+        return (len(errors) == 0, errors)
+
 
 @dataclass(frozen=True)
 class RunRecord:
@@ -177,6 +241,7 @@ class AggregateMetricResult:
     exclusion_reasons: Tuple[str, ...] = field(default_factory=tuple)
     contributing_run_ids: Tuple[str, ...] = field(default_factory=tuple)
     is_single_run: bool = False
+    is_deterministic_repetition: bool = False
 
 
 def aggregate_per_run_results(
@@ -270,9 +335,11 @@ def aggregate_per_run_results(
     if eligible_count >= min_samples_for_std:
         std_val = statistics.stdev(eligible_values)
         is_single = False
+        is_deterministic = math.isclose(std_val, 0.0)
     else:
         std_val = None
         is_single = True
+        is_deterministic = False
 
     return AggregateMetricResult(
         scenario_id=scenario_id,
@@ -294,4 +361,5 @@ def aggregate_per_run_results(
         exclusion_reasons=tuple(exclusion_reasons),
         contributing_run_ids=tuple(contributing_ids),
         is_single_run=is_single,
+        is_deterministic_repetition=is_deterministic,
     )
