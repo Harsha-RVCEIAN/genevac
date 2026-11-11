@@ -5,7 +5,7 @@ from collections import deque
 from collections.abc import Sequence
 from types import MappingProxyType
 
-from genevac.prediction.adapter import SimulationTrajectoryAdapter
+from genevac.prediction.adapter import SimulationTrajectoryAdapter, SnapshotAdaptationReport
 from genevac.prediction.baseline import ConstantVelocityPredictor
 from genevac.prediction.dataset_adapter import DatasetAdapter, SimulationEvaluationAdapter
 from genevac.prediction.evaluation import (
@@ -40,16 +40,6 @@ class TrajectoryHistoryBuffer:
         min_history_required: int = 2,
         max_observation_age: float | None = None,
     ):
-        """Create a new history buffer.
-
-        Args:
-            window_size: Maximum number of observations to keep per agent.
-            min_history_required: Minimum number of observations required for a
-                prediction.
-            max_observation_age: Optional maximum allowed age (in seconds) of the
-                *latest* observation relative to the reference timestamp used when
-                creating a snapshot. ``None`` disables the freshness check.
-        """
         if type(window_size) is not int or window_size <= 0:
             raise ValueError(f"window_size must be a positive integer, got {window_size}")
         if type(min_history_required) is not int or min_history_required < 1:
@@ -74,12 +64,6 @@ class TrajectoryHistoryBuffer:
         timestamp: float | None = None,
         category: TrajectoryCategory = TrajectoryCategory.SIMULATED,
     ) -> None:
-        """Record an observation in the cache.
-        
-        Can accept either a pre-constructed TrajectoryObservation or separate fields:
-        - `buf.record(obs)`
-        - `buf.record("ped_1", (10.0, 5.0), step_index=1, timestamp=0.1)`
-        """
         if isinstance(observation_or_agent_id, TrajectoryObservation):
             obs = observation_or_agent_id
         elif isinstance(observation_or_agent_id, str):
@@ -96,7 +80,6 @@ class TrajectoryHistoryBuffer:
                     agent_id=observation_or_agent_id,
                 )
 
-            # --- coordinate validation before conversion ---
             agent_id_str = observation_or_agent_id
             if not isinstance(position, (tuple, list)) or len(position) != 2:
                 raise TrajectoryValidationError(
@@ -107,8 +90,7 @@ class TrajectoryHistoryBuffer:
             for coord_name, coord_val in (("x", position[0]), ("y", position[1])):
                 if isinstance(coord_val, bool) or type(coord_val) not in (float, int):
                     raise TrajectoryValidationError(
-                        f"position {coord_name} coordinate must be a finite float or int "
-                        f"(bool, str, and other types are not allowed), got {type(coord_val).__name__!r}",
+                        f"position {coord_name} coordinate must be a finite float or int, got {type(coord_val).__name__!r}",
                         field=f"position.{coord_name}",
                         agent_id=agent_id_str,
                     )
@@ -133,7 +115,6 @@ class TrajectoryHistoryBuffer:
                 field="observation",
             )
 
-        # Reject PREDICTED category — predicted observations must never enter the authoritative buffer
         if obs.category == TrajectoryCategory.PREDICTED:
             raise TrajectoryValidationError(
                 f"Predicted observations must not be recorded in the authoritative history buffer. "
@@ -143,7 +124,6 @@ class TrajectoryHistoryBuffer:
                 step_index=obs.step_index,
             )
 
-        # Validate chronological order and check duplicates against the agent's last observation
         agent_id = obs.agent_id
         if agent_id not in self.history:
             self.history[agent_id] = deque(maxlen=self.window_size)
@@ -176,30 +156,19 @@ class TrajectoryHistoryBuffer:
         agent_deque.append(obs)
 
     def get_trajectory(self, agent_id: str, as_tuples: bool = True) -> list[tuple[float, float]] | list[TrajectoryObservation]:
-        """Retrieve an agent's history.
-        
-        Args:
-            agent_id: Identifier of the agent.
-            as_tuples: If True (default), returns list of (x, y) tuples for backwards
-                       compatibility with LinearTrajectoryPredictor.
-                       If False, returns list of TrajectoryObservation instances.
-        """
         agent_deque = self.history.get(agent_id, deque())
         if as_tuples:
             return [(obs.x, obs.y) for obs in agent_deque]
         return list(agent_deque)
 
     def get_observations(self, agent_id: str) -> tuple[TrajectoryObservation, ...]:
-        """Retrieve an agent's observations as an immutable tuple."""
         return tuple(self.history.get(agent_id, ()))
 
     def has_sufficient_history(self, agent_id: str, min_required: int | None = None) -> bool:
-        """Check whether the agent has accumulated at least min_required observations."""
         threshold = min_required if min_required is not None else self.min_history_required
         return len(self.history.get(agent_id, ())) >= threshold
 
     def get_agent_ids(self) -> list[str]:
-        """Return list of all agent IDs currently tracked in the buffer."""
         return list(self.history.keys())
 
     def is_latest_observation_fresh(
@@ -208,18 +177,6 @@ class TrajectoryHistoryBuffer:
         reference_timestamp: float,
         max_age: float | None = None,
     ) -> bool:
-        """Check whether the agent's latest observation is within the permitted age.
-
-        Args:
-            agent_id: Identifier of the agent to check.
-            reference_timestamp: Timestamp representing the current snapshot or reference time.
-            max_age: Maximum allowed age in seconds. If None, uses self.max_observation_age.
-                     If that is also None, returns True (no freshness limit enforced).
-
-        Returns:
-            True if latest observation exists and (reference_timestamp - latest_obs.timestamp) <= max_age.
-            False if agent is not in buffer, has no observations, or age exceeds max_age.
-        """
         allowed_age = max_age if max_age is not None else self.max_observation_age
         if allowed_age is None:
             return True
@@ -240,16 +197,6 @@ class TrajectoryHistoryBuffer:
         agent_ids: Sequence[str] | None = None,
         max_observation_age: float | None = None,
     ) -> TrajectorySnapshot:
-        """Create a read-only, immutable TrajectorySnapshot representing simulation state.
-        
-        Args:
-            current_step: Current simulation step index.
-            current_timestamp: Current simulation timestamp.
-            timestep: Simulation timestep.
-            agent_ids: Optional subset of agent IDs to include.
-            max_observation_age: Optional override for observation freshness validation.
-                                 If None, falls back to self.max_observation_age.
-        """
         target_ids = agent_ids if agent_ids is not None else list(self.history.keys())
         trajectories: dict[str, tuple[TrajectoryObservation, ...]] = {}
         for aid in target_ids:
@@ -269,7 +216,6 @@ class TrajectoryHistoryBuffer:
         return snapshot
 
     def clear(self, agent_id: str | None = None) -> None:
-        """Clear history for a specific agent or all agents."""
         if agent_id is not None:
             if agent_id in self.history:
                 del self.history[agent_id]
@@ -306,6 +252,7 @@ __all__ = [
     "SampleGenerator",
     "SimulationEvaluationAdapter",
     "SimulationTrajectoryAdapter",
+    "SnapshotAdaptationReport",
     "TrajectoryCategory",
     "TrajectoryEvaluationResult",
     "TrajectoryHistoryBuffer",

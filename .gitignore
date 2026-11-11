@@ -38,3 +38,8 @@ output/
 logs/
 *.log
 *.tmp
+
+# Reference Checkouts
+pavan-part1-reference/
+pavan-part1-references/
+

@@ -1,24 +1,47 @@
-"""Prediction accuracy and evacuation performance metrics."""
+"""Prediction accuracy, crowd dynamics, evacuation performance, and route validation metrics."""
 
-import math
-from typing import List, Tuple
+from genevac.metrics.trajectory import (
+    calculate_ade,
+    calculate_fde,
+    calculate_prediction_coverage,
+)
+from genevac.metrics.evacuation import (
+    calculate_agent_evacuation_times,
+    calculate_clearance_time,
+    calculate_evacuation_rate_series,
+    calculate_exit_throughput,
+)
+from genevac.metrics.crowd import (
+    calculate_area_density,
+    calculate_minimum_separation,
+)
+from genevac.metrics.route_checks import (
+    PathCheckResult,
+    PathCheckStatus,
+    PathValidationSummary,
+    calculate_geometric_path_length,
+    validate_evacuation_path,
+)
+from genevac.metrics.aggregation import (
+    MetricSummary,
+    aggregate_metric_series,
+)
 
-
-def calculate_ade(ground_truth: List[Tuple[float, float]], predicted: List[Tuple[float, float]]) -> float:
-    """Average Displacement Error (ADE)."""
-    if not ground_truth or not predicted or len(ground_truth) != len(predicted):
-        raise ValueError("Ground truth and prediction sequences must be non-empty and of equal length.")
-    total_disp = sum(math.hypot(gt[0] - pred[0], gt[1] - pred[1]) for gt, pred in zip(ground_truth, predicted))
-    return total_disp / len(ground_truth)
-
-
-def calculate_fde(ground_truth: List[Tuple[float, float]], predicted: List[Tuple[float, float]]) -> float:
-    """Final Displacement Error (FDE)."""
-    if not ground_truth or not predicted or len(ground_truth) != len(predicted):
-        raise ValueError("Ground truth and prediction sequences must be non-empty and of equal length.")
-    return math.hypot(ground_truth[-1][0] - predicted[-1][0], ground_truth[-1][1] - predicted[-1][1])
-
-
-def calculate_clearance_time(step_count: int, dt: float) -> float:
-    """Total clearance time in seconds."""
-    return step_count * dt
+__all__ = [
+    "calculate_ade",
+    "calculate_fde",
+    "calculate_prediction_coverage",
+    "calculate_clearance_time",
+    "calculate_agent_evacuation_times",
+    "calculate_exit_throughput",
+    "calculate_evacuation_rate_series",
+    "calculate_minimum_separation",
+    "calculate_area_density",
+    "calculate_geometric_path_length",
+    "validate_evacuation_path",
+    "PathCheckResult",
+    "PathCheckStatus",
+    "PathValidationSummary",
+    "MetricSummary",
+    "aggregate_metric_series",
+]

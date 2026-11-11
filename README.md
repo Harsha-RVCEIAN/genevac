@@ -93,3 +93,19 @@ python scripts/evaluate_predictions.py
 ```bash
 pytest
 ```
+GenEvac-Sentinel — Module B Person B Implementation Plan
+This folder contains the staged implementation plan for Person B / Module B Part 2.
+Ownership
+Pavan / Person A in the supplied schedule: Module B Part 1 — simulation engine.
+Harsha / Person B in the supplied schedule: Module B Part 2 — metrics, heatmaps, charts, exports, scenario comparisons, baseline trajectory prediction, MID investigation, experiments, evaluation, and research presentation.
+Module A: owned by other teammates. It is outside this implementation scope.
+How to use these files
+Read `00_EXECUTION_ORDER.md` first. It defines the phase order and approval gates. Then use the corresponding phase document. Do not ask the agent to execute all phases in one pass.
+The plan is designed to audit and reuse the current repository implementation first. Existing prediction/evaluation code must not be rewritten merely to match a new document.
+Important evidence rule
+Earlier project notes reported a 158-test passing result and described existing prediction files. Those are historical reports, not proof about the current checkout. Antigravity must inspect the actual branch, source, tests, and Pavan's current public simulation API before making claims.
+Suggested working arrangement
+Work on Harsha's own branch/worktree.
+Treat `pavan-part1-reference/`, if present, as read-only.
+Do not merge, rebase, cherry-pick, commit, push, or modify another person's branch without explicit approval.
+Stop at each phase gate and wait for Harsha's approval.
