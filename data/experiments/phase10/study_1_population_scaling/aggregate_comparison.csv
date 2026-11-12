@@ -1,0 +1,16 @@
+experiment_id,scenario_id,metric_name,mean,standard_deviation,minimum,maximum,sample_count,comparability_decision,availability_status,unavailable_reason
+study_pop_scaling,pop_05_baseline,area_density,0.005000,0.000000,0.005000,0.005000,2,BASELINE,VALID,
+study_pop_scaling,pop_05_baseline,exit_throughput,,,,,0,BASELINE,UNAVAILABLE,Run pop_05_baseline_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).; Run pop_05_baseline_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).
+study_pop_scaling,pop_05_baseline,mean_speed,1.000000,0.000000,1.000000,1.000000,2,BASELINE,VALID,
+study_pop_scaling,pop_05_baseline,minimum_separation,2.000000,0.000000,2.000000,2.000000,2,BASELINE,VALID,
+study_pop_scaling,pop_05_baseline,total_elapsed_time,4.000000,0.000000,4.000000,4.000000,2,BASELINE,VALID,
+study_pop_scaling,pop_15_medium,area_density,0.015000,0.000000,0.015000,0.015000,2,COMPARABLE_WITH_CAVEATS,VALID,
+study_pop_scaling,pop_15_medium,exit_throughput,,,,,0,NOT_COMPARABLE,UNAVAILABLE,Run pop_15_medium_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).; Run pop_15_medium_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).
+study_pop_scaling,pop_15_medium,mean_speed,1.000000,0.000000,1.000000,1.000000,2,COMPARABLE_WITH_CAVEATS,VALID,
+study_pop_scaling,pop_15_medium,minimum_separation,2.000000,0.000000,2.000000,2.000000,2,COMPARABLE_WITH_CAVEATS,VALID,
+study_pop_scaling,pop_15_medium,total_elapsed_time,4.000000,0.000000,4.000000,4.000000,2,COMPARABLE_WITH_CAVEATS,VALID,
+study_pop_scaling,pop_30_high,area_density,0.030000,0.000000,0.030000,0.030000,2,COMPARABLE_WITH_CAVEATS,VALID,
+study_pop_scaling,pop_30_high,exit_throughput,,,,,0,NOT_COMPARABLE,UNAVAILABLE,Run pop_30_high_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).; Run pop_30_high_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).
+study_pop_scaling,pop_30_high,mean_speed,1.000000,0.000000,1.000000,1.000000,2,COMPARABLE_WITH_CAVEATS,VALID,
+study_pop_scaling,pop_30_high,minimum_separation,2.000000,0.000000,2.000000,2.000000,2,COMPARABLE_WITH_CAVEATS,VALID,
+study_pop_scaling,pop_30_high,total_elapsed_time,4.000000,0.000000,4.000000,4.000000,2,COMPARABLE_WITH_CAVEATS,VALID,

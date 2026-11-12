@@ -15,6 +15,14 @@ from genevac.prediction.evaluation import (
     SampleGenerator,
     TrajectoryEvaluationResult,
 )
+from genevac.prediction.mid import (
+    EvacuationConditioning,
+    EvacuationMIDConfig,
+    EvacuationMIDNetwork,
+    EvacuationMIDPredictor,
+    MultiTrajectoryPrediction,
+    line_segment_intersects_box,
+)
 from genevac.prediction.data_contract import (
     PredictedPosition,
     TrajectoryCategory,
@@ -246,7 +254,13 @@ __all__ = [
     "ConstantVelocityPredictor",
     "DatasetAdapter",
     "EvaluationSample",
+    "EvacuationConditioning",
+    "EvacuationMIDConfig",
+    "EvacuationMIDNetwork",
+    "EvacuationMIDPredictor",
     "LinearTrajectoryPredictor",
+    "MultiTrajectoryPrediction",
+    "line_segment_intersects_box",
     "PredictedPosition",
     "PredictionEvaluator",
     "SampleGenerator",

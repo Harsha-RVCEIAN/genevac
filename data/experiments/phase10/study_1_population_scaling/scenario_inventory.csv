@@ -1,0 +1,4 @@
+experiment_id,scenario_id,scenario_name,scenario_version,scenario_description,role,agent_count,environment_id,room_width,room_height,obstacle_count,exit_count,max_steps,timestep,seed,stopping_condition,config_fingerprint
+study_pop_scaling,pop_05_baseline,Corridor Low Density (5 peds),1.0.0,Corridor with 5 evacuees,BASELINE,5,default_env,50.00,20.00,0,1,40,0.1000,101,max_steps_or_empty,b2b8fed82b721a1e7924cbbf8885e88c2a7435fc070d61c929ececbb475f2e20
+study_pop_scaling,pop_15_medium,Corridor Medium Density (15 peds),1.0.0,Corridor with 15 evacuees,VARIANT,15,default_env,50.00,20.00,0,1,40,0.1000,101,max_steps_or_empty,1a4087494b6939b6ee51ac85082cc1e33ee31055e38df63a0f003aedf1716156
+study_pop_scaling,pop_30_high,Corridor High Density (30 peds),1.0.0,Corridor with 30 evacuees,VARIANT,30,default_env,50.00,20.00,0,1,40,0.1000,101,max_steps_or_empty,aa18520b368d445c1310a58284d60a25fd14d97d5478e83e6efb56d717f7feda

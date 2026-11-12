@@ -1,0 +1,1530 @@
+{
+  "schema_version": "1.0.0",
+  "software_version": "1.0.0",
+  "experiment_identifier": "study_exit_configuration",
+  "comparison_metadata": {
+    "title": "Exit Width and Dual Portal Bottleneck Evaluation",
+    "research_question": "Evaluate the impact of exit width constriction and dual exit availability on evacuation flow.",
+    "baseline_scenario_id": "exit_std_baseline",
+    "scenario_ids": [
+      "exit_std_baseline",
+      "exit_narrow_bottleneck",
+      "exit_dual_portals"
+    ],
+    "independent_variable": "exit_portal_configuration",
+    "dependent_metrics": [
+      "total_elapsed_time",
+      "mean_speed",
+      "area_density",
+      "minimum_separation",
+      "exit_throughput"
+    ],
+    "controlled_factors": {
+      "width": 50.0,
+      "height": 20.0,
+      "agent_count": 20,
+      "timestep": 0.1,
+      "max_steps": 40
+    },
+    "seed_policy": "deterministic_constant",
+    "notes": ""
+  },
+  "executed_at": "2026-11-12T04:54:06.225303+00:00",
+  "scenarios": {
+    "exit_dual_portals": {
+      "scenario_id": "exit_dual_portals",
+      "name": "Dual Exit Portals (2x 2.5m)",
+      "version": "1.0.0",
+      "description": "Dual exit doors at north-east and south-east",
+      "environment_id": "default_env",
+      "environment_version": "1.0.0",
+      "agent_count": 20,
+      "engine_config": {
+        "width": 50.0,
+        "height": 20.0,
+        "max_steps": 40,
+        "timestep": 0.1,
+        "exits": [
+          {
+            "id": "exit_ne",
+            "position": [
+              50.0,
+              5.0
+            ],
+            "width": 2.5
+          },
+          {
+            "id": "exit_se",
+            "position": [
+              50.0,
+              15.0
+            ],
+            "width": 2.5
+          }
+        ],
+        "obstacles": []
+      },
+      "seed": 303,
+      "stopping_condition": "max_steps_or_empty",
+      "max_duration": null,
+      "config_fingerprint": "60977ae66027e6e0fcab80d668d59dc8836e91f73d56e721e60b11620d84e9f5"
+    },
+    "exit_narrow_bottleneck": {
+      "scenario_id": "exit_narrow_bottleneck",
+      "name": "Narrow Exit Bottleneck (1.0m)",
+      "version": "1.0.0",
+      "description": "Single narrow bottleneck 1.0m exit door",
+      "environment_id": "default_env",
+      "environment_version": "1.0.0",
+      "agent_count": 20,
+      "engine_config": {
+        "width": 50.0,
+        "height": 20.0,
+        "max_steps": 40,
+        "timestep": 0.1,
+        "exits": [
+          {
+            "id": "exit_east",
+            "position": [
+              50.0,
+              10.0
+            ],
+            "width": 1.0
+          }
+        ],
+        "obstacles": []
+      },
+      "seed": 303,
+      "stopping_condition": "max_steps_or_empty",
+      "max_duration": null,
+      "config_fingerprint": "a88261ebee45cdb082cfbf7df975af0d3a9a02ceea2a804dfe3a6e5f36fb67bf"
+    },
+    "exit_std_baseline": {
+      "scenario_id": "exit_std_baseline",
+      "name": "Standard Exit Baseline (3.0m)",
+      "version": "1.0.0",
+      "description": "Single standard 3.0m exit door",
+      "environment_id": "default_env",
+      "environment_version": "1.0.0",
+      "agent_count": 20,
+      "engine_config": {
+        "width": 50.0,
+        "height": 20.0,
+        "max_steps": 40,
+        "timestep": 0.1,
+        "exits": [
+          {
+            "id": "exit_east",
+            "position": [
+              50.0,
+              10.0
+            ],
+            "width": 3.0
+          }
+        ],
+        "obstacles": []
+      },
+      "seed": 303,
+      "stopping_condition": "max_steps_or_empty",
+      "max_duration": null,
+      "config_fingerprint": "26e91f29dff98d9723cfd2798efcb7f614d5d02b5c2f61254b4ea3f75d62fc00"
+    }
+  },
+  "run_records": [
+    {
+      "run_id": "exit_dual_portals_run_01",
+      "scenario_id": "exit_dual_portals",
+      "scenario_version": "1.0.0",
+      "started_at": "2026-11-12T04:54:06.225303+00:00",
+      "ended_at": "2026-11-12T04:54:06.225303+00:00",
+      "seed": 303,
+      "initial_agent_count": 20,
+      "final_step": 40,
+      "simulated_duration": 4.0,
+      "termination_reason": "MAX_STEPS_REACHED",
+      "run_status": "SUCCESS",
+      "failure_reason": "",
+      "config_fingerprint": "60977ae66027e6e0fcab80d668d59dc8836e91f73d56e721e60b11620d84e9f5"
+    },
+    {
+      "run_id": "exit_dual_portals_run_02",
+      "scenario_id": "exit_dual_portals",
+      "scenario_version": "1.0.0",
+      "started_at": "2026-11-12T04:54:06.225303+00:00",
+      "ended_at": "2026-11-12T04:54:06.225303+00:00",
+      "seed": 303,
+      "initial_agent_count": 20,
+      "final_step": 40,
+      "simulated_duration": 4.0,
+      "termination_reason": "MAX_STEPS_REACHED",
+      "run_status": "SUCCESS",
+      "failure_reason": "",
+      "config_fingerprint": "60977ae66027e6e0fcab80d668d59dc8836e91f73d56e721e60b11620d84e9f5"
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_01",
+      "scenario_id": "exit_narrow_bottleneck",
+      "scenario_version": "1.0.0",
+      "started_at": "2026-11-12T04:54:06.222101+00:00",
+      "ended_at": "2026-11-12T04:54:06.225303+00:00",
+      "seed": 303,
+      "initial_agent_count": 20,
+      "final_step": 40,
+      "simulated_duration": 4.0,
+      "termination_reason": "MAX_STEPS_REACHED",
+      "run_status": "SUCCESS",
+      "failure_reason": "",
+      "config_fingerprint": "a88261ebee45cdb082cfbf7df975af0d3a9a02ceea2a804dfe3a6e5f36fb67bf"
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_02",
+      "scenario_id": "exit_narrow_bottleneck",
+      "scenario_version": "1.0.0",
+      "started_at": "2026-11-12T04:54:06.225303+00:00",
+      "ended_at": "2026-11-12T04:54:06.225303+00:00",
+      "seed": 303,
+      "initial_agent_count": 20,
+      "final_step": 40,
+      "simulated_duration": 4.0,
+      "termination_reason": "MAX_STEPS_REACHED",
+      "run_status": "SUCCESS",
+      "failure_reason": "",
+      "config_fingerprint": "a88261ebee45cdb082cfbf7df975af0d3a9a02ceea2a804dfe3a6e5f36fb67bf"
+    },
+    {
+      "run_id": "exit_std_baseline_run_01",
+      "scenario_id": "exit_std_baseline",
+      "scenario_version": "1.0.0",
+      "started_at": "2026-11-12T04:54:06.222101+00:00",
+      "ended_at": "2026-11-12T04:54:06.222101+00:00",
+      "seed": 303,
+      "initial_agent_count": 20,
+      "final_step": 40,
+      "simulated_duration": 4.0,
+      "termination_reason": "MAX_STEPS_REACHED",
+      "run_status": "SUCCESS",
+      "failure_reason": "",
+      "config_fingerprint": "26e91f29dff98d9723cfd2798efcb7f614d5d02b5c2f61254b4ea3f75d62fc00"
+    },
+    {
+      "run_id": "exit_std_baseline_run_02",
+      "scenario_id": "exit_std_baseline",
+      "scenario_version": "1.0.0",
+      "started_at": "2026-11-12T04:54:06.222101+00:00",
+      "ended_at": "2026-11-12T04:54:06.222101+00:00",
+      "seed": 303,
+      "initial_agent_count": 20,
+      "final_step": 40,
+      "simulated_duration": 4.0,
+      "termination_reason": "MAX_STEPS_REACHED",
+      "run_status": "SUCCESS",
+      "failure_reason": "",
+      "config_fingerprint": "26e91f29dff98d9723cfd2798efcb7f614d5d02b5c2f61254b4ea3f75d62fc00"
+    }
+  ],
+  "per_run_metrics": [
+    {
+      "run_id": "exit_dual_portals_run_01",
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "area_density",
+      "display_name": "Pedestrian Area Density",
+      "value": 0.02,
+      "unit": "ped/m²",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_dual_portals_run_01",
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "clearance_time",
+      "display_name": "Evacuation Clearance Time",
+      "value": null,
+      "unit": "seconds",
+      "status": "UNAVAILABLE",
+      "reason": "Evacuation incomplete: 0/20 evacuated before simulation end.",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_dual_portals_run_01",
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "exit_throughput",
+      "display_name": "Exit Throughput Rate",
+      "value": null,
+      "unit": "ped/s",
+      "status": "UNAVAILABLE",
+      "reason": "Authoritative discrete exit events not emitted by engine.",
+      "time_window": [
+        0.0,
+        0.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_dual_portals_run_01",
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "mean_speed",
+      "display_name": "Mean Pedestrian Speed",
+      "value": 1.0,
+      "unit": "m/s",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 20,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_dual_portals_run_01",
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "minimum_separation",
+      "display_name": "Minimum Pedestrian Separation",
+      "value": 2.0,
+      "unit": "metres",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 20,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_dual_portals_run_01",
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "total_elapsed_time",
+      "display_name": "Total Elapsed Simulation Time",
+      "value": 4.0,
+      "unit": "seconds",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_dual_portals_run_02",
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "area_density",
+      "display_name": "Pedestrian Area Density",
+      "value": 0.02,
+      "unit": "ped/m²",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_dual_portals_run_02",
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "clearance_time",
+      "display_name": "Evacuation Clearance Time",
+      "value": null,
+      "unit": "seconds",
+      "status": "UNAVAILABLE",
+      "reason": "Evacuation incomplete: 0/20 evacuated before simulation end.",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_dual_portals_run_02",
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "exit_throughput",
+      "display_name": "Exit Throughput Rate",
+      "value": null,
+      "unit": "ped/s",
+      "status": "UNAVAILABLE",
+      "reason": "Authoritative discrete exit events not emitted by engine.",
+      "time_window": [
+        0.0,
+        0.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_dual_portals_run_02",
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "mean_speed",
+      "display_name": "Mean Pedestrian Speed",
+      "value": 1.0,
+      "unit": "m/s",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 20,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_dual_portals_run_02",
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "minimum_separation",
+      "display_name": "Minimum Pedestrian Separation",
+      "value": 2.0,
+      "unit": "metres",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 20,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_dual_portals_run_02",
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "total_elapsed_time",
+      "display_name": "Total Elapsed Simulation Time",
+      "value": 4.0,
+      "unit": "seconds",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_01",
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "area_density",
+      "display_name": "Pedestrian Area Density",
+      "value": 0.02,
+      "unit": "ped/m²",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_01",
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "clearance_time",
+      "display_name": "Evacuation Clearance Time",
+      "value": null,
+      "unit": "seconds",
+      "status": "UNAVAILABLE",
+      "reason": "Evacuation incomplete: 0/20 evacuated before simulation end.",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_01",
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "exit_throughput",
+      "display_name": "Exit Throughput Rate",
+      "value": null,
+      "unit": "ped/s",
+      "status": "UNAVAILABLE",
+      "reason": "Authoritative discrete exit events not emitted by engine.",
+      "time_window": [
+        0.0,
+        0.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_01",
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "mean_speed",
+      "display_name": "Mean Pedestrian Speed",
+      "value": 1.0,
+      "unit": "m/s",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 20,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_01",
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "minimum_separation",
+      "display_name": "Minimum Pedestrian Separation",
+      "value": 2.0,
+      "unit": "metres",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 20,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_01",
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "total_elapsed_time",
+      "display_name": "Total Elapsed Simulation Time",
+      "value": 4.0,
+      "unit": "seconds",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_02",
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "area_density",
+      "display_name": "Pedestrian Area Density",
+      "value": 0.02,
+      "unit": "ped/m²",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_02",
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "clearance_time",
+      "display_name": "Evacuation Clearance Time",
+      "value": null,
+      "unit": "seconds",
+      "status": "UNAVAILABLE",
+      "reason": "Evacuation incomplete: 0/20 evacuated before simulation end.",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_02",
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "exit_throughput",
+      "display_name": "Exit Throughput Rate",
+      "value": null,
+      "unit": "ped/s",
+      "status": "UNAVAILABLE",
+      "reason": "Authoritative discrete exit events not emitted by engine.",
+      "time_window": [
+        0.0,
+        0.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_02",
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "mean_speed",
+      "display_name": "Mean Pedestrian Speed",
+      "value": 1.0,
+      "unit": "m/s",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 20,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_02",
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "minimum_separation",
+      "display_name": "Minimum Pedestrian Separation",
+      "value": 2.0,
+      "unit": "metres",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 20,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_narrow_bottleneck_run_02",
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "total_elapsed_time",
+      "display_name": "Total Elapsed Simulation Time",
+      "value": 4.0,
+      "unit": "seconds",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_std_baseline_run_01",
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "area_density",
+      "display_name": "Pedestrian Area Density",
+      "value": 0.02,
+      "unit": "ped/m²",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_std_baseline_run_01",
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "clearance_time",
+      "display_name": "Evacuation Clearance Time",
+      "value": null,
+      "unit": "seconds",
+      "status": "UNAVAILABLE",
+      "reason": "Evacuation incomplete: 0/20 evacuated before simulation end.",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_std_baseline_run_01",
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "exit_throughput",
+      "display_name": "Exit Throughput Rate",
+      "value": null,
+      "unit": "ped/s",
+      "status": "UNAVAILABLE",
+      "reason": "Authoritative discrete exit events not emitted by engine.",
+      "time_window": [
+        0.0,
+        0.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_std_baseline_run_01",
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "mean_speed",
+      "display_name": "Mean Pedestrian Speed",
+      "value": 1.0,
+      "unit": "m/s",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 20,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_std_baseline_run_01",
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "minimum_separation",
+      "display_name": "Minimum Pedestrian Separation",
+      "value": 2.0,
+      "unit": "metres",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 20,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_std_baseline_run_01",
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "total_elapsed_time",
+      "display_name": "Total Elapsed Simulation Time",
+      "value": 4.0,
+      "unit": "seconds",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_std_baseline_run_02",
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "area_density",
+      "display_name": "Pedestrian Area Density",
+      "value": 0.02,
+      "unit": "ped/m²",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_std_baseline_run_02",
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "clearance_time",
+      "display_name": "Evacuation Clearance Time",
+      "value": null,
+      "unit": "seconds",
+      "status": "UNAVAILABLE",
+      "reason": "Evacuation incomplete: 0/20 evacuated before simulation end.",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_std_baseline_run_02",
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "exit_throughput",
+      "display_name": "Exit Throughput Rate",
+      "value": null,
+      "unit": "ped/s",
+      "status": "UNAVAILABLE",
+      "reason": "Authoritative discrete exit events not emitted by engine.",
+      "time_window": [
+        0.0,
+        0.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_std_baseline_run_02",
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "mean_speed",
+      "display_name": "Mean Pedestrian Speed",
+      "value": 1.0,
+      "unit": "m/s",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 20,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_std_baseline_run_02",
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "minimum_separation",
+      "display_name": "Minimum Pedestrian Separation",
+      "value": 2.0,
+      "unit": "metres",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 20,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "exit_std_baseline_run_02",
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "total_elapsed_time",
+      "display_name": "Total Elapsed Simulation Time",
+      "value": 4.0,
+      "unit": "seconds",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    }
+  ],
+  "aggregate_metrics": [
+    {
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "area_density",
+      "unit": "ped/m²",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 0.02,
+      "median": 0.02,
+      "std_dev": 0.0,
+      "min_val": 0.02,
+      "max_val": 0.02,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "exit_dual_portals_run_01",
+        "exit_dual_portals_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run exit_dual_portals_run_01: Valid observation 0.0200 ped/m²",
+        "Run exit_dual_portals_run_02: Valid observation 0.0200 ped/m²"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "exit_throughput",
+      "unit": "ped/s",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 0,
+      "excluded_run_count": 2,
+      "unavailable_count": 2,
+      "mean": null,
+      "median": null,
+      "std_dev": null,
+      "min_val": null,
+      "max_val": null,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [],
+      "is_single_run": false,
+      "is_deterministic_repetition": false,
+      "inclusion_reasons": [],
+      "exclusion_reasons": [
+        "Run exit_dual_portals_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).",
+        "Run exit_dual_portals_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.)."
+      ]
+    },
+    {
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "mean_speed",
+      "unit": "m/s",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 1.0,
+      "median": 1.0,
+      "std_dev": 0.0,
+      "min_val": 1.0,
+      "max_val": 1.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "exit_dual_portals_run_01",
+        "exit_dual_portals_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run exit_dual_portals_run_01: Valid observation 1.0000 m/s",
+        "Run exit_dual_portals_run_02: Valid observation 1.0000 m/s"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "minimum_separation",
+      "unit": "metres",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 2.0,
+      "median": 2.0,
+      "std_dev": 0.0,
+      "min_val": 2.0,
+      "max_val": 2.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "exit_dual_portals_run_01",
+        "exit_dual_portals_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run exit_dual_portals_run_01: Valid observation 2.0000 metres",
+        "Run exit_dual_portals_run_02: Valid observation 2.0000 metres"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "exit_dual_portals",
+      "metric_id": "total_elapsed_time",
+      "unit": "seconds",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 4.0,
+      "median": 4.0,
+      "std_dev": 0.0,
+      "min_val": 4.0,
+      "max_val": 4.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "exit_dual_portals_run_01",
+        "exit_dual_portals_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run exit_dual_portals_run_01: Valid observation 4.0000 seconds",
+        "Run exit_dual_portals_run_02: Valid observation 4.0000 seconds"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "area_density",
+      "unit": "ped/m²",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 0.02,
+      "median": 0.02,
+      "std_dev": 0.0,
+      "min_val": 0.02,
+      "max_val": 0.02,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "exit_narrow_bottleneck_run_01",
+        "exit_narrow_bottleneck_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run exit_narrow_bottleneck_run_01: Valid observation 0.0200 ped/m²",
+        "Run exit_narrow_bottleneck_run_02: Valid observation 0.0200 ped/m²"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "exit_throughput",
+      "unit": "ped/s",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 0,
+      "excluded_run_count": 2,
+      "unavailable_count": 2,
+      "mean": null,
+      "median": null,
+      "std_dev": null,
+      "min_val": null,
+      "max_val": null,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [],
+      "is_single_run": false,
+      "is_deterministic_repetition": false,
+      "inclusion_reasons": [],
+      "exclusion_reasons": [
+        "Run exit_narrow_bottleneck_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).",
+        "Run exit_narrow_bottleneck_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.)."
+      ]
+    },
+    {
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "mean_speed",
+      "unit": "m/s",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 1.0,
+      "median": 1.0,
+      "std_dev": 0.0,
+      "min_val": 1.0,
+      "max_val": 1.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "exit_narrow_bottleneck_run_01",
+        "exit_narrow_bottleneck_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run exit_narrow_bottleneck_run_01: Valid observation 1.0000 m/s",
+        "Run exit_narrow_bottleneck_run_02: Valid observation 1.0000 m/s"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "minimum_separation",
+      "unit": "metres",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 2.0,
+      "median": 2.0,
+      "std_dev": 0.0,
+      "min_val": 2.0,
+      "max_val": 2.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "exit_narrow_bottleneck_run_01",
+        "exit_narrow_bottleneck_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run exit_narrow_bottleneck_run_01: Valid observation 2.0000 metres",
+        "Run exit_narrow_bottleneck_run_02: Valid observation 2.0000 metres"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "total_elapsed_time",
+      "unit": "seconds",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 4.0,
+      "median": 4.0,
+      "std_dev": 0.0,
+      "min_val": 4.0,
+      "max_val": 4.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "exit_narrow_bottleneck_run_01",
+        "exit_narrow_bottleneck_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run exit_narrow_bottleneck_run_01: Valid observation 4.0000 seconds",
+        "Run exit_narrow_bottleneck_run_02: Valid observation 4.0000 seconds"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "area_density",
+      "unit": "ped/m²",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 0.02,
+      "median": 0.02,
+      "std_dev": 0.0,
+      "min_val": 0.02,
+      "max_val": 0.02,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "exit_std_baseline_run_01",
+        "exit_std_baseline_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run exit_std_baseline_run_01: Valid observation 0.0200 ped/m²",
+        "Run exit_std_baseline_run_02: Valid observation 0.0200 ped/m²"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "exit_throughput",
+      "unit": "ped/s",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 0,
+      "excluded_run_count": 2,
+      "unavailable_count": 2,
+      "mean": null,
+      "median": null,
+      "std_dev": null,
+      "min_val": null,
+      "max_val": null,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [],
+      "is_single_run": false,
+      "is_deterministic_repetition": false,
+      "inclusion_reasons": [],
+      "exclusion_reasons": [
+        "Run exit_std_baseline_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).",
+        "Run exit_std_baseline_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.)."
+      ]
+    },
+    {
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "mean_speed",
+      "unit": "m/s",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 1.0,
+      "median": 1.0,
+      "std_dev": 0.0,
+      "min_val": 1.0,
+      "max_val": 1.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "exit_std_baseline_run_01",
+        "exit_std_baseline_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run exit_std_baseline_run_01: Valid observation 1.0000 m/s",
+        "Run exit_std_baseline_run_02: Valid observation 1.0000 m/s"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "minimum_separation",
+      "unit": "metres",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 2.0,
+      "median": 2.0,
+      "std_dev": 0.0,
+      "min_val": 2.0,
+      "max_val": 2.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "exit_std_baseline_run_01",
+        "exit_std_baseline_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run exit_std_baseline_run_01: Valid observation 2.0000 metres",
+        "Run exit_std_baseline_run_02: Valid observation 2.0000 metres"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "exit_std_baseline",
+      "metric_id": "total_elapsed_time",
+      "unit": "seconds",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 4.0,
+      "median": 4.0,
+      "std_dev": 0.0,
+      "min_val": 4.0,
+      "max_val": 4.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "exit_std_baseline_run_01",
+        "exit_std_baseline_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run exit_std_baseline_run_01: Valid observation 4.0000 seconds",
+        "Run exit_std_baseline_run_02: Valid observation 4.0000 seconds"
+      ],
+      "exclusion_reasons": []
+    }
+  ],
+  "comparability_evaluations": [
+    {
+      "variant_scenario_id": "exit_dual_portals",
+      "metric_id": "area_density",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "exit_dual_portals",
+      "metric_id": "exit_throughput",
+      "decision": "NOT_COMPARABLE",
+      "is_comparable": false,
+      "reason_codes": [
+        "DATA_UNAVAILABLE"
+      ],
+      "explanation": "Underlying observation data for metric 'exit_throughput' is unavailable in one or both scenarios.",
+      "caveats": [
+        "Authoritative measurements or exit events absent; cross-scenario comparison cannot be made."
+      ]
+    },
+    {
+      "variant_scenario_id": "exit_dual_portals",
+      "metric_id": "mean_speed",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "exit_dual_portals",
+      "metric_id": "minimum_separation",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "exit_dual_portals",
+      "metric_id": "total_elapsed_time",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "area_density",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "exit_throughput",
+      "decision": "NOT_COMPARABLE",
+      "is_comparable": false,
+      "reason_codes": [
+        "DATA_UNAVAILABLE"
+      ],
+      "explanation": "Underlying observation data for metric 'exit_throughput' is unavailable in one or both scenarios.",
+      "caveats": [
+        "Authoritative measurements or exit events absent; cross-scenario comparison cannot be made."
+      ]
+    },
+    {
+      "variant_scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "mean_speed",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "minimum_separation",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "total_elapsed_time",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    }
+  ],
+  "metric_deltas": [
+    {
+      "variant_scenario_id": "exit_dual_portals",
+      "metric_id": "area_density",
+      "baseline_mean": 0.02,
+      "variant_mean": 0.02,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "exit_dual_portals",
+      "metric_id": "exit_throughput",
+      "baseline_mean": null,
+      "variant_mean": null,
+      "absolute_delta": null,
+      "percentage_delta": null,
+      "comparability_decision": "NOT_COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "exit_dual_portals",
+      "metric_id": "mean_speed",
+      "baseline_mean": 1.0,
+      "variant_mean": 1.0,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "exit_dual_portals",
+      "metric_id": "minimum_separation",
+      "baseline_mean": 2.0,
+      "variant_mean": 2.0,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "exit_dual_portals",
+      "metric_id": "total_elapsed_time",
+      "baseline_mean": 4.0,
+      "variant_mean": 4.0,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "area_density",
+      "baseline_mean": 0.02,
+      "variant_mean": 0.02,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "exit_throughput",
+      "baseline_mean": null,
+      "variant_mean": null,
+      "absolute_delta": null,
+      "percentage_delta": null,
+      "comparability_decision": "NOT_COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "mean_speed",
+      "baseline_mean": 1.0,
+      "variant_mean": 1.0,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "minimum_separation",
+      "baseline_mean": 2.0,
+      "variant_mean": 2.0,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "exit_narrow_bottleneck",
+      "metric_id": "total_elapsed_time",
+      "baseline_mean": 4.0,
+      "variant_mean": 4.0,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    }
+  ],
+  "reproducibility_metadata": {
+    "schema_version": "1.0.0",
+    "software_version": "1.0.0",
+    "experiment_id": "study_exit_configuration",
+    "execution_timestamp": "2026-11-12T04:54:06.225303+00:00",
+    "baseline_scenario_id": "exit_std_baseline",
+    "scenario_ids": [
+      "exit_std_baseline",
+      "exit_narrow_bottleneck",
+      "exit_dual_portals"
+    ],
+    "run_ids": [
+      "exit_dual_portals_run_01",
+      "exit_dual_portals_run_02",
+      "exit_narrow_bottleneck_run_01",
+      "exit_narrow_bottleneck_run_02",
+      "exit_std_baseline_run_01",
+      "exit_std_baseline_run_02"
+    ],
+    "total_runs_attempted": 6,
+    "runs_by_status": {
+      "SUCCESS": 6,
+      "PARTIAL": 0,
+      "FAILED": 0
+    },
+    "configured_seeds": {
+      "exit_dual_portals": 303,
+      "exit_narrow_bottleneck": 303,
+      "exit_std_baseline": 303
+    },
+    "seed_used_by_engine": false,
+    "seed_usage_note": "As inspected in the current Pavan SimulationEngine (genevac.simulation.engine), the engine's kinematics are purely deterministic and do not consume PRNG seeds during physics stepping. Supplied seeds are recorded as scenario intent only.",
+    "repetition_sample_type": "deterministic_duplicate",
+    "reproducibility_notes": "Executed 2 repetitions per scenario. All multi-run metrics produced zero variance (std_dev = 0.0) due to deterministic simulation kinematics. These are deterministic duplicates and must not be treated as independent stochastic samples.",
+    "engine_timesteps": {
+      "exit_dual_portals": 0.1,
+      "exit_narrow_bottleneck": 0.1,
+      "exit_std_baseline": 0.1
+    },
+    "engine_max_steps": {
+      "exit_dual_portals": 40,
+      "exit_narrow_bottleneck": 40,
+      "exit_std_baseline": 40
+    },
+    "initial_agent_counts": {
+      "exit_dual_portals": 20,
+      "exit_narrow_bottleneck": 20,
+      "exit_std_baseline": 20
+    },
+    "scenario_config_fingerprints": {
+      "exit_dual_portals": "60977ae66027e6e0fcab80d668d59dc8836e91f73d56e721e60b11620d84e9f5",
+      "exit_narrow_bottleneck": "a88261ebee45cdb082cfbf7df975af0d3a9a02ceea2a804dfe3a6e5f36fb67bf",
+      "exit_std_baseline": "26e91f29dff98d9723cfd2798efcb7f614d5d02b5c2f61254b4ea3f75d62fc00"
+    }
+  }
+}

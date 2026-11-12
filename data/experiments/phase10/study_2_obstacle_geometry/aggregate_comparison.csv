@@ -1,0 +1,16 @@
+experiment_id,scenario_id,metric_name,mean,standard_deviation,minimum,maximum,sample_count,comparability_decision,availability_status,unavailable_reason
+study_obstacle_geometry,obs_central_pillar,area_density,0.015000,0.000000,0.015000,0.015000,2,COMPARABLE,VALID,
+study_obstacle_geometry,obs_central_pillar,exit_throughput,,,,,0,NOT_COMPARABLE,UNAVAILABLE,Run obs_central_pillar_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).; Run obs_central_pillar_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).
+study_obstacle_geometry,obs_central_pillar,mean_speed,1.000000,0.000000,1.000000,1.000000,2,COMPARABLE,VALID,
+study_obstacle_geometry,obs_central_pillar,minimum_separation,2.000000,0.000000,2.000000,2.000000,2,COMPARABLE,VALID,
+study_obstacle_geometry,obs_central_pillar,total_elapsed_time,4.000000,0.000000,4.000000,4.000000,2,COMPARABLE,VALID,
+study_obstacle_geometry,obs_clear_baseline,area_density,0.015000,0.000000,0.015000,0.015000,2,BASELINE,VALID,
+study_obstacle_geometry,obs_clear_baseline,exit_throughput,,,,,0,BASELINE,UNAVAILABLE,Run obs_clear_baseline_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).; Run obs_clear_baseline_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).
+study_obstacle_geometry,obs_clear_baseline,mean_speed,1.000000,0.000000,1.000000,1.000000,2,BASELINE,VALID,
+study_obstacle_geometry,obs_clear_baseline,minimum_separation,2.000000,0.000000,2.000000,2.000000,2,BASELINE,VALID,
+study_obstacle_geometry,obs_clear_baseline,total_elapsed_time,4.000000,0.000000,4.000000,4.000000,2,BASELINE,VALID,
+study_obstacle_geometry,obs_dual_pillars,area_density,0.015000,0.000000,0.015000,0.015000,2,COMPARABLE,VALID,
+study_obstacle_geometry,obs_dual_pillars,exit_throughput,,,,,0,NOT_COMPARABLE,UNAVAILABLE,Run obs_dual_pillars_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).; Run obs_dual_pillars_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).
+study_obstacle_geometry,obs_dual_pillars,mean_speed,1.000000,0.000000,1.000000,1.000000,2,COMPARABLE,VALID,
+study_obstacle_geometry,obs_dual_pillars,minimum_separation,2.000000,0.000000,2.000000,2.000000,2,COMPARABLE,VALID,
+study_obstacle_geometry,obs_dual_pillars,total_elapsed_time,4.000000,0.000000,4.000000,4.000000,2,COMPARABLE,VALID,

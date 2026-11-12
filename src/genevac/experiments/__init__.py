@@ -30,6 +30,15 @@ from genevac.experiments.presentation import (
     generate_scenario_inventory_table,
     generate_scientific_interpretation,
 )
+from genevac.experiments.export import (
+    export_aggregate_comparison_csv,
+    export_all_experiment_artifacts,
+    export_experiment_json,
+    export_per_run_metrics_csv,
+    export_scenario_inventory_csv,
+    extract_reproducibility_metadata,
+    generate_experiment_report,
+)
 
 
 class ExperimentRunner:
@@ -70,4 +79,11 @@ __all__ = [
     "generate_metric_comparison_table",
     "generate_per_run_detail_table",
     "generate_scientific_interpretation",
+    "export_scenario_inventory_csv",
+    "export_per_run_metrics_csv",
+    "export_aggregate_comparison_csv",
+    "extract_reproducibility_metadata",
+    "export_experiment_json",
+    "generate_experiment_report",
+    "export_all_experiment_artifacts",
 ]

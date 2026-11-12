@@ -1,0 +1,37 @@
+experiment_id,scenario_id,run_id,run_status,metric_name,metric_value,metric_unit,availability_status,unavailable_reason,repetition_sample_type
+study_pop_scaling,pop_05_baseline,pop_05_baseline_run_01,SUCCESS,area_density,0.005000,ped/m²,VALID,,deterministic_duplicate
+study_pop_scaling,pop_05_baseline,pop_05_baseline_run_01,SUCCESS,clearance_time,,seconds,UNAVAILABLE,Evacuation incomplete: 0/5 evacuated before simulation end.,deterministic_duplicate
+study_pop_scaling,pop_05_baseline,pop_05_baseline_run_01,SUCCESS,exit_throughput,,ped/s,UNAVAILABLE,Authoritative discrete exit events not emitted by engine.,deterministic_duplicate
+study_pop_scaling,pop_05_baseline,pop_05_baseline_run_01,SUCCESS,mean_speed,1.000000,m/s,VALID,,deterministic_duplicate
+study_pop_scaling,pop_05_baseline,pop_05_baseline_run_01,SUCCESS,minimum_separation,2.000000,metres,VALID,,deterministic_duplicate
+study_pop_scaling,pop_05_baseline,pop_05_baseline_run_01,SUCCESS,total_elapsed_time,4.000000,seconds,VALID,,deterministic_duplicate
+study_pop_scaling,pop_05_baseline,pop_05_baseline_run_02,SUCCESS,area_density,0.005000,ped/m²,VALID,,deterministic_duplicate
+study_pop_scaling,pop_05_baseline,pop_05_baseline_run_02,SUCCESS,clearance_time,,seconds,UNAVAILABLE,Evacuation incomplete: 0/5 evacuated before simulation end.,deterministic_duplicate
+study_pop_scaling,pop_05_baseline,pop_05_baseline_run_02,SUCCESS,exit_throughput,,ped/s,UNAVAILABLE,Authoritative discrete exit events not emitted by engine.,deterministic_duplicate
+study_pop_scaling,pop_05_baseline,pop_05_baseline_run_02,SUCCESS,mean_speed,1.000000,m/s,VALID,,deterministic_duplicate
+study_pop_scaling,pop_05_baseline,pop_05_baseline_run_02,SUCCESS,minimum_separation,2.000000,metres,VALID,,deterministic_duplicate
+study_pop_scaling,pop_05_baseline,pop_05_baseline_run_02,SUCCESS,total_elapsed_time,4.000000,seconds,VALID,,deterministic_duplicate
+study_pop_scaling,pop_15_medium,pop_15_medium_run_01,SUCCESS,area_density,0.015000,ped/m²,VALID,,deterministic_duplicate
+study_pop_scaling,pop_15_medium,pop_15_medium_run_01,SUCCESS,clearance_time,,seconds,UNAVAILABLE,Evacuation incomplete: 0/15 evacuated before simulation end.,deterministic_duplicate
+study_pop_scaling,pop_15_medium,pop_15_medium_run_01,SUCCESS,exit_throughput,,ped/s,UNAVAILABLE,Authoritative discrete exit events not emitted by engine.,deterministic_duplicate
+study_pop_scaling,pop_15_medium,pop_15_medium_run_01,SUCCESS,mean_speed,1.000000,m/s,VALID,,deterministic_duplicate
+study_pop_scaling,pop_15_medium,pop_15_medium_run_01,SUCCESS,minimum_separation,2.000000,metres,VALID,,deterministic_duplicate
+study_pop_scaling,pop_15_medium,pop_15_medium_run_01,SUCCESS,total_elapsed_time,4.000000,seconds,VALID,,deterministic_duplicate
+study_pop_scaling,pop_15_medium,pop_15_medium_run_02,SUCCESS,area_density,0.015000,ped/m²,VALID,,deterministic_duplicate
+study_pop_scaling,pop_15_medium,pop_15_medium_run_02,SUCCESS,clearance_time,,seconds,UNAVAILABLE,Evacuation incomplete: 0/15 evacuated before simulation end.,deterministic_duplicate
+study_pop_scaling,pop_15_medium,pop_15_medium_run_02,SUCCESS,exit_throughput,,ped/s,UNAVAILABLE,Authoritative discrete exit events not emitted by engine.,deterministic_duplicate
+study_pop_scaling,pop_15_medium,pop_15_medium_run_02,SUCCESS,mean_speed,1.000000,m/s,VALID,,deterministic_duplicate
+study_pop_scaling,pop_15_medium,pop_15_medium_run_02,SUCCESS,minimum_separation,2.000000,metres,VALID,,deterministic_duplicate
+study_pop_scaling,pop_15_medium,pop_15_medium_run_02,SUCCESS,total_elapsed_time,4.000000,seconds,VALID,,deterministic_duplicate
+study_pop_scaling,pop_30_high,pop_30_high_run_01,SUCCESS,area_density,0.030000,ped/m²,VALID,,deterministic_duplicate
+study_pop_scaling,pop_30_high,pop_30_high_run_01,SUCCESS,clearance_time,,seconds,UNAVAILABLE,Evacuation incomplete: 0/30 evacuated before simulation end.,deterministic_duplicate
+study_pop_scaling,pop_30_high,pop_30_high_run_01,SUCCESS,exit_throughput,,ped/s,UNAVAILABLE,Authoritative discrete exit events not emitted by engine.,deterministic_duplicate
+study_pop_scaling,pop_30_high,pop_30_high_run_01,SUCCESS,mean_speed,1.000000,m/s,VALID,,deterministic_duplicate
+study_pop_scaling,pop_30_high,pop_30_high_run_01,SUCCESS,minimum_separation,2.000000,metres,VALID,,deterministic_duplicate
+study_pop_scaling,pop_30_high,pop_30_high_run_01,SUCCESS,total_elapsed_time,4.000000,seconds,VALID,,deterministic_duplicate
+study_pop_scaling,pop_30_high,pop_30_high_run_02,SUCCESS,area_density,0.030000,ped/m²,VALID,,deterministic_duplicate
+study_pop_scaling,pop_30_high,pop_30_high_run_02,SUCCESS,clearance_time,,seconds,UNAVAILABLE,Evacuation incomplete: 0/30 evacuated before simulation end.,deterministic_duplicate
+study_pop_scaling,pop_30_high,pop_30_high_run_02,SUCCESS,exit_throughput,,ped/s,UNAVAILABLE,Authoritative discrete exit events not emitted by engine.,deterministic_duplicate
+study_pop_scaling,pop_30_high,pop_30_high_run_02,SUCCESS,mean_speed,1.000000,m/s,VALID,,deterministic_duplicate
+study_pop_scaling,pop_30_high,pop_30_high_run_02,SUCCESS,minimum_separation,2.000000,metres,VALID,,deterministic_duplicate
+study_pop_scaling,pop_30_high,pop_30_high_run_02,SUCCESS,total_elapsed_time,4.000000,seconds,VALID,,deterministic_duplicate

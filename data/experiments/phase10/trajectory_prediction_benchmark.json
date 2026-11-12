@@ -1,0 +1,36 @@
+{
+  "evaluation_samples_count": 12,
+  "prediction_horizon": 10,
+  "history_steps": 6,
+  "baseline_constant_velocity": {
+    "mean_ade_m": 0.0,
+    "mean_fde_m": 0.0,
+    "median_ade_m": 0.0,
+    "median_fde_m": 0.0,
+    "point_walkability_pct": 100.0,
+    "segment_collision_free_pct": 100.0,
+    "is_stochastic": false
+  },
+  "evacuation_mid_untrained": {
+    "is_trained": false,
+    "oracle_best_of_k_ade_m": 0.285911,
+    "oracle_best_of_k_fde_m": 0.118347,
+    "expected_mean_of_k_ade_m": 0.371322,
+    "sample_diversity_m": 0.520346,
+    "point_walkability_pct": 100.0,
+    "segment_collision_free_pct": 100.0,
+    "k_samples": 10
+  },
+  "evacuation_mid_trained": {
+    "is_trained": true,
+    "training_epochs": 5,
+    "final_train_loss": 0.441206,
+    "oracle_best_of_k_ade_m": 0.267475,
+    "oracle_best_of_k_fde_m": 0.105629,
+    "expected_mean_of_k_ade_m": 0.35835,
+    "sample_diversity_m": 0.500107,
+    "point_walkability_pct": 100.0,
+    "segment_collision_free_pct": 100.0,
+    "k_samples": 10
+  }
+}

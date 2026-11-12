@@ -1,0 +1,29 @@
+{
+  "grid_specification": {
+    "width_m": 50.0,
+    "height_m": 20.0,
+    "cols": 25,
+    "rows": 10,
+    "cell_size_m": [
+      2.0,
+      2.0
+    ],
+    "cell_area_m2": 4.0
+  },
+  "spatial_grid_results": {
+    "total_agents_processed": 20,
+    "accepted_agents": 20,
+    "rejected_agents": 0,
+    "max_occupancy_in_single_cell": 1,
+    "max_density_ped_per_m2": 0.25,
+    "mean_active_density_ped_per_m2": 0.25,
+    "min_max_normalized_max": 1.0
+  },
+  "live_chart_series": {
+    "active_count": 25,
+    "blocked_count": 25,
+    "evacuated_count": 25,
+    "min_separation": 25,
+    "exit_throughput": 0
+  }
+}

@@ -1,0 +1,4 @@
+Model,Trained,Samples_K,Oracle_Best_ADE_m,Expected_Mean_ADE_m,Oracle_Best_FDE_m,Diversity_m,Point_Walkability_Pct,Segment_Collision_Free_Pct
+ConstantVelocity (Baseline),N/A,1,0.0000,0.0000,0.0000,0.0000,100.0,100.0
+Evacuation MID (Untrained),False,10,0.2859,0.3713,0.1183,0.5203,100.0,100.0
+Evacuation MID (Trained),True,10,0.2675,0.3584,0.1056,0.5001,100.0,100.0

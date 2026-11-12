@@ -1,0 +1,16 @@
+experiment_id,scenario_id,metric_name,mean,standard_deviation,minimum,maximum,sample_count,comparability_decision,availability_status,unavailable_reason
+study_exit_configuration,exit_dual_portals,area_density,0.020000,0.000000,0.020000,0.020000,2,COMPARABLE,VALID,
+study_exit_configuration,exit_dual_portals,exit_throughput,,,,,0,NOT_COMPARABLE,UNAVAILABLE,Run exit_dual_portals_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).; Run exit_dual_portals_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).
+study_exit_configuration,exit_dual_portals,mean_speed,1.000000,0.000000,1.000000,1.000000,2,COMPARABLE,VALID,
+study_exit_configuration,exit_dual_portals,minimum_separation,2.000000,0.000000,2.000000,2.000000,2,COMPARABLE,VALID,
+study_exit_configuration,exit_dual_portals,total_elapsed_time,4.000000,0.000000,4.000000,4.000000,2,COMPARABLE,VALID,
+study_exit_configuration,exit_narrow_bottleneck,area_density,0.020000,0.000000,0.020000,0.020000,2,COMPARABLE,VALID,
+study_exit_configuration,exit_narrow_bottleneck,exit_throughput,,,,,0,NOT_COMPARABLE,UNAVAILABLE,Run exit_narrow_bottleneck_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).; Run exit_narrow_bottleneck_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).
+study_exit_configuration,exit_narrow_bottleneck,mean_speed,1.000000,0.000000,1.000000,1.000000,2,COMPARABLE,VALID,
+study_exit_configuration,exit_narrow_bottleneck,minimum_separation,2.000000,0.000000,2.000000,2.000000,2,COMPARABLE,VALID,
+study_exit_configuration,exit_narrow_bottleneck,total_elapsed_time,4.000000,0.000000,4.000000,4.000000,2,COMPARABLE,VALID,
+study_exit_configuration,exit_std_baseline,area_density,0.020000,0.000000,0.020000,0.020000,2,BASELINE,VALID,
+study_exit_configuration,exit_std_baseline,exit_throughput,,,,,0,BASELINE,UNAVAILABLE,Run exit_std_baseline_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).; Run exit_std_baseline_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).
+study_exit_configuration,exit_std_baseline,mean_speed,1.000000,0.000000,1.000000,1.000000,2,BASELINE,VALID,
+study_exit_configuration,exit_std_baseline,minimum_separation,2.000000,0.000000,2.000000,2.000000,2,BASELINE,VALID,
+study_exit_configuration,exit_std_baseline,total_elapsed_time,4.000000,0.000000,4.000000,4.000000,2,BASELINE,VALID,

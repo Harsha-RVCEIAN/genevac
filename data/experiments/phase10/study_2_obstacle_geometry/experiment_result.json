@@ -1,0 +1,1551 @@
+{
+  "schema_version": "1.0.0",
+  "software_version": "1.0.0",
+  "experiment_identifier": "study_obstacle_geometry",
+  "comparison_metadata": {
+    "title": "Obstacle Geometry and Spatial Constriction Analysis",
+    "research_question": "Evaluate the effect of geometric obstacles on hallway pedestrian flow.",
+    "baseline_scenario_id": "obs_clear_baseline",
+    "scenario_ids": [
+      "obs_clear_baseline",
+      "obs_central_pillar",
+      "obs_dual_pillars"
+    ],
+    "independent_variable": "obstacle_configuration",
+    "dependent_metrics": [
+      "total_elapsed_time",
+      "mean_speed",
+      "area_density",
+      "minimum_separation",
+      "exit_throughput"
+    ],
+    "controlled_factors": {
+      "width": 50.0,
+      "height": 20.0,
+      "agent_count": 15,
+      "timestep": 0.1,
+      "max_steps": 40
+    },
+    "seed_policy": "deterministic_constant",
+    "notes": ""
+  },
+  "executed_at": "2026-11-12T04:54:06.206045+00:00",
+  "scenarios": {
+    "obs_central_pillar": {
+      "scenario_id": "obs_central_pillar",
+      "name": "Hallway with Central Pillar",
+      "version": "1.0.0",
+      "description": "Hallway with large central obstacle pillar",
+      "environment_id": "default_env",
+      "environment_version": "1.0.0",
+      "agent_count": 15,
+      "engine_config": {
+        "width": 50.0,
+        "height": 20.0,
+        "max_steps": 40,
+        "timestep": 0.1,
+        "exits": [
+          {
+            "id": "main_exit",
+            "position": [
+              50.0,
+              10.0
+            ],
+            "width": 3.0
+          }
+        ],
+        "obstacles": [
+          {
+            "id": "pillar_center",
+            "bounds": [
+              20.0,
+              6.0,
+              30.0,
+              14.0
+            ]
+          }
+        ]
+      },
+      "seed": 202,
+      "stopping_condition": "max_steps_or_empty",
+      "max_duration": null,
+      "config_fingerprint": "7e016f781948a753ead0e76ccc3dbe6c796b20dd3d5af5e74074f47ec0bfff49"
+    },
+    "obs_clear_baseline": {
+      "scenario_id": "obs_clear_baseline",
+      "name": "Clear Hallway Baseline",
+      "version": "1.0.0",
+      "description": "Unobstructed hallway",
+      "environment_id": "default_env",
+      "environment_version": "1.0.0",
+      "agent_count": 15,
+      "engine_config": {
+        "width": 50.0,
+        "height": 20.0,
+        "max_steps": 40,
+        "timestep": 0.1,
+        "exits": [
+          {
+            "id": "main_exit",
+            "position": [
+              50.0,
+              10.0
+            ],
+            "width": 3.0
+          }
+        ],
+        "obstacles": []
+      },
+      "seed": 202,
+      "stopping_condition": "max_steps_or_empty",
+      "max_duration": null,
+      "config_fingerprint": "c74f914951895946759c3948112a9a84ba233f09590134fca115dec7d0068187"
+    },
+    "obs_dual_pillars": {
+      "scenario_id": "obs_dual_pillars",
+      "name": "Hallway with Staggered Dual Pillars",
+      "version": "1.0.0",
+      "description": "Hallway with two staggered pillars forming a chicane",
+      "environment_id": "default_env",
+      "environment_version": "1.0.0",
+      "agent_count": 15,
+      "engine_config": {
+        "width": 50.0,
+        "height": 20.0,
+        "max_steps": 40,
+        "timestep": 0.1,
+        "exits": [
+          {
+            "id": "main_exit",
+            "position": [
+              50.0,
+              10.0
+            ],
+            "width": 3.0
+          }
+        ],
+        "obstacles": [
+          {
+            "id": "pillar_north",
+            "bounds": [
+              15.0,
+              10.0,
+              22.0,
+              18.0
+            ]
+          },
+          {
+            "id": "pillar_south",
+            "bounds": [
+              28.0,
+              2.0,
+              35.0,
+              10.0
+            ]
+          }
+        ]
+      },
+      "seed": 202,
+      "stopping_condition": "max_steps_or_empty",
+      "max_duration": null,
+      "config_fingerprint": "a5b281b87875f47447a028a5a8585ddbea1fd42e8e171ad3e3dcabc16a50e736"
+    }
+  },
+  "run_records": [
+    {
+      "run_id": "obs_central_pillar_run_01",
+      "scenario_id": "obs_central_pillar",
+      "scenario_version": "1.0.0",
+      "started_at": "2026-11-12T04:54:06.206045+00:00",
+      "ended_at": "2026-11-12T04:54:06.206045+00:00",
+      "seed": 202,
+      "initial_agent_count": 15,
+      "final_step": 40,
+      "simulated_duration": 4.0,
+      "termination_reason": "MAX_STEPS_REACHED",
+      "run_status": "SUCCESS",
+      "failure_reason": "",
+      "config_fingerprint": "7e016f781948a753ead0e76ccc3dbe6c796b20dd3d5af5e74074f47ec0bfff49"
+    },
+    {
+      "run_id": "obs_central_pillar_run_02",
+      "scenario_id": "obs_central_pillar",
+      "scenario_version": "1.0.0",
+      "started_at": "2026-11-12T04:54:06.206045+00:00",
+      "ended_at": "2026-11-12T04:54:06.206045+00:00",
+      "seed": 202,
+      "initial_agent_count": 15,
+      "final_step": 40,
+      "simulated_duration": 4.0,
+      "termination_reason": "MAX_STEPS_REACHED",
+      "run_status": "SUCCESS",
+      "failure_reason": "",
+      "config_fingerprint": "7e016f781948a753ead0e76ccc3dbe6c796b20dd3d5af5e74074f47ec0bfff49"
+    },
+    {
+      "run_id": "obs_clear_baseline_run_01",
+      "scenario_id": "obs_clear_baseline",
+      "scenario_version": "1.0.0",
+      "started_at": "2026-11-12T04:54:06.206045+00:00",
+      "ended_at": "2026-11-12T04:54:06.206045+00:00",
+      "seed": 202,
+      "initial_agent_count": 15,
+      "final_step": 40,
+      "simulated_duration": 4.0,
+      "termination_reason": "MAX_STEPS_REACHED",
+      "run_status": "SUCCESS",
+      "failure_reason": "",
+      "config_fingerprint": "c74f914951895946759c3948112a9a84ba233f09590134fca115dec7d0068187"
+    },
+    {
+      "run_id": "obs_clear_baseline_run_02",
+      "scenario_id": "obs_clear_baseline",
+      "scenario_version": "1.0.0",
+      "started_at": "2026-11-12T04:54:06.206045+00:00",
+      "ended_at": "2026-11-12T04:54:06.206045+00:00",
+      "seed": 202,
+      "initial_agent_count": 15,
+      "final_step": 40,
+      "simulated_duration": 4.0,
+      "termination_reason": "MAX_STEPS_REACHED",
+      "run_status": "SUCCESS",
+      "failure_reason": "",
+      "config_fingerprint": "c74f914951895946759c3948112a9a84ba233f09590134fca115dec7d0068187"
+    },
+    {
+      "run_id": "obs_dual_pillars_run_01",
+      "scenario_id": "obs_dual_pillars",
+      "scenario_version": "1.0.0",
+      "started_at": "2026-11-12T04:54:06.206045+00:00",
+      "ended_at": "2026-11-12T04:54:06.206045+00:00",
+      "seed": 202,
+      "initial_agent_count": 15,
+      "final_step": 40,
+      "simulated_duration": 4.0,
+      "termination_reason": "MAX_STEPS_REACHED",
+      "run_status": "SUCCESS",
+      "failure_reason": "",
+      "config_fingerprint": "a5b281b87875f47447a028a5a8585ddbea1fd42e8e171ad3e3dcabc16a50e736"
+    },
+    {
+      "run_id": "obs_dual_pillars_run_02",
+      "scenario_id": "obs_dual_pillars",
+      "scenario_version": "1.0.0",
+      "started_at": "2026-11-12T04:54:06.206045+00:00",
+      "ended_at": "2026-11-12T04:54:06.206045+00:00",
+      "seed": 202,
+      "initial_agent_count": 15,
+      "final_step": 40,
+      "simulated_duration": 4.0,
+      "termination_reason": "MAX_STEPS_REACHED",
+      "run_status": "SUCCESS",
+      "failure_reason": "",
+      "config_fingerprint": "a5b281b87875f47447a028a5a8585ddbea1fd42e8e171ad3e3dcabc16a50e736"
+    }
+  ],
+  "per_run_metrics": [
+    {
+      "run_id": "obs_central_pillar_run_01",
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "area_density",
+      "display_name": "Pedestrian Area Density",
+      "value": 0.015,
+      "unit": "ped/m²",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_central_pillar_run_01",
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "clearance_time",
+      "display_name": "Evacuation Clearance Time",
+      "value": null,
+      "unit": "seconds",
+      "status": "UNAVAILABLE",
+      "reason": "Evacuation incomplete: 0/15 evacuated before simulation end.",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_central_pillar_run_01",
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "exit_throughput",
+      "display_name": "Exit Throughput Rate",
+      "value": null,
+      "unit": "ped/s",
+      "status": "UNAVAILABLE",
+      "reason": "Authoritative discrete exit events not emitted by engine.",
+      "time_window": [
+        0.0,
+        0.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_central_pillar_run_01",
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "mean_speed",
+      "display_name": "Mean Pedestrian Speed",
+      "value": 1.0,
+      "unit": "m/s",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 15,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_central_pillar_run_01",
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "minimum_separation",
+      "display_name": "Minimum Pedestrian Separation",
+      "value": 2.0,
+      "unit": "metres",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 15,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_central_pillar_run_01",
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "total_elapsed_time",
+      "display_name": "Total Elapsed Simulation Time",
+      "value": 4.0,
+      "unit": "seconds",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_central_pillar_run_02",
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "area_density",
+      "display_name": "Pedestrian Area Density",
+      "value": 0.015,
+      "unit": "ped/m²",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_central_pillar_run_02",
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "clearance_time",
+      "display_name": "Evacuation Clearance Time",
+      "value": null,
+      "unit": "seconds",
+      "status": "UNAVAILABLE",
+      "reason": "Evacuation incomplete: 0/15 evacuated before simulation end.",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_central_pillar_run_02",
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "exit_throughput",
+      "display_name": "Exit Throughput Rate",
+      "value": null,
+      "unit": "ped/s",
+      "status": "UNAVAILABLE",
+      "reason": "Authoritative discrete exit events not emitted by engine.",
+      "time_window": [
+        0.0,
+        0.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_central_pillar_run_02",
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "mean_speed",
+      "display_name": "Mean Pedestrian Speed",
+      "value": 1.0,
+      "unit": "m/s",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 15,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_central_pillar_run_02",
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "minimum_separation",
+      "display_name": "Minimum Pedestrian Separation",
+      "value": 2.0,
+      "unit": "metres",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 15,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_central_pillar_run_02",
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "total_elapsed_time",
+      "display_name": "Total Elapsed Simulation Time",
+      "value": 4.0,
+      "unit": "seconds",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_clear_baseline_run_01",
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "area_density",
+      "display_name": "Pedestrian Area Density",
+      "value": 0.015,
+      "unit": "ped/m²",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_clear_baseline_run_01",
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "clearance_time",
+      "display_name": "Evacuation Clearance Time",
+      "value": null,
+      "unit": "seconds",
+      "status": "UNAVAILABLE",
+      "reason": "Evacuation incomplete: 0/15 evacuated before simulation end.",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_clear_baseline_run_01",
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "exit_throughput",
+      "display_name": "Exit Throughput Rate",
+      "value": null,
+      "unit": "ped/s",
+      "status": "UNAVAILABLE",
+      "reason": "Authoritative discrete exit events not emitted by engine.",
+      "time_window": [
+        0.0,
+        0.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_clear_baseline_run_01",
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "mean_speed",
+      "display_name": "Mean Pedestrian Speed",
+      "value": 1.0,
+      "unit": "m/s",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 15,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_clear_baseline_run_01",
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "minimum_separation",
+      "display_name": "Minimum Pedestrian Separation",
+      "value": 2.0,
+      "unit": "metres",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 15,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_clear_baseline_run_01",
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "total_elapsed_time",
+      "display_name": "Total Elapsed Simulation Time",
+      "value": 4.0,
+      "unit": "seconds",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_clear_baseline_run_02",
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "area_density",
+      "display_name": "Pedestrian Area Density",
+      "value": 0.015,
+      "unit": "ped/m²",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_clear_baseline_run_02",
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "clearance_time",
+      "display_name": "Evacuation Clearance Time",
+      "value": null,
+      "unit": "seconds",
+      "status": "UNAVAILABLE",
+      "reason": "Evacuation incomplete: 0/15 evacuated before simulation end.",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_clear_baseline_run_02",
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "exit_throughput",
+      "display_name": "Exit Throughput Rate",
+      "value": null,
+      "unit": "ped/s",
+      "status": "UNAVAILABLE",
+      "reason": "Authoritative discrete exit events not emitted by engine.",
+      "time_window": [
+        0.0,
+        0.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_clear_baseline_run_02",
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "mean_speed",
+      "display_name": "Mean Pedestrian Speed",
+      "value": 1.0,
+      "unit": "m/s",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 15,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_clear_baseline_run_02",
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "minimum_separation",
+      "display_name": "Minimum Pedestrian Separation",
+      "value": 2.0,
+      "unit": "metres",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 15,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_clear_baseline_run_02",
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "total_elapsed_time",
+      "display_name": "Total Elapsed Simulation Time",
+      "value": 4.0,
+      "unit": "seconds",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_dual_pillars_run_01",
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "area_density",
+      "display_name": "Pedestrian Area Density",
+      "value": 0.015,
+      "unit": "ped/m²",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_dual_pillars_run_01",
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "clearance_time",
+      "display_name": "Evacuation Clearance Time",
+      "value": null,
+      "unit": "seconds",
+      "status": "UNAVAILABLE",
+      "reason": "Evacuation incomplete: 0/15 evacuated before simulation end.",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_dual_pillars_run_01",
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "exit_throughput",
+      "display_name": "Exit Throughput Rate",
+      "value": null,
+      "unit": "ped/s",
+      "status": "UNAVAILABLE",
+      "reason": "Authoritative discrete exit events not emitted by engine.",
+      "time_window": [
+        0.0,
+        0.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_dual_pillars_run_01",
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "mean_speed",
+      "display_name": "Mean Pedestrian Speed",
+      "value": 1.0,
+      "unit": "m/s",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 15,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_dual_pillars_run_01",
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "minimum_separation",
+      "display_name": "Minimum Pedestrian Separation",
+      "value": 2.0,
+      "unit": "metres",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 15,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_dual_pillars_run_01",
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "total_elapsed_time",
+      "display_name": "Total Elapsed Simulation Time",
+      "value": 4.0,
+      "unit": "seconds",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_dual_pillars_run_02",
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "area_density",
+      "display_name": "Pedestrian Area Density",
+      "value": 0.015,
+      "unit": "ped/m²",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_dual_pillars_run_02",
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "clearance_time",
+      "display_name": "Evacuation Clearance Time",
+      "value": null,
+      "unit": "seconds",
+      "status": "UNAVAILABLE",
+      "reason": "Evacuation incomplete: 0/15 evacuated before simulation end.",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_dual_pillars_run_02",
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "exit_throughput",
+      "display_name": "Exit Throughput Rate",
+      "value": null,
+      "unit": "ped/s",
+      "status": "UNAVAILABLE",
+      "reason": "Authoritative discrete exit events not emitted by engine.",
+      "time_window": [
+        0.0,
+        0.0
+      ],
+      "population": "all",
+      "valid_sample_count": 0,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_dual_pillars_run_02",
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "mean_speed",
+      "display_name": "Mean Pedestrian Speed",
+      "value": 1.0,
+      "unit": "m/s",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 15,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_dual_pillars_run_02",
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "minimum_separation",
+      "display_name": "Minimum Pedestrian Separation",
+      "value": 2.0,
+      "unit": "metres",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 15,
+      "missing_sample_count": 0
+    },
+    {
+      "run_id": "obs_dual_pillars_run_02",
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "total_elapsed_time",
+      "display_name": "Total Elapsed Simulation Time",
+      "value": 4.0,
+      "unit": "seconds",
+      "status": "VALID",
+      "reason": "",
+      "time_window": [
+        0.0,
+        4.0
+      ],
+      "population": "all",
+      "valid_sample_count": 1,
+      "missing_sample_count": 0
+    }
+  ],
+  "aggregate_metrics": [
+    {
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "area_density",
+      "unit": "ped/m²",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 0.015,
+      "median": 0.015,
+      "std_dev": 0.0,
+      "min_val": 0.015,
+      "max_val": 0.015,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "obs_central_pillar_run_01",
+        "obs_central_pillar_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run obs_central_pillar_run_01: Valid observation 0.0150 ped/m²",
+        "Run obs_central_pillar_run_02: Valid observation 0.0150 ped/m²"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "exit_throughput",
+      "unit": "ped/s",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 0,
+      "excluded_run_count": 2,
+      "unavailable_count": 2,
+      "mean": null,
+      "median": null,
+      "std_dev": null,
+      "min_val": null,
+      "max_val": null,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [],
+      "is_single_run": false,
+      "is_deterministic_repetition": false,
+      "inclusion_reasons": [],
+      "exclusion_reasons": [
+        "Run obs_central_pillar_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).",
+        "Run obs_central_pillar_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.)."
+      ]
+    },
+    {
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "mean_speed",
+      "unit": "m/s",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 1.0,
+      "median": 1.0,
+      "std_dev": 0.0,
+      "min_val": 1.0,
+      "max_val": 1.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "obs_central_pillar_run_01",
+        "obs_central_pillar_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run obs_central_pillar_run_01: Valid observation 1.0000 m/s",
+        "Run obs_central_pillar_run_02: Valid observation 1.0000 m/s"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "minimum_separation",
+      "unit": "metres",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 2.0,
+      "median": 2.0,
+      "std_dev": 0.0,
+      "min_val": 2.0,
+      "max_val": 2.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "obs_central_pillar_run_01",
+        "obs_central_pillar_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run obs_central_pillar_run_01: Valid observation 2.0000 metres",
+        "Run obs_central_pillar_run_02: Valid observation 2.0000 metres"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "obs_central_pillar",
+      "metric_id": "total_elapsed_time",
+      "unit": "seconds",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 4.0,
+      "median": 4.0,
+      "std_dev": 0.0,
+      "min_val": 4.0,
+      "max_val": 4.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "obs_central_pillar_run_01",
+        "obs_central_pillar_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run obs_central_pillar_run_01: Valid observation 4.0000 seconds",
+        "Run obs_central_pillar_run_02: Valid observation 4.0000 seconds"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "area_density",
+      "unit": "ped/m²",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 0.015,
+      "median": 0.015,
+      "std_dev": 0.0,
+      "min_val": 0.015,
+      "max_val": 0.015,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "obs_clear_baseline_run_01",
+        "obs_clear_baseline_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run obs_clear_baseline_run_01: Valid observation 0.0150 ped/m²",
+        "Run obs_clear_baseline_run_02: Valid observation 0.0150 ped/m²"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "exit_throughput",
+      "unit": "ped/s",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 0,
+      "excluded_run_count": 2,
+      "unavailable_count": 2,
+      "mean": null,
+      "median": null,
+      "std_dev": null,
+      "min_val": null,
+      "max_val": null,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [],
+      "is_single_run": false,
+      "is_deterministic_repetition": false,
+      "inclusion_reasons": [],
+      "exclusion_reasons": [
+        "Run obs_clear_baseline_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).",
+        "Run obs_clear_baseline_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.)."
+      ]
+    },
+    {
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "mean_speed",
+      "unit": "m/s",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 1.0,
+      "median": 1.0,
+      "std_dev": 0.0,
+      "min_val": 1.0,
+      "max_val": 1.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "obs_clear_baseline_run_01",
+        "obs_clear_baseline_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run obs_clear_baseline_run_01: Valid observation 1.0000 m/s",
+        "Run obs_clear_baseline_run_02: Valid observation 1.0000 m/s"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "minimum_separation",
+      "unit": "metres",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 2.0,
+      "median": 2.0,
+      "std_dev": 0.0,
+      "min_val": 2.0,
+      "max_val": 2.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "obs_clear_baseline_run_01",
+        "obs_clear_baseline_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run obs_clear_baseline_run_01: Valid observation 2.0000 metres",
+        "Run obs_clear_baseline_run_02: Valid observation 2.0000 metres"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "obs_clear_baseline",
+      "metric_id": "total_elapsed_time",
+      "unit": "seconds",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 4.0,
+      "median": 4.0,
+      "std_dev": 0.0,
+      "min_val": 4.0,
+      "max_val": 4.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "obs_clear_baseline_run_01",
+        "obs_clear_baseline_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run obs_clear_baseline_run_01: Valid observation 4.0000 seconds",
+        "Run obs_clear_baseline_run_02: Valid observation 4.0000 seconds"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "area_density",
+      "unit": "ped/m²",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 0.015,
+      "median": 0.015,
+      "std_dev": 0.0,
+      "min_val": 0.015,
+      "max_val": 0.015,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "obs_dual_pillars_run_01",
+        "obs_dual_pillars_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run obs_dual_pillars_run_01: Valid observation 0.0150 ped/m²",
+        "Run obs_dual_pillars_run_02: Valid observation 0.0150 ped/m²"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "exit_throughput",
+      "unit": "ped/s",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 0,
+      "excluded_run_count": 2,
+      "unavailable_count": 2,
+      "mean": null,
+      "median": null,
+      "std_dev": null,
+      "min_val": null,
+      "max_val": null,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [],
+      "is_single_run": false,
+      "is_deterministic_repetition": false,
+      "inclusion_reasons": [],
+      "exclusion_reasons": [
+        "Run obs_dual_pillars_run_01: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.).",
+        "Run obs_dual_pillars_run_02: Metric status is UNAVAILABLE (Authoritative discrete exit events not emitted by engine.)."
+      ]
+    },
+    {
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "mean_speed",
+      "unit": "m/s",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 1.0,
+      "median": 1.0,
+      "std_dev": 0.0,
+      "min_val": 1.0,
+      "max_val": 1.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "obs_dual_pillars_run_01",
+        "obs_dual_pillars_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run obs_dual_pillars_run_01: Valid observation 1.0000 m/s",
+        "Run obs_dual_pillars_run_02: Valid observation 1.0000 m/s"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "minimum_separation",
+      "unit": "metres",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 2.0,
+      "median": 2.0,
+      "std_dev": 0.0,
+      "min_val": 2.0,
+      "max_val": 2.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "obs_dual_pillars_run_01",
+        "obs_dual_pillars_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run obs_dual_pillars_run_01: Valid observation 2.0000 metres",
+        "Run obs_dual_pillars_run_02: Valid observation 2.0000 metres"
+      ],
+      "exclusion_reasons": []
+    },
+    {
+      "scenario_id": "obs_dual_pillars",
+      "metric_id": "total_elapsed_time",
+      "unit": "seconds",
+      "attempted_run_count": 2,
+      "successful_run_count": 2,
+      "partial_run_count": 0,
+      "failed_run_count": 0,
+      "eligible_run_count": 2,
+      "excluded_run_count": 0,
+      "unavailable_count": 0,
+      "mean": 4.0,
+      "median": 4.0,
+      "std_dev": 0.0,
+      "min_val": 4.0,
+      "max_val": 4.0,
+      "aggregation_method": "sample_mean_and_stdev",
+      "contributing_run_ids": [
+        "obs_dual_pillars_run_01",
+        "obs_dual_pillars_run_02"
+      ],
+      "is_single_run": false,
+      "is_deterministic_repetition": true,
+      "inclusion_reasons": [
+        "Run obs_dual_pillars_run_01: Valid observation 4.0000 seconds",
+        "Run obs_dual_pillars_run_02: Valid observation 4.0000 seconds"
+      ],
+      "exclusion_reasons": []
+    }
+  ],
+  "comparability_evaluations": [
+    {
+      "variant_scenario_id": "obs_central_pillar",
+      "metric_id": "area_density",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "obs_central_pillar",
+      "metric_id": "exit_throughput",
+      "decision": "NOT_COMPARABLE",
+      "is_comparable": false,
+      "reason_codes": [
+        "DATA_UNAVAILABLE"
+      ],
+      "explanation": "Underlying observation data for metric 'exit_throughput' is unavailable in one or both scenarios.",
+      "caveats": [
+        "Authoritative measurements or exit events absent; cross-scenario comparison cannot be made."
+      ]
+    },
+    {
+      "variant_scenario_id": "obs_central_pillar",
+      "metric_id": "mean_speed",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "obs_central_pillar",
+      "metric_id": "minimum_separation",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "obs_central_pillar",
+      "metric_id": "total_elapsed_time",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "obs_dual_pillars",
+      "metric_id": "area_density",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "obs_dual_pillars",
+      "metric_id": "exit_throughput",
+      "decision": "NOT_COMPARABLE",
+      "is_comparable": false,
+      "reason_codes": [
+        "DATA_UNAVAILABLE"
+      ],
+      "explanation": "Underlying observation data for metric 'exit_throughput' is unavailable in one or both scenarios.",
+      "caveats": [
+        "Authoritative measurements or exit events absent; cross-scenario comparison cannot be made."
+      ]
+    },
+    {
+      "variant_scenario_id": "obs_dual_pillars",
+      "metric_id": "mean_speed",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "obs_dual_pillars",
+      "metric_id": "minimum_separation",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    },
+    {
+      "variant_scenario_id": "obs_dual_pillars",
+      "metric_id": "total_elapsed_time",
+      "decision": "COMPARABLE",
+      "is_comparable": true,
+      "reason_codes": [
+        "FULLY_COMPARABLE"
+      ],
+      "explanation": "Metric definitions, units, windows, spatial frames, and populations match.",
+      "caveats": []
+    }
+  ],
+  "metric_deltas": [
+    {
+      "variant_scenario_id": "obs_central_pillar",
+      "metric_id": "area_density",
+      "baseline_mean": 0.015,
+      "variant_mean": 0.015,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "obs_central_pillar",
+      "metric_id": "exit_throughput",
+      "baseline_mean": null,
+      "variant_mean": null,
+      "absolute_delta": null,
+      "percentage_delta": null,
+      "comparability_decision": "NOT_COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "obs_central_pillar",
+      "metric_id": "mean_speed",
+      "baseline_mean": 1.0,
+      "variant_mean": 1.0,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "obs_central_pillar",
+      "metric_id": "minimum_separation",
+      "baseline_mean": 2.0,
+      "variant_mean": 2.0,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "obs_central_pillar",
+      "metric_id": "total_elapsed_time",
+      "baseline_mean": 4.0,
+      "variant_mean": 4.0,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "obs_dual_pillars",
+      "metric_id": "area_density",
+      "baseline_mean": 0.015,
+      "variant_mean": 0.015,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "obs_dual_pillars",
+      "metric_id": "exit_throughput",
+      "baseline_mean": null,
+      "variant_mean": null,
+      "absolute_delta": null,
+      "percentage_delta": null,
+      "comparability_decision": "NOT_COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "obs_dual_pillars",
+      "metric_id": "mean_speed",
+      "baseline_mean": 1.0,
+      "variant_mean": 1.0,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "obs_dual_pillars",
+      "metric_id": "minimum_separation",
+      "baseline_mean": 2.0,
+      "variant_mean": 2.0,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    },
+    {
+      "variant_scenario_id": "obs_dual_pillars",
+      "metric_id": "total_elapsed_time",
+      "baseline_mean": 4.0,
+      "variant_mean": 4.0,
+      "absolute_delta": 0.0,
+      "percentage_delta": 0.0,
+      "comparability_decision": "COMPARABLE"
+    }
+  ],
+  "reproducibility_metadata": {
+    "schema_version": "1.0.0",
+    "software_version": "1.0.0",
+    "experiment_id": "study_obstacle_geometry",
+    "execution_timestamp": "2026-11-12T04:54:06.206045+00:00",
+    "baseline_scenario_id": "obs_clear_baseline",
+    "scenario_ids": [
+      "obs_clear_baseline",
+      "obs_central_pillar",
+      "obs_dual_pillars"
+    ],
+    "run_ids": [
+      "obs_central_pillar_run_01",
+      "obs_central_pillar_run_02",
+      "obs_clear_baseline_run_01",
+      "obs_clear_baseline_run_02",
+      "obs_dual_pillars_run_01",
+      "obs_dual_pillars_run_02"
+    ],
+    "total_runs_attempted": 6,
+    "runs_by_status": {
+      "SUCCESS": 6,
+      "PARTIAL": 0,
+      "FAILED": 0
+    },
+    "configured_seeds": {
+      "obs_central_pillar": 202,
+      "obs_clear_baseline": 202,
+      "obs_dual_pillars": 202
+    },
+    "seed_used_by_engine": false,
+    "seed_usage_note": "As inspected in the current Pavan SimulationEngine (genevac.simulation.engine), the engine's kinematics are purely deterministic and do not consume PRNG seeds during physics stepping. Supplied seeds are recorded as scenario intent only.",
+    "repetition_sample_type": "deterministic_duplicate",
+    "reproducibility_notes": "Executed 2 repetitions per scenario. All multi-run metrics produced zero variance (std_dev = 0.0) due to deterministic simulation kinematics. These are deterministic duplicates and must not be treated as independent stochastic samples.",
+    "engine_timesteps": {
+      "obs_central_pillar": 0.1,
+      "obs_clear_baseline": 0.1,
+      "obs_dual_pillars": 0.1
+    },
+    "engine_max_steps": {
+      "obs_central_pillar": 40,
+      "obs_clear_baseline": 40,
+      "obs_dual_pillars": 40
+    },
+    "initial_agent_counts": {
+      "obs_central_pillar": 15,
+      "obs_clear_baseline": 15,
+      "obs_dual_pillars": 15
+    },
+    "scenario_config_fingerprints": {
+      "obs_central_pillar": "7e016f781948a753ead0e76ccc3dbe6c796b20dd3d5af5e74074f47ec0bfff49",
+      "obs_clear_baseline": "c74f914951895946759c3948112a9a84ba233f09590134fca115dec7d0068187",
+      "obs_dual_pillars": "a5b281b87875f47447a028a5a8585ddbea1fd42e8e171ad3e3dcabc16a50e736"
+    }
+  }
+}
