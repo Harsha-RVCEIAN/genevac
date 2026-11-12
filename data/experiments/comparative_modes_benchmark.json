@@ -1,0 +1,1730 @@
+{
+  "normal_evacuation_scenario": {
+    "original_simulation": {
+      "mode": "ORIGINAL SIMULATION",
+      "seed": 42,
+      "total_steps": 279,
+      "elapsed_time_s": 27.9,
+      "initial_pedestrians": 8,
+      "evacuated": 8,
+      "blocked": 0,
+      "active": 0,
+      "throughput_peds_per_sec": 0.287,
+      "mean_path_length_m": 25.335,
+      "interventions_count": 0,
+      "invalid_candidates_rejected": 0,
+      "fallbacks_count": 0,
+      "safety_audit": {
+        "speed_limit_violations": 0,
+        "walkability_or_obstacle_penetrations": 0,
+        "pedestrian_overlap_violations": 0,
+        "teleport_violations": 0,
+        "max_single_step_displacement_m": 0.15
+      },
+      "evac_step_by_agent": {
+        "ped_1": 263,
+        "ped_2": 279,
+        "ped_3": 140,
+        "ped_4": 164,
+        "ped_5": 134,
+        "ped_6": 50,
+        "ped_7": 259,
+        "ped_8": 264
+      },
+      "total_dist_by_agent": {
+        "ped_1": 33.94,
+        "ped_2": 33.258,
+        "ped_3": 19.325,
+        "ped_4": 19.403,
+        "ped_5": 20.0,
+        "ped_6": 6.424,
+        "ped_7": 33.522,
+        "ped_8": 36.809
+      },
+      "causality_traces": [
+        {
+          "step": 4,
+          "timestamp_s": 0.4,
+          "mode": "ORIGINAL SIMULATION",
+          "ped_1_position": [
+            8.1644,
+            6.4933
+          ],
+          "ped_1_velocity": [
+            0.4111,
+            1.2333
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ]
+        },
+        {
+          "step": 8,
+          "timestamp_s": 0.8,
+          "mode": "ORIGINAL SIMULATION",
+          "ped_1_position": [
+            8.3289,
+            6.9866
+          ],
+          "ped_1_velocity": [
+            0.4111,
+            1.2333
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ]
+        }
+      ]
+    },
+    "mid_prediction_only": {
+      "mode": "MID PREDICTION ONLY",
+      "seed": 42,
+      "total_steps": 279,
+      "elapsed_time_s": 27.9,
+      "initial_pedestrians": 8,
+      "evacuated": 8,
+      "blocked": 0,
+      "active": 0,
+      "throughput_peds_per_sec": 0.287,
+      "mean_path_length_m": 25.335,
+      "interventions_count": 0,
+      "invalid_candidates_rejected": 0,
+      "fallbacks_count": 0,
+      "safety_audit": {
+        "speed_limit_violations": 0,
+        "walkability_or_obstacle_penetrations": 0,
+        "pedestrian_overlap_violations": 0,
+        "teleport_violations": 0,
+        "max_single_step_displacement_m": 0.15
+      },
+      "evac_step_by_agent": {
+        "ped_1": 263,
+        "ped_2": 279,
+        "ped_3": 140,
+        "ped_4": 164,
+        "ped_5": 134,
+        "ped_6": 50,
+        "ped_7": 259,
+        "ped_8": 264
+      },
+      "total_dist_by_agent": {
+        "ped_1": 33.94,
+        "ped_2": 33.258,
+        "ped_3": 19.325,
+        "ped_4": 19.403,
+        "ped_5": 20.0,
+        "ped_6": 6.424,
+        "ped_7": 33.522,
+        "ped_8": 36.809
+      },
+      "causality_traces": [
+        {
+          "step": 4,
+          "timestamp_s": 0.4,
+          "mode": "MID PREDICTION ONLY",
+          "ped_1_position": [
+            8.1644,
+            6.4933
+          ],
+          "ped_1_velocity": [
+            0.4111,
+            1.2333
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ]
+        },
+        {
+          "step": 8,
+          "timestamp_s": 0.8,
+          "mode": "MID PREDICTION ONLY",
+          "ped_1_position": [
+            8.3289,
+            6.9866
+          ],
+          "ped_1_velocity": [
+            0.4111,
+            1.2333
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ]
+        }
+      ]
+    },
+    "mid_assisted_seed_42": {
+      "mode": "MID-ASSISTED EVACUATION",
+      "seed": 42,
+      "total_steps": 183,
+      "elapsed_time_s": 18.3,
+      "initial_pedestrians": 8,
+      "evacuated": 8,
+      "blocked": 0,
+      "active": 0,
+      "throughput_peds_per_sec": 0.437,
+      "mean_path_length_m": 17.707,
+      "interventions_count": 264,
+      "invalid_candidates_rejected": 99,
+      "fallbacks_count": 6,
+      "safety_audit": {
+        "speed_limit_violations": 0,
+        "walkability_or_obstacle_penetrations": 0,
+        "pedestrian_overlap_violations": 0,
+        "teleport_violations": 0,
+        "max_single_step_displacement_m": 0.15
+      },
+      "evac_step_by_agent": {
+        "ped_1": 162,
+        "ped_2": 149,
+        "ped_3": 135,
+        "ped_4": 183,
+        "ped_5": 135,
+        "ped_6": 50,
+        "ped_7": 150,
+        "ped_8": 135
+      },
+      "total_dist_by_agent": {
+        "ped_1": 20.058,
+        "ped_2": 17.48,
+        "ped_3": 18.63,
+        "ped_4": 21.334,
+        "ped_5": 20.188,
+        "ped_6": 6.392,
+        "ped_7": 18.884,
+        "ped_8": 18.687
+      },
+      "causality_traces": [
+        {
+          "step": 4,
+          "timestamp_s": 0.4,
+          "mode": "MID-ASSISTED EVACUATION",
+          "ped_1_position": [
+            8.1644,
+            6.4933
+          ],
+          "ped_1_velocity": [
+            0.4111,
+            1.2333
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              8.5177,
+              7.712
+            ],
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ],
+          "controller_decision": {
+            "evaluated_samples": 6,
+            "valid_candidates": 6,
+            "invalid_candidates": 0,
+            "selected_sample_idx": 1,
+            "guide_waypoint": [
+              8.5177,
+              7.712
+            ],
+            "selection_reason": "Selected sample #1 -> wp(8.5,7.7) [valid=6/6, dist=18.8m]",
+            "guidance_applied": true,
+            "fallback_to_original": false,
+            "candidates": [
+              {
+                "sample_idx": 0,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.6785,
+                  7.6816
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.455,
+                "route_distance_m": 18.811
+              },
+              {
+                "sample_idx": 1,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.5177,
+                  7.712
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.351,
+                "route_distance_m": 18.806
+              },
+              {
+                "sample_idx": 2,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.2158,
+                  7.1777
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 2.779,
+                "route_distance_m": 18.828
+              },
+              {
+                "sample_idx": 3,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.392,
+                  7.0372
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 2.843,
+                "route_distance_m": 18.806
+              },
+              {
+                "sample_idx": 4,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  9.0642,
+                  7.7201
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.784,
+                "route_distance_m": 18.902
+              },
+              {
+                "sample_idx": 5,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.2068,
+                  7.8249
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.205,
+                "route_distance_m": 18.876
+              }
+            ]
+          }
+        },
+        {
+          "step": 8,
+          "timestamp_s": 0.8,
+          "mode": "MID-ASSISTED EVACUATION",
+          "ped_1_position": [
+            8.3092,
+            6.9928
+          ],
+          "ped_1_velocity": [
+            0.3619,
+            1.2486
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              8.5019,
+              7.6155
+            ],
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ],
+          "controller_decision": {
+            "evaluated_samples": 6,
+            "valid_candidates": 6,
+            "invalid_candidates": 0,
+            "selected_sample_idx": 5,
+            "guide_waypoint": [
+              8.5019,
+              7.6155
+            ],
+            "selection_reason": "Selected sample #5 -> wp(8.5,7.6) [valid=6/6, dist=18.3m]",
+            "guidance_applied": true,
+            "fallback_to_original": false,
+            "candidates": [
+              {
+                "sample_idx": 0,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.8146,
+                  8.0237
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.78,
+                "route_distance_m": 18.297
+              },
+              {
+                "sample_idx": 1,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.5595,
+                  8.7352
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 4.125,
+                "route_distance_m": 18.329
+              },
+              {
+                "sample_idx": 2,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.3445,
+                  7.5751
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.131,
+                "route_distance_m": 18.308
+              },
+              {
+                "sample_idx": 3,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.3097,
+                  7.763
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.234,
+                "route_distance_m": 18.332
+              },
+              {
+                "sample_idx": 4,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.4819,
+                  7.3226
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.079,
+                "route_distance_m": 18.29
+              },
+              {
+                "sample_idx": 5,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.5019,
+                  7.6155
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.276,
+                "route_distance_m": 18.285
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "mid_assisted_seed_43": {
+      "mode": "MID-ASSISTED EVACUATION",
+      "seed": 43,
+      "total_steps": 160,
+      "elapsed_time_s": 16.0,
+      "initial_pedestrians": 8,
+      "evacuated": 8,
+      "blocked": 0,
+      "active": 0,
+      "throughput_peds_per_sec": 0.5,
+      "mean_path_length_m": 17.197,
+      "interventions_count": 257,
+      "invalid_candidates_rejected": 66,
+      "fallbacks_count": 2,
+      "safety_audit": {
+        "speed_limit_violations": 0,
+        "walkability_or_obstacle_penetrations": 0,
+        "pedestrian_overlap_violations": 0,
+        "teleport_violations": 0,
+        "max_single_step_displacement_m": 0.15
+      },
+      "evac_step_by_agent": {
+        "ped_1": 154,
+        "ped_2": 148,
+        "ped_3": 137,
+        "ped_4": 160,
+        "ped_5": 135,
+        "ped_6": 49,
+        "ped_7": 145,
+        "ped_8": 127
+      },
+      "total_dist_by_agent": {
+        "ped_1": 19.515,
+        "ped_2": 17.625,
+        "ped_3": 18.929,
+        "ped_4": 18.885,
+        "ped_5": 20.145,
+        "ped_6": 6.363,
+        "ped_7": 18.378,
+        "ped_8": 17.733
+      },
+      "causality_traces": [
+        {
+          "step": 4,
+          "timestamp_s": 0.4,
+          "mode": "MID-ASSISTED EVACUATION",
+          "ped_1_position": [
+            8.1644,
+            6.4933
+          ],
+          "ped_1_velocity": [
+            0.4111,
+            1.2333
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              8.4699,
+              7.3678
+            ],
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ],
+          "controller_decision": {
+            "evaluated_samples": 6,
+            "valid_candidates": 6,
+            "invalid_candidates": 0,
+            "selected_sample_idx": 2,
+            "guide_waypoint": [
+              8.4699,
+              7.3678
+            ],
+            "selection_reason": "Selected sample #2 -> wp(8.5,7.4) [valid=6/6, dist=18.8m]",
+            "guidance_applied": true,
+            "fallback_to_original": false,
+            "candidates": [
+              {
+                "sample_idx": 0,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.2208,
+                  7.4935
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 2.984,
+                "route_distance_m": 18.847
+              },
+              {
+                "sample_idx": 1,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.102,
+                  7.5639
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 2.946,
+                "route_distance_m": 18.897
+              },
+              {
+                "sample_idx": 2,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.4699,
+                  7.3678
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.097,
+                "route_distance_m": 18.805
+              },
+              {
+                "sample_idx": 3,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.3863,
+                  7.6412
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.206,
+                "route_distance_m": 18.817
+              },
+              {
+                "sample_idx": 4,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.4427,
+                  7.1777
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 2.963,
+                "route_distance_m": 18.806
+              },
+              {
+                "sample_idx": 5,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.3549,
+                  8.4058
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.74,
+                "route_distance_m": 18.875
+              }
+            ]
+          }
+        },
+        {
+          "step": 8,
+          "timestamp_s": 0.8,
+          "mode": "MID-ASSISTED EVACUATION",
+          "ped_1_position": [
+            8.3359,
+            6.9842
+          ],
+          "ped_1_velocity": [
+            0.4287,
+            1.2273
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              8.5258,
+              7.9403
+            ],
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ],
+          "controller_decision": {
+            "evaluated_samples": 6,
+            "valid_candidates": 6,
+            "invalid_candidates": 0,
+            "selected_sample_idx": 5,
+            "guide_waypoint": [
+              8.5258,
+              7.9403
+            ],
+            "selection_reason": "Selected sample #5 -> wp(8.5,7.9) [valid=6/6, dist=18.3m]",
+            "guidance_applied": true,
+            "fallback_to_original": false,
+            "candidates": [
+              {
+                "sample_idx": 0,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.9836,
+                  8.451
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 4.196,
+                "route_distance_m": 18.295
+              },
+              {
+                "sample_idx": 1,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.4841,
+                  8.4736
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.875,
+                "route_distance_m": 18.335
+              },
+              {
+                "sample_idx": 2,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.5153,
+                  8.102
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.619,
+                "route_distance_m": 18.303
+              },
+              {
+                "sample_idx": 3,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.2275,
+                  7.9052
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.278,
+                "route_distance_m": 18.389
+              },
+              {
+                "sample_idx": 4,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  9.0301,
+                  7.4533
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.605,
+                "route_distance_m": 18.487
+              },
+              {
+                "sample_idx": 5,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.5258,
+                  7.9403
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.512,
+                "route_distance_m": 18.294
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "mid_assisted_seed_44": {
+      "mode": "MID-ASSISTED EVACUATION",
+      "seed": 44,
+      "total_steps": 155,
+      "elapsed_time_s": 15.5,
+      "initial_pedestrians": 8,
+      "evacuated": 8,
+      "blocked": 0,
+      "active": 0,
+      "throughput_peds_per_sec": 0.516,
+      "mean_path_length_m": 17.135,
+      "interventions_count": 256,
+      "invalid_candidates_rejected": 64,
+      "fallbacks_count": 2,
+      "safety_audit": {
+        "speed_limit_violations": 0,
+        "walkability_or_obstacle_penetrations": 0,
+        "pedestrian_overlap_violations": 0,
+        "teleport_violations": 0,
+        "max_single_step_displacement_m": 0.15
+      },
+      "evac_step_by_agent": {
+        "ped_1": 142,
+        "ped_2": 155,
+        "ped_3": 140,
+        "ped_4": 153,
+        "ped_5": 136,
+        "ped_6": 50,
+        "ped_7": 147,
+        "ped_8": 129
+      },
+      "total_dist_by_agent": {
+        "ped_1": 18.209,
+        "ped_2": 18.223,
+        "ped_3": 19.227,
+        "ped_4": 17.997,
+        "ped_5": 20.232,
+        "ped_6": 6.411,
+        "ped_7": 18.842,
+        "ped_8": 17.941
+      },
+      "causality_traces": [
+        {
+          "step": 4,
+          "timestamp_s": 0.4,
+          "mode": "MID-ASSISTED EVACUATION",
+          "ped_1_position": [
+            8.1644,
+            6.4933
+          ],
+          "ped_1_velocity": [
+            0.4111,
+            1.2333
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              8.3983,
+              7.1322
+            ],
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ],
+          "controller_decision": {
+            "evaluated_samples": 6,
+            "valid_candidates": 6,
+            "invalid_candidates": 0,
+            "selected_sample_idx": 1,
+            "guide_waypoint": [
+              8.3983,
+              7.1322
+            ],
+            "selection_reason": "Selected sample #1 -> wp(8.4,7.1) [valid=6/6, dist=18.8m]",
+            "guidance_applied": true,
+            "fallback_to_original": false,
+            "candidates": [
+              {
+                "sample_idx": 0,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.753,
+                  7.3812
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.334,
+                "route_distance_m": 18.849
+              },
+              {
+                "sample_idx": 1,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.3983,
+                  7.1322
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 2.901,
+                "route_distance_m": 18.805
+              },
+              {
+                "sample_idx": 2,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.3902,
+                  7.4786
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.103,
+                "route_distance_m": 18.81
+              },
+              {
+                "sample_idx": 3,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.5965,
+                  7.3477
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.187,
+                "route_distance_m": 18.817
+              },
+              {
+                "sample_idx": 4,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.9149,
+                  7.7689
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.694,
+                "route_distance_m": 18.848
+              },
+              {
+                "sample_idx": 5,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.3843,
+                  7.5726
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.159,
+                "route_distance_m": 18.814
+              }
+            ]
+          }
+        },
+        {
+          "step": 8,
+          "timestamp_s": 0.8,
+          "mode": "MID-ASSISTED EVACUATION",
+          "ped_1_position": [
+            8.3432,
+            6.9816
+          ],
+          "ped_1_velocity": [
+            0.4468,
+            1.2208
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              8.743,
+              8.1072
+            ],
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ],
+          "controller_decision": {
+            "evaluated_samples": 6,
+            "valid_candidates": 6,
+            "invalid_candidates": 0,
+            "selected_sample_idx": 0,
+            "guide_waypoint": [
+              8.743,
+              8.1072
+            ],
+            "selection_reason": "Selected sample #0 -> wp(8.7,8.1) [valid=6/6, dist=18.3m]",
+            "guidance_applied": true,
+            "fallback_to_original": false,
+            "candidates": [
+              {
+                "sample_idx": 0,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.743,
+                  8.1072
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.784,
+                "route_distance_m": 18.285
+              },
+              {
+                "sample_idx": 1,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.8325,
+                  7.8332
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.67,
+                "route_distance_m": 18.309
+              },
+              {
+                "sample_idx": 2,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.8463,
+                  8.6681
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 4.259,
+                "route_distance_m": 18.286
+              },
+              {
+                "sample_idx": 3,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.5057,
+                  8.1213
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.626,
+                "route_distance_m": 18.308
+              },
+              {
+                "sample_idx": 4,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.8152,
+                  7.9913
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.759,
+                "route_distance_m": 18.295
+              },
+              {
+                "sample_idx": 5,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.8904,
+                  7.5877
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.565,
+                "route_distance_m": 18.366
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "proof_1_divergence_orig_vs_pred_only": {
+      "ped_1": {
+        "max_divergence_m": 0.0,
+        "mean_divergence_m": 0.0,
+        "steps_compared": 280
+      },
+      "ped_2": {
+        "max_divergence_m": 0.0,
+        "mean_divergence_m": 0.0,
+        "steps_compared": 280
+      },
+      "ped_3": {
+        "max_divergence_m": 0.0,
+        "mean_divergence_m": 0.0,
+        "steps_compared": 280
+      },
+      "ped_4": {
+        "max_divergence_m": 0.0,
+        "mean_divergence_m": 0.0,
+        "steps_compared": 280
+      },
+      "ped_5": {
+        "max_divergence_m": 0.0,
+        "mean_divergence_m": 0.0,
+        "steps_compared": 280
+      },
+      "ped_6": {
+        "max_divergence_m": 0.0,
+        "mean_divergence_m": 0.0,
+        "steps_compared": 280
+      },
+      "ped_7": {
+        "max_divergence_m": 0.0,
+        "mean_divergence_m": 0.0,
+        "steps_compared": 280
+      },
+      "ped_8": {
+        "max_divergence_m": 0.0,
+        "mean_divergence_m": 0.0,
+        "steps_compared": 280
+      }
+    },
+    "proof_1_divergence_orig_vs_mid_assisted": {
+      "ped_1": {
+        "max_divergence_m": 10.3585,
+        "mean_divergence_m": 4.4112,
+        "steps_compared": 184
+      },
+      "ped_2": {
+        "max_divergence_m": 10.8187,
+        "mean_divergence_m": 4.7786,
+        "steps_compared": 184
+      },
+      "ped_3": {
+        "max_divergence_m": 1.1925,
+        "mean_divergence_m": 0.5538,
+        "steps_compared": 184
+      },
+      "ped_4": {
+        "max_divergence_m": 2.58,
+        "mean_divergence_m": 1.3928,
+        "steps_compared": 184
+      },
+      "ped_5": {
+        "max_divergence_m": 0.7265,
+        "mean_divergence_m": 0.2053,
+        "steps_compared": 184
+      },
+      "ped_6": {
+        "max_divergence_m": 0.1918,
+        "mean_divergence_m": 0.0192,
+        "steps_compared": 184
+      },
+      "ped_7": {
+        "max_divergence_m": 10.5132,
+        "mean_divergence_m": 4.7758,
+        "steps_compared": 184
+      },
+      "ped_8": {
+        "max_divergence_m": 10.9608,
+        "mean_divergence_m": 5.2933,
+        "steps_compared": 184
+      }
+    }
+  },
+  "exit_closure_scenario_step_25": {
+    "original_simulation": {
+      "mode": "ORIGINAL SIMULATION",
+      "seed": 42,
+      "total_steps": 264,
+      "elapsed_time_s": 26.4,
+      "initial_pedestrians": 8,
+      "evacuated": 5,
+      "blocked": 3,
+      "active": 0,
+      "throughput_peds_per_sec": 0.189,
+      "mean_path_length_m": 15.635,
+      "interventions_count": 0,
+      "invalid_candidates_rejected": 0,
+      "fallbacks_count": 0,
+      "safety_audit": {
+        "speed_limit_violations": 0,
+        "walkability_or_obstacle_penetrations": 0,
+        "pedestrian_overlap_violations": 0,
+        "teleport_violations": 0,
+        "max_single_step_displacement_m": 0.15
+      },
+      "evac_step_by_agent": {
+        "ped_1": null,
+        "ped_2": null,
+        "ped_3": 140,
+        "ped_4": 164,
+        "ped_5": null,
+        "ped_6": 50,
+        "ped_7": 259,
+        "ped_8": 264
+      },
+      "total_dist_by_agent": {
+        "ped_1": 3.12,
+        "ped_2": 2.88,
+        "ped_3": 19.325,
+        "ped_4": 19.403,
+        "ped_5": 3.6,
+        "ped_6": 6.424,
+        "ped_7": 33.522,
+        "ped_8": 36.809
+      },
+      "causality_traces": [
+        {
+          "step": 4,
+          "timestamp_s": 0.4,
+          "mode": "ORIGINAL SIMULATION",
+          "ped_1_position": [
+            8.1644,
+            6.4933
+          ],
+          "ped_1_velocity": [
+            0.4111,
+            1.2333
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ]
+        },
+        {
+          "step": 8,
+          "timestamp_s": 0.8,
+          "mode": "ORIGINAL SIMULATION",
+          "ped_1_position": [
+            8.3289,
+            6.9866
+          ],
+          "ped_1_velocity": [
+            0.4111,
+            1.2333
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ]
+        }
+      ]
+    },
+    "mid_prediction_only": {
+      "mode": "MID PREDICTION ONLY",
+      "seed": 42,
+      "total_steps": 264,
+      "elapsed_time_s": 26.4,
+      "initial_pedestrians": 8,
+      "evacuated": 5,
+      "blocked": 3,
+      "active": 0,
+      "throughput_peds_per_sec": 0.189,
+      "mean_path_length_m": 15.635,
+      "interventions_count": 0,
+      "invalid_candidates_rejected": 0,
+      "fallbacks_count": 0,
+      "safety_audit": {
+        "speed_limit_violations": 0,
+        "walkability_or_obstacle_penetrations": 0,
+        "pedestrian_overlap_violations": 0,
+        "teleport_violations": 0,
+        "max_single_step_displacement_m": 0.15
+      },
+      "evac_step_by_agent": {
+        "ped_1": null,
+        "ped_2": null,
+        "ped_3": 140,
+        "ped_4": 164,
+        "ped_5": null,
+        "ped_6": 50,
+        "ped_7": 259,
+        "ped_8": 264
+      },
+      "total_dist_by_agent": {
+        "ped_1": 3.12,
+        "ped_2": 2.88,
+        "ped_3": 19.325,
+        "ped_4": 19.403,
+        "ped_5": 3.6,
+        "ped_6": 6.424,
+        "ped_7": 33.522,
+        "ped_8": 36.809
+      },
+      "causality_traces": [
+        {
+          "step": 4,
+          "timestamp_s": 0.4,
+          "mode": "MID PREDICTION ONLY",
+          "ped_1_position": [
+            8.1644,
+            6.4933
+          ],
+          "ped_1_velocity": [
+            0.4111,
+            1.2333
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ]
+        },
+        {
+          "step": 8,
+          "timestamp_s": 0.8,
+          "mode": "MID PREDICTION ONLY",
+          "ped_1_position": [
+            8.3289,
+            6.9866
+          ],
+          "ped_1_velocity": [
+            0.4111,
+            1.2333
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ]
+        }
+      ]
+    },
+    "mid_assisted_evacuation": {
+      "mode": "MID-ASSISTED EVACUATION",
+      "seed": 42,
+      "total_steps": 215,
+      "elapsed_time_s": 21.5,
+      "initial_pedestrians": 8,
+      "evacuated": 8,
+      "blocked": 0,
+      "active": 0,
+      "throughput_peds_per_sec": 0.372,
+      "mean_path_length_m": 19.825,
+      "interventions_count": 298,
+      "invalid_candidates_rejected": 95,
+      "fallbacks_count": 7,
+      "safety_audit": {
+        "speed_limit_violations": 0,
+        "walkability_or_obstacle_penetrations": 0,
+        "pedestrian_overlap_violations": 0,
+        "teleport_violations": 0,
+        "max_single_step_displacement_m": 0.15
+      },
+      "evac_step_by_agent": {
+        "ped_1": 215,
+        "ped_2": 207,
+        "ped_3": 135,
+        "ped_4": 183,
+        "ped_5": 167,
+        "ped_6": 50,
+        "ped_7": 150,
+        "ped_8": 135
+      },
+      "total_dist_by_agent": {
+        "ped_1": 26.517,
+        "ped_2": 24.105,
+        "ped_3": 18.63,
+        "ped_4": 21.334,
+        "ped_5": 24.053,
+        "ped_6": 6.392,
+        "ped_7": 18.884,
+        "ped_8": 18.687
+      },
+      "causality_traces": [
+        {
+          "step": 4,
+          "timestamp_s": 0.4,
+          "mode": "MID-ASSISTED EVACUATION",
+          "ped_1_position": [
+            8.1644,
+            6.4933
+          ],
+          "ped_1_velocity": [
+            0.4111,
+            1.2333
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              8.5177,
+              7.712
+            ],
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ],
+          "controller_decision": {
+            "evaluated_samples": 6,
+            "valid_candidates": 6,
+            "invalid_candidates": 0,
+            "selected_sample_idx": 1,
+            "guide_waypoint": [
+              8.5177,
+              7.712
+            ],
+            "selection_reason": "Selected sample #1 -> wp(8.5,7.7) [valid=6/6, dist=18.8m]",
+            "guidance_applied": true,
+            "fallback_to_original": false,
+            "candidates": [
+              {
+                "sample_idx": 0,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.6785,
+                  7.6816
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.455,
+                "route_distance_m": 18.811
+              },
+              {
+                "sample_idx": 1,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.5177,
+                  7.712
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.351,
+                "route_distance_m": 18.806
+              },
+              {
+                "sample_idx": 2,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.2158,
+                  7.1777
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 2.779,
+                "route_distance_m": 18.828
+              },
+              {
+                "sample_idx": 3,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.392,
+                  7.0372
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 2.843,
+                "route_distance_m": 18.806
+              },
+              {
+                "sample_idx": 4,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  9.0642,
+                  7.7201
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.784,
+                "route_distance_m": 18.902
+              },
+              {
+                "sample_idx": 5,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.2068,
+                  7.8249
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.205,
+                "route_distance_m": 18.876
+              }
+            ]
+          }
+        },
+        {
+          "step": 8,
+          "timestamp_s": 0.8,
+          "mode": "MID-ASSISTED EVACUATION",
+          "ped_1_position": [
+            8.3092,
+            6.9928
+          ],
+          "ped_1_velocity": [
+            0.3619,
+            1.2486
+          ],
+          "ped_1_target_exit": "exit_left",
+          "ped_1_waypoints": [
+            [
+              8.5019,
+              7.6155
+            ],
+            [
+              10.0,
+              12.0
+            ],
+            [
+              10.0,
+              13.5
+            ],
+            [
+              10.0,
+              15.0
+            ],
+            [
+              0.0,
+              15.0
+            ]
+          ],
+          "controller_decision": {
+            "evaluated_samples": 6,
+            "valid_candidates": 6,
+            "invalid_candidates": 0,
+            "selected_sample_idx": 5,
+            "guide_waypoint": [
+              8.5019,
+              7.6155
+            ],
+            "selection_reason": "Selected sample #5 -> wp(8.5,7.6) [valid=6/6, dist=18.3m]",
+            "guidance_applied": true,
+            "fallback_to_original": false,
+            "candidates": [
+              {
+                "sample_idx": 0,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.8146,
+                  8.0237
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.78,
+                "route_distance_m": 18.297
+              },
+              {
+                "sample_idx": 1,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.5595,
+                  8.7352
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 4.125,
+                "route_distance_m": 18.329
+              },
+              {
+                "sample_idx": 2,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.3445,
+                  7.5751
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.131,
+                "route_distance_m": 18.308
+              },
+              {
+                "sample_idx": 3,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.3097,
+                  7.763
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.234,
+                "route_distance_m": 18.332
+              },
+              {
+                "sample_idx": 4,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.4819,
+                  7.3226
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.079,
+                "route_distance_m": 18.29
+              },
+              {
+                "sample_idx": 5,
+                "is_valid": true,
+                "rejection_reason": null,
+                "guide_waypoint": [
+                  8.5019,
+                  7.6155
+                ],
+                "full_sample_collision_free": true,
+                "local_congestion_count": 0,
+                "min_obstacle_clearance_m": 3.276,
+                "route_distance_m": 18.285
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
