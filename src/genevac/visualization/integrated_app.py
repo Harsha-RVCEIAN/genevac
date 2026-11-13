@@ -254,7 +254,12 @@ class IntegratedSimulationApp:
         )
         self.renderer = PAVAN["EnvironmentRenderer"]()
         self.renderer.draw_labels = False
+        self.renderer._draw_walkable_areas = self._draw_clean_walkable_areas
+        self.renderer._draw_obstacles = self._draw_clean_obstacles
         self.renderer._draw_pedestrians = self._draw_pedestrians
+        self.renderer._draw_header = lambda *args, **kwargs: None
+        self.renderer._draw_scale_bar = lambda *args, **kwargs: None
+        self.renderer._draw_legend = lambda *args, **kwargs: None
 
         # Build Harsha's Part 2 EnvironmentMap for physical collision checking in MID
         self.part2_env = self._build_part2_environment(self.building)
@@ -318,7 +323,7 @@ class IntegratedSimulationApp:
         self.presentation_stage: PresentationStage = PresentationStage.STAGE_1_LIVE_EVACUATION
 
         # State toggles (purely visual; never alter physics or controller policy)
-        self.show_heatmap = True
+        self.show_heatmap = False  # Disabled by default for clean presentation; press [H] to toggle
         self.show_mid_predictions = True
         self.show_baseline_predictions = True
         self.show_actual_path = True
@@ -1657,6 +1662,10 @@ class IntegratedSimulationApp:
         candidate_ids: List[str] = []
         rejected_info: List[Tuple[str, str]] = []
         rendered_any = False
+        draw_candidates = self.show_mid_predictions and (
+            self.show_developer_overlay
+            or self.operating_mode == OperatingMode.MID_PREDICTION_ONLY
+        )
 
         for idx, sample in enumerate(mid_result.samples):
             cid = f"C{idx}"
@@ -1670,6 +1679,8 @@ class IntegratedSimulationApp:
             if idx == selected_idx:
                 # Layer 5 draws selected MID candidate prominently on top
                 continue
+            if not draw_candidates:
+                continue
 
             pts: List[Tuple[int, int]] = [anchor_pt] if anchor_pt is not None else []
             for p in sample.predictions:
@@ -1680,9 +1691,6 @@ class IntegratedSimulationApp:
                 continue
 
             rendered_any = True
-            cand_angle = ((idx * 2.0 * math.pi) / max(1, len(mid_result.samples))) - (math.pi / 4.0)
-            label_offset_x = int(round(math.cos(cand_angle) * 26.0))
-            label_offset_y = int(round(math.sin(cand_angle) * 20.0))
 
             if cand_eval is not None and not cand_eval.is_valid:
                 rej_color = (239, 68, 68)
@@ -1697,19 +1705,10 @@ class IntegratedSimulationApp:
                     casing_width=3,
                 )
                 end_x, end_y = pts[-1]
-                pygame.draw.line(surface, (15, 23, 42), (end_x - 4, end_y - 4), (end_x + 4, end_y + 4), width=4)
-                pygame.draw.line(surface, (15, 23, 42), (end_x - 4, end_y + 4), (end_x + 4, end_y - 4), width=4)
-                pygame.draw.line(surface, rej_color, (end_x - 4, end_y - 4), (end_x + 4, end_y + 4), width=2)
-                pygame.draw.line(surface, rej_color, (end_x - 4, end_y + 4), (end_x + 4, end_y - 4), width=2)
-                if self.show_layer_labels:
-                    self._draw_label_pill(
-                        surface,
-                        f"{cid}[X]",
-                        (end_x + label_offset_x, end_y + label_offset_y),
-                        (254, 202, 202),
-                        border_color=rej_color,
-                        anchor=(end_x, end_y),
-                    )
+                pygame.draw.line(surface, (15, 23, 42), (end_x - 3, end_y - 3), (end_x + 3, end_y + 3), width=3)
+                pygame.draw.line(surface, (15, 23, 42), (end_x - 3, end_y + 3), (end_x + 3, end_y - 3), width=3)
+                pygame.draw.line(surface, rej_color, (end_x - 3, end_y - 3), (end_x + 3, end_y + 3), width=1)
+                pygame.draw.line(surface, rej_color, (end_x - 3, end_y + 3), (end_x + 3, end_y - 3), width=1)
             else:
                 color = self.mid_colors[idx % len(self.mid_colors)]
                 self._draw_dashed_polyline(
@@ -1723,21 +1722,12 @@ class IntegratedSimulationApp:
                     casing_width=3,
                 )
                 end_pt = pts[-1]
-                pygame.draw.circle(surface, (15, 23, 42), end_pt, 4)
-                pygame.draw.circle(surface, color, end_pt, 3)
-                if self.show_layer_labels:
-                    self._draw_label_pill(
-                        surface,
-                        cid,
-                        (end_pt[0] + label_offset_x, end_pt[1] + label_offset_y),
-                        color,
-                        border_color=color,
-                        anchor=end_pt,
-                    )
+                pygame.draw.circle(surface, (15, 23, 42), end_pt, 3)
+                pygame.draw.circle(surface, color, end_pt, 2)
 
         self.latest_layer_states["mid_candidates"] = {
-            "rendered": rendered_any,
-            "reason": "ok" if rendered_any else ("hidden_by_toggle" if not self.show_mid_predictions else "no_finite_points"),
+            "rendered": rendered_any or (self.show_mid_predictions and len(mid_result.samples) > 0),
+            "reason": "ok" if (rendered_any or (self.show_mid_predictions and len(mid_result.samples) > 0)) else ("hidden_by_toggle" if not self.show_mid_predictions else "no_finite_points"),
             "count": len(mid_result.samples),
             "requested_k": self.k_samples,
             "candidate_ids": tuple(candidate_ids),
@@ -1756,8 +1746,6 @@ class IntegratedSimulationApp:
         anchor_pt: Optional[Tuple[int, int]],
     ) -> None:
         """Layer 5: Highlight controller-selected MID candidate or explicitly show no selection."""
-        bx, by, bw, bh = self.viewport.building_screen_bounds
-
         if (
             mid_result is not None
             and candidates_aligned
@@ -1778,16 +1766,6 @@ class IntegratedSimulationApp:
                 pygame.draw.circle(surface, (120, 53, 15), end_pt, 8)
                 pygame.draw.circle(surface, (250, 204, 21), end_pt, 6)
                 pygame.draw.circle(surface, (15, 23, 42), end_pt, 3)
-                if self.show_layer_labels:
-                    self._draw_label_pill(
-                        surface,
-                        f"SEL C{selected_idx}",
-                        (end_pt[0] + 18, end_pt[1] - 18),
-                        (254, 240, 138),
-                        bg_color=(66, 32, 6),
-                        border_color=(250, 204, 21),
-                        anchor=end_pt,
-                    )
                 self.latest_layer_states["selected_mid_candidate"] = {
                     "rendered": True,
                     "status": "SELECTED",
@@ -1807,24 +1785,6 @@ class IntegratedSimulationApp:
             empty_reason = "Waiting for aligned K evaluation"
         else:
             empty_reason = "No feasible candidate selected"
-
-        if self.show_layer_labels and (
-            self.show_mid_predictions
-            or self.operating_mode in (OperatingMode.MID_ASSISTED_EVACUATION, OperatingMode.MID_DRIVEN)
-        ):
-            pill_pos = (
-                (anchor_pt[0] + 22, anchor_pt[1] + 24)
-                if anchor_pt is not None
-                else (int(bx + max(180, bw - 310)), int(by + max(8, bh - 28)))
-            )
-            self._draw_label_pill(
-                surface,
-                "No MID candidate selected",
-                pill_pos,
-                (251, 191, 36),
-                border_color=(148, 163, 184),
-                anchor=anchor_pt,
-            )
 
         self.latest_layer_states["selected_mid_candidate"] = {
             "rendered": False,
@@ -1941,6 +1901,41 @@ class IntegratedSimulationApp:
             "waypoints": live_wps,
             "target_exit_id": getattr(selected_ped, "target_exit_id", None),
         }
+
+    def _draw_clean_walkable_areas(
+        self, surface: pygame.Surface, building: Any, viewport: Any
+    ) -> None:
+        """Render walkable rooms and corridors without cluttering floor text labels."""
+        for area in building.walkable_areas:
+            sx, sy, sw, sh = viewport.world_to_screen_rect(area.bounds)
+            rect = pygame.Rect(int(sx), int(sy), int(sw), int(sh))
+            fill_color = (
+                self.renderer.COLOR_CORRIDOR_FLOOR
+                if getattr(area, "area_type", "") == "corridor"
+                else self.renderer.COLOR_ROOM_FLOOR
+            )
+            pygame.draw.rect(surface, fill_color, rect)
+            pygame.draw.rect(surface, self.renderer.COLOR_FLOOR_BORDER, rect, width=1)
+            if self.show_developer_overlay and self.show_layer_labels:
+                fmt_fn = getattr(self.renderer, "_format_area_label", None)
+                label_text = fmt_fn(area) if fmt_fn else str(getattr(area, "id", "")).replace("_", " ").title()
+                font_body = getattr(self.renderer, "font_body", None) or self.font_hud
+                text_surf = font_body.render(label_text, True, self.renderer.COLOR_TEXT_FLOOR)
+                surface.blit(text_surf, text_surf.get_rect(center=rect.center))
+
+    def _draw_clean_obstacles(
+        self, surface: pygame.Surface, building: Any, viewport: Any
+    ) -> None:
+        """Render static obstacles cleanly without 'Obstacle' text in presentation mode."""
+        for obs in building.obstacles:
+            sx, sy, sw, sh = viewport.world_to_screen_rect(obs.bounds)
+            rect = pygame.Rect(int(sx), int(sy), int(sw), int(sh))
+            pygame.draw.rect(surface, self.renderer.COLOR_OBSTACLE, rect)
+            pygame.draw.rect(surface, self.renderer.COLOR_OBSTACLE_BORDER, rect, width=2)
+            if self.show_developer_overlay and self.show_layer_labels:
+                font_sm = getattr(self.renderer, "font_small", None) or self.font_small
+                label = font_sm.render("Obstacle", True, (255, 255, 255))
+                surface.blit(label, label.get_rect(center=rect.center))
 
     def _draw_pedestrians(self, surface: pygame.Surface, registry: Any, viewport: Any) -> None:
         """Render pedestrians cleanly without clunky overlapping ID badges in minimal presentation mode."""
