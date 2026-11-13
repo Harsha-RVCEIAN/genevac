@@ -1,0 +1,17 @@
+{
+  "include": [
+    "src",
+    "tests"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    ".venv"
+  ],
+  "extraPaths": [
+    "src",
+    "pavan-part1-reference/src",
+    ".venv/Lib/site-packages",
+    "C:/Users/harsh/AppData/Local/Programs/Python/Python311/Lib/site-packages"
+  ],
+  "pythonVersion": "3.11"
+}

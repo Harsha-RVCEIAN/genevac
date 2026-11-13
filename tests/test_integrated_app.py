@@ -248,9 +248,12 @@ class TestMIDProvenance:
         assert prov["training_sample_count"] > 0
 
     def test_epochs_and_samples_match_constructor(self, app: IntegratedSimulationApp):
-        """Predictor epochs match the 10 configured in create_pretrained_mid_predictor."""
+        """Predictor epochs match 10 and training uses multi-agent social interaction corpus (> 8)."""
+        prov = app.mid_predictor.training_provenance
         assert app.mid_predictor._training_epochs_completed == 10
-        assert app.mid_predictor._training_sample_count == 8  # 8 synthetic samples
+        assert app.mid_predictor._training_sample_count == 54
+        assert prov["has_social_interactions"] is True
+        assert len(prov["interaction_scenarios"]) >= 5
 
     def test_untrained_predictor_provenance(self):
         """Fresh EvacuationMIDPredictor reports untrained state."""

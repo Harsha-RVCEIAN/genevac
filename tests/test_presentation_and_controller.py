@@ -35,11 +35,6 @@ from genevac.visualization.integrated_app import (
     PROJECT_ROOT,
     PAVAN,
 )
-from genevac.prediction.controller import (
-    CandidateEvaluation,
-    MIDAssistedDecisionAdapter,
-    MIDDecisionRecommendation,
-)
 from genevac.prediction.data_contract import PredictedPosition, TrajectoryPrediction
 from genevac.prediction.mid import MultiTrajectoryPrediction
 
@@ -379,6 +374,7 @@ class TestRenderingAndPresentationStages:
         after_px = pygame.surfarray.array3d(app.screen).copy()
 
         assert (before_px != after_px).any()
+        assert app.selected_agent_id is not None
         rec = app.controller.latest_recommendations_by_agent.get(app.selected_agent_id)
         assert rec is not None
         assert rec.selected_sample_idx >= 0

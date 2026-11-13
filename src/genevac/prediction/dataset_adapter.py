@@ -42,7 +42,7 @@ class DatasetAdapter:
         if not p.is_file():
             raise FileNotFoundError(f"Dataset file not found: {filepath}")
 
-        raw_records: dict[str, list[tuple[int, float, float, float]]] = {}
+        raw_records: dict[str, list[tuple[int, float, float]]] = {}
 
         with open(p, "r", encoding="utf-8") as f:
             for line in f:

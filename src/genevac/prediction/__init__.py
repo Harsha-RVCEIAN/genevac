@@ -15,13 +15,29 @@ from genevac.prediction.evaluation import (
     SampleGenerator,
     TrajectoryEvaluationResult,
 )
+from genevac.prediction.controller import (
+    CandidateEvaluation,
+    CollisionAvoidanceSafetyLayer,
+    MIDAssistedDecisionAdapter,
+    MIDDecisionRecommendation,
+    MIDDrivenMovementController,
+    SafetyCheckResult,
+    SafetyInterventionEvent,
+)
 from genevac.prediction.mid import (
+    SOCIAL_FEATURE_DIM,
     EvacuationConditioning,
     EvacuationMIDConfig,
     EvacuationMIDNetwork,
     EvacuationMIDPredictor,
     MultiTrajectoryPrediction,
+    SocialInteractionSummary,
     line_segment_intersects_box,
+)
+from genevac.prediction.social_training import (
+    TRAINING_INTERACTION_SCENARIOS,
+    TRAINING_SOURCE_NAME,
+    generate_social_interaction_training_samples,
 )
 from genevac.prediction.data_contract import (
     PredictedPosition,
@@ -251,6 +267,8 @@ class LinearTrajectoryPredictor:
 
 __all__ = [
     "AggregateEvaluationReport",
+    "CandidateEvaluation",
+    "CollisionAvoidanceSafetyLayer",
     "ConstantVelocityPredictor",
     "DatasetAdapter",
     "EvaluationSample",
@@ -259,14 +277,23 @@ __all__ = [
     "EvacuationMIDNetwork",
     "EvacuationMIDPredictor",
     "LinearTrajectoryPredictor",
+    "MIDAssistedDecisionAdapter",
+    "MIDDecisionRecommendation",
+    "MIDDrivenMovementController",
     "MultiTrajectoryPrediction",
     "line_segment_intersects_box",
     "PredictedPosition",
     "PredictionEvaluator",
+    "SOCIAL_FEATURE_DIM",
+    "SafetyCheckResult",
+    "SafetyInterventionEvent",
     "SampleGenerator",
     "SimulationEvaluationAdapter",
     "SimulationTrajectoryAdapter",
     "SnapshotAdaptationReport",
+    "SocialInteractionSummary",
+    "TRAINING_INTERACTION_SCENARIOS",
+    "TRAINING_SOURCE_NAME",
     "TrajectoryCategory",
     "TrajectoryEvaluationResult",
     "TrajectoryHistoryBuffer",
@@ -275,4 +302,5 @@ __all__ = [
     "TrajectorySnapshot",
     "TrajectoryValidationError",
     "TrajectoryValidator",
+    "generate_social_interaction_training_samples",
 ]

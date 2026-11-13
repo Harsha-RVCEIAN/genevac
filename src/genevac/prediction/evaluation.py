@@ -10,6 +10,7 @@ Provides:
 
 from __future__ import annotations
 
+from bisect import bisect_right
 import csv
 import json
 import math
@@ -34,8 +35,9 @@ class EvaluationSample:
 
     Strict Data Isolation Invariant:
     - ``history`` contains only observations strictly on or before ``reference_timestamp``.
+    - ``neighbor_trajectories`` contains optional nearby/other agent observations strictly on or before ``reference_timestamp``.
     - ``ground_truth_future`` contains only observations strictly after ``reference_timestamp``.
-    The prediction model must ONLY receive ``history`` via a snapshot.
+    The prediction model must ONLY receive ``history`` and historical neighbor observations via a snapshot.
     """
     agent_id: str
     reference_step: int
@@ -43,6 +45,7 @@ class EvaluationSample:
     history: tuple[TrajectoryObservation, ...]
     ground_truth_future: tuple[TrajectoryObservation, ...]
     cohort: str = "active"
+    neighbor_trajectories: tuple[tuple[str, tuple[TrajectoryObservation, ...]], ...] = ()
 
     def __post_init__(self) -> None:
         if not self.history:
@@ -54,6 +57,13 @@ class EvaluationSample:
                     f"Data leakage detected! History observation timestamp {obs.timestamp} "
                     f"is after reference timestamp {self.reference_timestamp}."
                 )
+        for nbr_id, nbr_seq in self.neighbor_trajectories:
+            for obs in nbr_seq:
+                if obs.timestamp > self.reference_timestamp + 1e-9:
+                    raise ValueError(
+                        f"Data leakage detected in neighbor '{nbr_id}'! Timestamp {obs.timestamp} "
+                        f"is after reference timestamp {self.reference_timestamp}."
+                    )
         for obs in self.ground_truth_future:
             if obs.timestamp <= self.reference_timestamp:
                 raise ValueError(
@@ -63,7 +73,12 @@ class EvaluationSample:
 
     def to_snapshot(self, timestep: float = 0.1) -> TrajectorySnapshot:
         """Construct an immutable TrajectorySnapshot containing ONLY historical observations."""
-        trajectories = {self.agent_id: self.history}
+        trajectories: dict[str, tuple[TrajectoryObservation, ...]] = {
+            self.agent_id: self.history
+        }
+        for nbr_id, nbr_seq in self.neighbor_trajectories:
+            if nbr_id != self.agent_id and nbr_seq:
+                trajectories[nbr_id] = nbr_seq
         return TrajectorySnapshot(
             current_step=self.reference_step,
             current_timestamp=self.reference_timestamp,
@@ -211,18 +226,25 @@ class SampleGenerator:
         self,
         trajectories: dict[str, Sequence[TrajectoryObservation]],
         cohort_map: dict[str, str] | None = None,
+        include_neighbors: bool = True,
     ) -> list[EvaluationSample]:
         """Generate evaluation samples across all agents in the provided trajectories.
 
         Args:
             trajectories: Mapping of agent_id -> chronological Sequence[TrajectoryObservation].
             cohort_map: Optional mapping of agent_id -> cohort name (e.g. 'active', 'blocked').
+            include_neighbors: When True, includes historical (<= ref_timestamp) observations
+                for co-present pedestrians to support social conditioning without future leakage.
 
         Returns:
             List of EvaluationSample instances.
         """
         samples: list[EvaluationSample] = []
         cohort_map = cohort_map or {}
+        ts_index_cache: dict[str, list[float]] = {
+            aid: [float(o.timestamp) for o in seq]
+            for aid, seq in trajectories.items()
+        }
 
         for agent_id, obs_seq in trajectories.items():
             if len(obs_seq) < self.history_length + 1:
@@ -252,6 +274,23 @@ class SampleGenerator:
                 if len(future_tuple) < self.min_future_points:
                     continue
 
+                nbr_entries: list[tuple[str, tuple[TrajectoryObservation, ...]]] = []
+                if include_neighbors and len(trajectories) > 1:
+                    ref_ts = float(ref_obs.timestamp)
+                    cutoff_ts = ref_ts + 1e-9
+                    max_stale_s = max(2.0, self.history_length * 0.5)
+                    for other_id, other_seq in trajectories.items():
+                        if other_id == agent_id or not other_seq:
+                            continue
+                        idx_hi = bisect_right(ts_index_cache[other_id], cutoff_ts)
+                        if idx_hi < 1:
+                            continue
+                        last_nbr = other_seq[idx_hi - 1]
+                        if ref_ts - float(last_nbr.timestamp) > max_stale_s:
+                            continue
+                        idx_lo = max(0, idx_hi - self.history_length)
+                        nbr_entries.append((other_id, tuple(other_seq[idx_lo:idx_hi])))
+
                 sample = EvaluationSample(
                     agent_id=agent_id,
                     reference_step=ref_obs.step_index,
@@ -259,6 +298,7 @@ class SampleGenerator:
                     history=history_tuple,
                     ground_truth_future=future_tuple,
                     cohort=cohort,
+                    neighbor_trajectories=tuple(nbr_entries),
                 )
                 samples.append(sample)
 

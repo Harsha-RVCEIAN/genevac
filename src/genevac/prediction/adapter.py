@@ -18,7 +18,6 @@ Bridges Person A's simulation engine and Person B's prediction/metrics subsystem
 
 from __future__ import annotations
 
-from collections.abc import Sequence as SequenceABC
 from dataclasses import dataclass, field
 import math
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Sequence, Set, Tuple
@@ -225,7 +224,13 @@ class SimulationTrajectoryAdapter:
         if ts is None:
             dt = getattr(snapshot, "dt", getattr(snapshot, "timestep", 0.1))
             ts = step * dt
-        ts = float(ts)
+        try:
+            ts = float(ts)
+        except (TypeError, ValueError, OverflowError) as exc:
+            raise TrajectoryValidationError(
+                f"snapshot timestamp must be numeric, got {ts!r}",
+                field="timestamp",
+            ) from exc
         if not math.isfinite(ts) or ts < 0.0:
             raise TrajectoryValidationError(
                 f"snapshot timestamp must be a finite non-negative number, got {ts!r}",
@@ -235,8 +240,14 @@ class SimulationTrajectoryAdapter:
         # Read snapshot_id
         snap_id = str(getattr(snapshot, "snapshot_id", f"snap_{step:06d}"))
 
-        # Step rollback reset check
-        if step < self._last_observed_step:
+        # Reset if either simulation step or simulation time moves backwards.
+        if (
+            step < self._last_observed_step
+            or (
+                self._last_recorded_timestamp >= 0.0
+                and ts < self._last_recorded_timestamp
+            )
+        ):
             self.reset(run_id=active_run_id)
         self._last_observed_step = step
 
@@ -427,7 +438,7 @@ class SimulationTrajectoryAdapter:
 
         # 1. Extract and validate event_id
         evt_id = getattr(event, "event_id", None)
-        if not evt_id or not isinstance(evt_id, str):
+        if not isinstance(evt_id, str) or not evt_id.strip():
             return EventAdaptationReport(
                 event_id=str(evt_id or "invalid_id"),
                 run_id=active_run_id,
@@ -441,6 +452,7 @@ class SimulationTrajectoryAdapter:
             )
 
         # 2. Check run-scoped event deduplication
+        evt_id = evt_id.strip()
         evt_key = (active_run_id, evt_id)
         if evt_key in self._seen_event_keys:
             step = int(getattr(event, "step", 0))
@@ -475,6 +487,18 @@ class SimulationTrajectoryAdapter:
             )
 
         ts = getattr(event, "timestamp", None)
+        if ts is None:
+            return EventAdaptationReport(
+                event_id=evt_id,
+                run_id=active_run_id,
+                step_index=step,
+                timestamp=-1.0,
+                event_type="unknown",
+                pedestrian_id=None,
+                is_duplicate=False,
+                status="REJECTED",
+                rejection_reason="event timestamp is None or missing",
+            )
         try:
             ts_f = float(ts)
             if not (math.isfinite(ts_f) and ts_f >= 0.0):
@@ -493,7 +517,8 @@ class SimulationTrajectoryAdapter:
             )
 
         raw_type = getattr(event, "event_type", None)
-        if not raw_type or not isinstance(raw_type, (str, bytes)):
+        raw_type = getattr(raw_type, "value", raw_type)
+        if not isinstance(raw_type, str) or not raw_type.strip():
             return EventAdaptationReport(
                 event_id=evt_id,
                 run_id=active_run_id,
@@ -505,13 +530,26 @@ class SimulationTrajectoryAdapter:
                 status="REJECTED",
                 rejection_reason=f"event_type must be a non-empty string, got {raw_type!r}",
             )
-        event_type_str = str(raw_type).strip().lower()
+        event_type_str = raw_type.strip().lower()
 
         ped_id = getattr(event, "pedestrian_id", None)
         if ped_id is not None:
             ped_id = str(ped_id).strip()
 
-        details = dict(getattr(event, "details", {}) or {})
+        raw_details = getattr(event, "details", {}) or {}
+        if not isinstance(raw_details, dict):
+            return EventAdaptationReport(
+                event_id=evt_id,
+                run_id=active_run_id,
+                step_index=step,
+                timestamp=ts_f,
+                event_type=event_type_str,
+                pedestrian_id=ped_id,
+                is_duplicate=False,
+                status="REJECTED",
+                rejection_reason="event details must be a dictionary",
+            )
+        details = dict(raw_details)
 
         # 4. Harmonize event state with adapter cohorts without double counting
         if event_type_str in ("blocked", "no_route") and ped_id:
@@ -565,7 +603,8 @@ class SimulationTrajectoryAdapter:
         """Perform a certified read-only ingestion of snapshots and events from a running engine."""
         active_run_id = str(run_id).strip() if (run_id is not None and str(run_id).strip()) else self._current_run_id
 
-        # 1. Snapshot engine properties before ingestion
+        # 1. Capture the full observable engine state before ingestion.
+        before_public_state = _capture_engine_public_state(engine)
         before_step = getattr(engine, "current_step", None)
         if before_step is None and hasattr(engine, "clock"):
             before_step = getattr(engine.clock, "step_count", None)
@@ -612,6 +651,13 @@ class SimulationTrajectoryAdapter:
             raise RuntimeError(f"Engine timestamp mutated during ingestion: {before_ts} -> {after_ts}")
         if before_events_len != after_events_len:
             raise RuntimeError(f"Engine event count mutated during ingestion: {before_events_len} -> {after_events_len}")
+
+        after_public_state = _capture_engine_public_state(engine)
+        if before_public_state != after_public_state:
+            raise RuntimeError(
+                "Engine public state changed during read-only ingestion; "
+                "inspect snapshot, event, pedestrian, or history state."
+            )
 
         return snapshot_report, event_reports
 
@@ -717,6 +763,30 @@ class SimulationTrajectoryAdapter:
             status_val = raw_status.value if hasattr(raw_status, "value") else raw_status
             status_str = str(status_val).strip().lower()
 
+            # Validate coordinates before mutating cohort state. A malformed pedestrian
+            # must not partially update adapter bookkeeping.
+            if hasattr(ped, "position"):
+                pos = ped.position
+                coord_x = float(pos[0]) if hasattr(pos, "__getitem__") else float(pos.x)
+                coord_y = float(pos[1]) if hasattr(pos, "__getitem__") else float(pos.y)
+            elif hasattr(ped, "x") and hasattr(ped, "y"):
+                coord_x = float(ped.x)
+                coord_y = float(ped.y)
+            else:
+                raise TrajectoryValidationError(
+                    f"Pedestrian '{ped_id}' missing coordinates.",
+                    field="position",
+                    agent_id=ped_id,
+                    step_index=current_step,
+                )
+            if not (math.isfinite(coord_x) and math.isfinite(coord_y)):
+                raise TrajectoryValidationError(
+                    f"Pedestrian '{ped_id}' has non-finite coordinates ({coord_x}, {coord_y}).",
+                    field="position",
+                    agent_id=ped_id,
+                    step_index=current_step,
+                )
+
             event_blocked_map = self._blocked_from_events.get(active_run_id, {})
             evt_block_step = event_blocked_map.get(ped_id, -1)
 
@@ -761,22 +831,6 @@ class SimulationTrajectoryAdapter:
                     f"Unknown pedestrian status '{raw_status!r}' for agent '{ped_id}'. "
                     f"Allowed statuses: 'active', 'blocked', 'evacuated', 'incapacitated', 'inactive'.",
                     field="status",
-                    agent_id=ped_id,
-                    step_index=current_step,
-                )
-
-            # Extract coordinates
-            if hasattr(ped, "position"):
-                pos = ped.position
-                coord_x = float(pos[0]) if hasattr(pos, "__getitem__") else float(pos.x)
-                coord_y = float(pos[1]) if hasattr(pos, "__getitem__") else float(pos.y)
-            elif hasattr(ped, "x") and hasattr(ped, "y"):
-                coord_x = float(ped.x)
-                coord_y = float(ped.y)
-            else:
-                raise TrajectoryValidationError(
-                    f"Pedestrian '{ped_id}' missing coordinates.",
-                    field="position",
                     agent_id=ped_id,
                     step_index=current_step,
                 )
