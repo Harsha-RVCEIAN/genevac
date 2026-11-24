@@ -121,17 +121,21 @@ def make_windows(tracks, splits, *, history_length=8, prediction_horizon=12, str
                 out.append(DatasetWindow(dataset,scene,aid,split,float(h[-1].timestamp),tuple((o.timestamp,o.x,o.y) for o in h),tuple((o.timestamp,o.x,o.y) for o in f)))
     return out
 
-def export_dataset(tracks, output_dir, *, dataset, scene, source, seed=42, history_length=8, prediction_horizon=12):
+def export_dataset(tracks, output_dir, *, dataset, scene, source, seed=42, history_length=8, prediction_horizon=12, fixed_split=None):
     check=validate_trajectories(tracks)
     if not check["valid"]: raise ValueError("invalid trajectories: "+"; ".join(check["errors"][:5]))
-    splits=split_by_agent(tracks,seed=seed)
+    if fixed_split is not None:
+        if fixed_split not in {"train","validation","test"}: raise ValueError("fixed_split must be train, validation or test")
+        splits={fixed_split:sorted(k for k,v in tracks.items() if len(v)>=2)}
+    else:
+        splits=split_by_agent(tracks,seed=seed)
     windows=make_windows(tracks,splits,history_length=history_length,prediction_horizon=prediction_horizon,dataset=dataset,scene=scene)
     out=Path(output_dir); out.mkdir(parents=True,exist_ok=True)
     for name in ("train","validation","test"):
         with (out/f"{dataset.lower()}_{scene.lower()}_{name}.jsonl").open("w",encoding="utf-8") as f:
             for w in windows:
                 if w.split==name: f.write(json.dumps(asdict(w))+"\n")
-    manifest={"schema_version":"1.0","dataset":dataset,"scene":scene,"source":str(source),"coordinate_units":"metres","temporal_units":"seconds","split_strategy":"agent_disjoint","seed":seed,"history_length":history_length,"prediction_horizon":prediction_horizon,"validation":check,"split_agents":splits,"window_counts":{k:sum(w.split==k for w in windows) for k in ("train","validation","test")},"note":"Keep real-world benchmark scores separate from synthetic evacuation scores."}
+    manifest={"schema_version":"1.0","dataset":dataset,"scene":scene,"source":str(source),"coordinate_units":"metres","temporal_units":"seconds","split_strategy":"official_source_partition" if fixed_split else "agent_disjoint","source_split":fixed_split,"seed":seed,"history_length":history_length,"prediction_horizon":prediction_horizon,"validation":check,"split_agents":splits,"window_counts":{k:sum(w.split==k for w in windows) for k in ("train","validation","test")},"note":"Keep real-world benchmark scores separate from synthetic evacuation scores."}
     (out/f"{dataset.lower()}_{scene.lower()}_manifest.json").write_text(json.dumps(manifest,indent=2),encoding="utf-8")
     return manifest
 
