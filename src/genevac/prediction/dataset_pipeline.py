@@ -146,6 +146,9 @@ def load_eth_ucy(
             raw.setdefault(agent_id, []).append((frame, x, y))
 
     records: dict[str, list[tuple[float, float, float]]] = {}
+    # Use one scene-wide frame origin. Per-agent zeroing would destroy
+    # synchronization between pedestrians that enter the scene at different times.
+    scene_first_frame = min((point[0] for points in raw.values() for point in points), default=0)
     for agent_id, points in raw.items():
         points.sort(key=lambda item: item[0])
         frames = [point[0] for point in points]
@@ -153,9 +156,8 @@ def load_eth_ucy(
             raise ValueError(f"{path}: duplicate frame for agent {agent_id}")
         points = points[::sampling_stride]
         if len(points) >= 2:
-            first_frame = points[0][0]
             records[agent_id] = [
-                ((frame - first_frame) * seconds_per_source_frame, x, y)
+                ((frame - scene_first_frame) * seconds_per_source_frame, x, y)
                 for frame, x, y in points
             ]
     return _observation_tracks(records)
