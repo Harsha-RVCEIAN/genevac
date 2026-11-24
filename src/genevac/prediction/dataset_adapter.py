@@ -23,7 +23,7 @@ class DatasetAdapter:
     def load_eth_file(
         filepath: str | Path,
         sampling_stride: int = 1,
-        time_per_frame: float = 0.4,
+        time_per_frame: float = 0.04,
     ) -> dict[str, list[TrajectoryObservation]]:
         """Load ETH/UCY space/tab-separated dataset file.
 
@@ -33,7 +33,7 @@ class DatasetAdapter:
         Args:
             filepath: Path to the dataset text file.
             sampling_stride: Subsample frame interval (default 1).
-            time_per_frame: Time interval per recorded frame in seconds (default 0.4s for ETH benchmark).
+            time_per_frame: Source-frame duration in seconds (default 0.04s; 10-frame gaps equal 0.4s).
 
         Returns:
             Dictionary mapping agent_id -> sorted list of TrajectoryObservation instances.
