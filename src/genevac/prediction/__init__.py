@@ -8,6 +8,18 @@ from types import MappingProxyType
 from genevac.prediction.adapter import SimulationTrajectoryAdapter, SnapshotAdaptationReport
 from genevac.prediction.baseline import ConstantVelocityPredictor
 from genevac.prediction.dataset_adapter import DatasetAdapter, SimulationEvaluationAdapter
+from genevac.prediction.dataset_pipeline import (
+    DatasetWindow,
+    SimulationDatasetRecorder,
+    export_dataset,
+    identify_dataset,
+    inventory_datasets,
+    load_eth_ucy,
+    load_sdd_pickle,
+    make_windows,
+    split_by_agent,
+    validate_trajectories,
+)
 from genevac.prediction.evaluation import (
     AggregateEvaluationReport,
     EvaluationSample,
@@ -271,6 +283,7 @@ __all__ = [
     "CollisionAvoidanceSafetyLayer",
     "ConstantVelocityPredictor",
     "DatasetAdapter",
+    "DatasetWindow",
     "EvaluationSample",
     "EvacuationConditioning",
     "EvacuationMIDConfig",
@@ -289,6 +302,15 @@ __all__ = [
     "SafetyInterventionEvent",
     "SampleGenerator",
     "SimulationEvaluationAdapter",
+    "SimulationDatasetRecorder",
+    "export_dataset",
+    "identify_dataset",
+    "inventory_datasets",
+    "load_eth_ucy",
+    "load_sdd_pickle",
+    "make_windows",
+    "split_by_agent",
+    "validate_trajectories",
     "SimulationTrajectoryAdapter",
     "SnapshotAdaptationReport",
     "SocialInteractionSummary",
