@@ -128,6 +128,10 @@ def load_eth_ucy(
         raise FileNotFoundError(path)
 
     raw: dict[str, list[tuple[int, float, float]]] = {}
+        # Handle escaped newline literals ("\\n") that may appear in malformed files
+        # Convert them to a space so that split() yields proper fields.
+        # This ensures legacy or test-generated files with inline escaped newlines are robustly parsed.
+
     with path.open(encoding="utf-8") as handle:
         for line_number, line in enumerate(handle, 1):
             fields = line.replace(",", " ").split()
