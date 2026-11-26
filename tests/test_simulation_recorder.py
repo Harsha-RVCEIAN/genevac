@@ -434,3 +434,125 @@ class TestBatchGenerator:
         val = summary["validation"]
         assert val["invalid_records"] == 0
         assert val["valid_runs"] == 2
+
+    def test_engine_failure_is_not_counted_as_completed(self, tmp, monkeypatch):
+        gen = BatchGenerator(
+            output_dir=tmp,
+            scenarios=[self._pilot_scenario()],
+            runs_per_scenario=2,
+        )
+
+        def _failing_build(scenario, seed):
+            engine = _make_engine(n_peds=2, max_steps=5, seed=seed)
+
+            def _boom():
+                raise RuntimeError("simulated engine crash")
+
+            engine.step = _boom
+            return engine
+
+        monkeypatch.setattr(gen, "_build_engine", _failing_build)
+        summary = gen.run()
+        assert summary["total_completed"] == 0
+        assert summary["total_failed"] == 2
+        assert len(summary["completed_runs"]) == 0
+        assert len(summary["failed_runs"]) == 2
+        for entry in summary["failed_runs"]:
+            assert "simulated engine crash" in entry["error"]
+            assert entry["status"] == "failed"
+
+        manifest_data = json.loads((tmp / "manifests" / "batch_manifest.json").read_text())
+        assert manifest_data["total_completed"] == 0
+        assert manifest_data["total_failed"] == 2
+
+
+class TestAuditFixes:
+    def test_single_authoritative_recorder(self):
+        import importlib
+        mod = importlib.import_module("genevac.prediction.simulation_recorder")
+        assert hasattr(mod, "SimulationRecorder")
+        assert hasattr(mod, "record_full_run")
+        with pytest.raises(ModuleNotFoundError):
+            importlib.import_module("genevac.data.simulation.simulation_recorder")
+
+    def test_evacuation_outcome_and_termination_reason(self, tmp):
+        # Case 1: active pedestrians remain at max_steps -> max_steps_reached
+        eng1 = _make_engine(n_peds=3, max_steps=5)
+        meta1, _ = record_full_run(
+            eng1, scenario_id="s1", layout_id="l1", seed=1,
+            trajectories_dir=tmp / "traj1", manifests_dir=tmp / "mfst1",
+        )
+        assert meta1.evacuated == 0
+        assert meta1.termination_reason == "max_steps_reached"
+
+        # Case 2: all pedestrians evacuated -> evacuation_completed
+        eng2 = _make_engine(n_peds=2, max_steps=10)
+        for ped in eng2.pedestrians:
+            ped.status = PedestrianStatus.EVACUATED
+        meta2, _ = record_full_run(
+            eng2, scenario_id="s2", layout_id="l1", seed=2,
+            trajectories_dir=tmp / "traj2", manifests_dir=tmp / "mfst2",
+        )
+        assert meta2.evacuated == 2
+        assert meta2.termination_reason == "evacuation_completed"
+
+    def test_empty_split_detection_and_real_leakage_checks(self):
+        from genevac.prediction.simulation_split import check_split_leakage
+        from genevac.prediction.simulation_preprocess import SimulationWindow
+        from genevac.prediction.data_contract import TrajectoryCategory, TrajectoryObservation
+
+        # Fewer than 3 runs cannot form non-empty train/val/test
+        with pytest.raises(ValueError, match="At least 3 items"):
+            split_run_ids(["r1", "r2"])
+
+        with pytest.raises(ValueError, match="At least 3 items"):
+            split_by_layout({"l1": ["r1"], "l2": ["r2"]})
+
+        # Empty split detection in check_split_leakage
+        errs_empty = check_split_leakage({"train": ["r1", "r2"], "val": ["r3"], "test": []})
+        assert any("empty" in e for e in errs_empty)
+
+        # Cross-split run leakage detection
+        errs_run = check_split_leakage({"train": ["r1"], "val": ["r1", "r2"], "test": ["r3"]})
+        assert any("leaked across splits" in e for e in errs_run)
+
+        # Layout leakage detection
+        errs_layout = check_split_leakage(
+            {"train": ["r1"], "val": ["r2"], "test": ["r3"]},
+            run_to_layout={"r1": "L1", "r2": "L1", "r3": "L2"},
+        )
+        assert any("layout_id='L1'" in e for e in errs_layout)
+
+        # Window-level leakage detection
+        obs = (TrajectoryObservation("p1", 0, 0.0, 0.0, 0.0, TrajectoryCategory.SIMULATED),)
+        bad_win = SimulationWindow("r1", "s1", "L1", "p1", 0.0, obs, obs)
+        errs_win = check_split_leakage(
+            {"train": ["r1"], "val": ["r2"], "test": ["r3"]},
+            windows_by_split={"train": [], "val": [bad_win], "test": []},
+        )
+        assert any("run_id='r1'" in e for e in errs_win)
+
+    def test_pilot_clean_isolation_and_failure_behavior(self, tmp):
+        import sys
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+        import generate_pilot_dataset as pilot
+
+        # Refuses to clean an unmarked non-empty directory
+        unmarked = tmp / "unmarked"
+        unmarked.mkdir()
+        (unmarked / "user_file.txt").write_text("keep me")
+        with pytest.raises(RuntimeError, match="safety marker"):
+            pilot.run_pilot(output_dir=str(unmarked), clean=True)
+        assert (unmarked / "user_file.txt").is_file()
+
+        # Repeated runs into separate directories do not contaminate each other
+        out1 = pilot.run_pilot(output_dir=str(tmp / "pilot_1"), runs_per_scenario=1)
+        out2 = pilot.run_pilot(output_dir=str(tmp / "pilot_2"), runs_per_scenario=1)
+        mfst1 = list_manifests(out1 / "raw" / "v1" / "manifests")
+        mfst2 = list_manifests(out2 / "raw" / "v1" / "manifests")
+        assert len(mfst1) == 3
+        assert len(mfst2) == 3
+        run_ids_1 = {load_manifest(p)["run_id"] for p in mfst1}
+        run_ids_2 = {load_manifest(p)["run_id"] for p in mfst2}
+        assert run_ids_1.isdisjoint(run_ids_2)
+

@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "run_id": "7a23ee1d-ac2e-4299-9fa2-23d04316457e",
+  "scenario_id": "pilot_corridor_evac_02",
+  "layout_id": "pilot_corridor_B",
+  "seed": 46,
+  "population": 6,
+  "status": "completed",
+  "total_steps": 40,
+  "evacuated": 0,
+  "start_time": "2026-11-26T02:05:36Z",
+  "end_time": "2026-11-26T02:05:36Z",
+  "trajectory_file": "C:\\Users\\harsh\\projects\\genevac\\data\\simulation\\pilots\\20261126T020536Z_11b23b\\raw\\v1\\trajectories\\7a23ee1d-ac2e-4299-9fa2-23d04316457e.jsonl",
+  "events_file": null,
+  "failure_reason": null,
+  "termination_reason": "max_steps_reached"
+}

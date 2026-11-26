@@ -201,6 +201,22 @@ class SimulationRecorder:
         env = getattr(engine, "environment", None)
         env_w = float(getattr(env, "width", 0.0)) if env else 0.0
         env_h = float(getattr(env, "height", 0.0)) if env else 0.0
+        max_steps = int(getattr(engine, "max_steps", 0))
+
+        active_remaining = sum(
+            1 for p in peds
+            if getattr(p, "status", None) in (PedestrianStatus.ACTIVE, "active")
+        )
+        if status == "failed":
+            termination_reason = "error"
+        elif status == "interrupted":
+            termination_reason = "interrupted"
+        elif population > 0 and active_remaining == 0:
+            termination_reason = "evacuation_completed"
+        elif max_steps > 0 and total_steps >= max_steps:
+            termination_reason = "max_steps_reached"
+        else:
+            termination_reason = "completed"
 
         metadata = RunMetadata(
             run_id=self.run_id,
@@ -211,13 +227,14 @@ class SimulationRecorder:
             environment_width=env_w,
             environment_height=env_h,
             timestep=float(getattr(engine, "timestep", 0.1)),
-            max_steps=int(getattr(engine, "max_steps", 0)),
+            max_steps=max_steps,
             total_steps=total_steps,
             evacuated=evacuated,
             start_time=self._start_time,
             end_time=end_time,
             status=status,
             failure_reason=failure_reason,
+            termination_reason=termination_reason,
         )
 
         write_manifest(

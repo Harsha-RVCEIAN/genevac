@@ -77,6 +77,7 @@ class BatchGenerator:
     def run(self) -> Dict[str, Any]:
         """Execute all runs and return a batch summary dict."""
         completed: List[str] = []
+        interrupted: List[Dict[str, Any]] = []
         failed: List[Dict[str, Any]] = []
         global_index = 0
 
@@ -96,12 +97,33 @@ class BatchGenerator:
                         trajectories_dir=self._traj_dir,
                         manifests_dir=self._manifests_dir,
                     )
-                    completed.append(run_id)
+                    if metadata.status == "completed":
+                        completed.append(run_id)
+                    elif metadata.status == "interrupted":
+                        interrupted.append({
+                            "scenario_id": scenario.scenario_id,
+                            "layout_id": scenario.environment_id,
+                            "seed": seed,
+                            "run_id": run_id,
+                            "status": metadata.status,
+                            "reason": metadata.failure_reason or "run interrupted",
+                        })
+                    else:
+                        failed.append({
+                            "scenario_id": scenario.scenario_id,
+                            "layout_id": scenario.environment_id,
+                            "seed": seed,
+                            "run_id": run_id,
+                            "status": metadata.status,
+                            "error": metadata.failure_reason or "run did not complete",
+                        })
                 except Exception as exc:  # noqa: BLE001
                     failed.append({
                         "scenario_id": scenario.scenario_id,
+                        "layout_id": scenario.environment_id,
                         "seed": seed,
                         "run_id": run_id,
+                        "status": "failed",
                         "error": str(exc),
                         "traceback": traceback.format_exc(),
                     })
@@ -113,8 +135,10 @@ class BatchGenerator:
             "schema_version": "v1",
             "generated_at": iso_timestamp(),
             "completed_runs": completed,
+            "interrupted_runs": interrupted,
             "failed_runs": failed,
             "total_completed": len(completed),
+            "total_interrupted": len(interrupted),
             "total_failed": len(failed),
             "validation": validation_report,
         }

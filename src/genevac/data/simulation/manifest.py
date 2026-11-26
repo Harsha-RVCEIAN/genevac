@@ -64,6 +64,7 @@ def write_manifest(
         "trajectory_file": str(trajectory_file),
         "events_file": str(events_file) if events_file is not None else None,
         "failure_reason": metadata.failure_reason,
+        "termination_reason": metadata.termination_reason,
     }
     if extra:
         manifest.update(extra)

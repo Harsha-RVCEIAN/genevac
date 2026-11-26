@@ -51,6 +51,7 @@ def generate_stats(
     populations: List[int] = []
     evacuation_counts: List[int] = []
     status_counter: Counter = Counter()
+    termination_counter: Counter = Counter()
     run_errors: List[str] = []
 
     for mpath in manifests:
@@ -63,6 +64,7 @@ def generate_stats(
         scenario_ids.add(manifest.get("scenario_id", "UNKNOWN"))
         layout_ids.add(manifest.get("layout_id", "UNKNOWN"))
         status_counter[manifest.get("status", "unknown")] += 1
+        termination_counter[manifest.get("termination_reason") or "unknown"] += 1
         populations.append(int(manifest.get("population", 0)))
         evacuation_counts.append(int(manifest.get("evacuated", 0)))
 
@@ -96,7 +98,9 @@ def generate_stats(
         "trajectory_length": _safe_stats(traj_lengths),
         "population": _safe_stats(populations),
         "evacuation_counts": _safe_stats(evacuation_counts),
+        "total_evacuated": sum(evacuation_counts),
         "run_status_distribution": dict(status_counter),
+        "termination_reason_distribution": dict(termination_counter),
         "load_errors": run_errors,
     }
 

@@ -79,6 +79,7 @@ class RunMetadata:
     end_time: str
     status: str
     failure_reason: Optional[str] = None
+    termination_reason: Optional[str] = None
 
     def to_json(self) -> str:
         """Serialize to a compact JSON string (no indentation)."""

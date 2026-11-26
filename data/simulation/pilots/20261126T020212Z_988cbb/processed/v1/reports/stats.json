@@ -1,0 +1,42 @@
+{
+  "schema_version": "v1",
+  "total_runs": 9,
+  "scenarios": [
+    "pilot_atrium_evac_03",
+    "pilot_corridor_evac_02",
+    "pilot_hall_evac_01"
+  ],
+  "layouts": [
+    "pilot_atrium_C",
+    "pilot_corridor_B",
+    "pilot_hall_A"
+  ],
+  "total_pedestrians": 66,
+  "total_observations": 2640,
+  "trajectory_length": {
+    "min": 40,
+    "max": 40,
+    "mean": 40,
+    "median": 40.0
+  },
+  "population": {
+    "min": 6,
+    "max": 8,
+    "mean": 7.333,
+    "median": 8
+  },
+  "evacuation_counts": {
+    "min": 0,
+    "max": 0,
+    "mean": 0,
+    "median": 0
+  },
+  "total_evacuated": 0,
+  "run_status_distribution": {
+    "completed": 9
+  },
+  "termination_reason_distribution": {
+    "max_steps_reached": 9
+  },
+  "load_errors": []
+}
