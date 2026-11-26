@@ -64,12 +64,12 @@ def build_pilot_scenarios() -> List[ScenarioDefinition]:
             engine_config={
                 "width": 20.0,
                 "height": 10.0,
-                "max_steps": 40,
+                "max_steps": 300,
                 "timestep": 0.1,
-                "exits": [{"id": "exit_A", "position": [19.5, 5.0], "width": 2.0}],
+                "exits": [{"id": "exit_A", "position": [20.0, 5.0], "width": 2.0}],
                 "obstacles": [],
                 "pedestrians": [
-                    {"id": f"hall_p{i+1}", "position": [2.0 + i * 1.5, 5.0], "velocity": [1.0, 0.0]}
+                    {"id": f"hall_p{i+1}", "position": [2.0 + i * 1.5, 4.0 + (i % 3) * 1.0], "velocity": [1.0, 0.0], "target_exit": "exit_A"}
                     for i in range(8)
                 ],
             },
@@ -84,12 +84,12 @@ def build_pilot_scenarios() -> List[ScenarioDefinition]:
             engine_config={
                 "width": 30.0,
                 "height": 8.0,
-                "max_steps": 40,
+                "max_steps": 300,
                 "timestep": 0.1,
-                "exits": [{"id": "exit_B", "position": [29.5, 4.0], "width": 2.0}],
+                "exits": [{"id": "exit_B", "position": [30.0, 4.0], "width": 2.0}],
                 "obstacles": [{"id": "pillar_1", "bounds": [12.0, 3.0, 14.0, 5.0]}],
                 "pedestrians": [
-                    {"id": f"corr_p{i+1}", "position": [2.0 + i * 1.4, 2.0 + (i % 2) * 4.0], "velocity": [1.2, 0.0]}
+                    {"id": f"corr_p{i+1}", "position": [2.0 + i * 1.4, 2.0 + (i % 2) * 4.0], "velocity": [1.2, 0.0], "target_exit": "exit_B"}
                     for i in range(6)
                 ],
             },
@@ -104,15 +104,20 @@ def build_pilot_scenarios() -> List[ScenarioDefinition]:
             engine_config={
                 "width": 25.0,
                 "height": 15.0,
-                "max_steps": 40,
+                "max_steps": 300,
                 "timestep": 0.1,
                 "exits": [
-                    {"id": "exit_C1", "position": [24.5, 4.0], "width": 2.0},
-                    {"id": "exit_C2", "position": [24.5, 11.0], "width": 2.0},
+                    {"id": "exit_C1", "position": [25.0, 4.0], "width": 2.0},
+                    {"id": "exit_C2", "position": [25.0, 11.0], "width": 2.0},
                 ],
                 "obstacles": [{"id": "kiosk_1", "bounds": [10.0, 6.0, 13.0, 9.0]}],
                 "pedestrians": [
-                    {"id": f"atr_p{i+1}", "position": [2.0 + (i % 4) * 1.8, 3.0 + (i // 4) * 8.0], "velocity": [1.1, 0.0]}
+                    {
+                        "id": f"atr_p{i+1}",
+                        "position": [2.0 + (i % 4) * 1.8, 3.5 + (i // 4) * 8.0],
+                        "velocity": [1.1, 0.0],
+                        "target_exit": "exit_C1" if i < 4 else "exit_C2",
+                    }
                     for i in range(8)
                 ],
             },

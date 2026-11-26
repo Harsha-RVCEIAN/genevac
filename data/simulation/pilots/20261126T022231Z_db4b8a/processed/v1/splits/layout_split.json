@@ -1,0 +1,20 @@
+{
+  "schema_version": "v1",
+  "split_seed": 42,
+  "counts": {
+    "train": 3,
+    "val": 3,
+    "test": 3
+  },
+  "assignments": {
+    "dea8fe04-cf9d-4bec-bea0-c951c23f029a": "train",
+    "2b3633c2-993f-4f85-83e7-e8add01e3e01": "train",
+    "95b9537e-a917-4518-b2f0-ad3c3240a8a0": "train",
+    "29f53702-79e0-4831-96d6-433e02093817": "val",
+    "f545534d-fb49-4df6-964c-fefb5cf617e4": "val",
+    "03a0664e-b155-4f08-b03d-b5b98ab20e76": "val",
+    "c49a84e4-29fb-4be1-8cf9-816b5f9a702c": "test",
+    "80267568-cfad-4e48-a394-f04048a3965a": "test",
+    "156cea8e-d4db-4bc0-8d92-5b4e028b7385": "test"
+  }
+}

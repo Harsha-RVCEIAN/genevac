@@ -1,0 +1,14 @@
+{
+  "schema_version": "v1",
+  "total_runs": 9,
+  "valid_runs": 9,
+  "invalid_runs": 0,
+  "total_records": 11214,
+  "valid_records": 11214,
+  "invalid_records": 0,
+  "warning_count": 0,
+  "errors": [],
+  "warnings": [],
+  "affected_run_ids": [],
+  "affected_pedestrian_ids": []
+}

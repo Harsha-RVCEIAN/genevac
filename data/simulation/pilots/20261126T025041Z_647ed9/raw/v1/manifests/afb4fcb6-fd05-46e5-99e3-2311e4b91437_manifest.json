@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "run_id": "afb4fcb6-fd05-46e5-99e3-2311e4b91437",
+  "scenario_id": "pilot_atrium_evac_03",
+  "layout_id": "pilot_atrium_C",
+  "seed": 48,
+  "population": 8,
+  "status": "completed",
+  "total_steps": 172,
+  "evacuated": 8,
+  "start_time": "2026-11-26T02:50:42Z",
+  "end_time": "2026-11-26T02:50:42Z",
+  "trajectory_file": "C:\\Users\\harsh\\projects\\genevac\\data\\simulation\\pilots\\20261126T025041Z_647ed9\\raw\\v1\\trajectories\\afb4fcb6-fd05-46e5-99e3-2311e4b91437.jsonl",
+  "events_file": null,
+  "failure_reason": null,
+  "termination_reason": "evacuation_completed"
+}

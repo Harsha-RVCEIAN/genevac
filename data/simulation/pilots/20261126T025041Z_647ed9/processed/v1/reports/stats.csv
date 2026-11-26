@@ -1,0 +1,7 @@
+metric,value
+total_runs,9
+total_pedestrians,66
+total_observations,11214
+mean_trajectory_length,169.909
+median_trajectory_length,173.0
+mean_population,7.333
