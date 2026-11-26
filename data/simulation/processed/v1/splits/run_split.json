@@ -1,0 +1,9 @@
+{
+  "schema_version": "v1",
+  "split_seed": 42,
+  "assignments": {
+    "d8b3ea33-0713-402f-9a75-cb876050c66b": "train",
+    "cf2c760b-afec-4e12-aca8-c7502feacfe0": "train",
+    "0cbd1b92-10a3-411d-b52d-b48ce699780f": "val"
+  }
+}

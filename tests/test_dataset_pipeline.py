@@ -29,8 +29,8 @@ class RealWorldDatasetPipelineTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "biwi_eth.txt"
             path.write_text(
-                "0 1 0.0 0.0\\n10 1 1.0 1.0\\n"
-                "5 2 2.0 2.0\\n15 2 3.0 3.0\\n"
+                "0 1 0.0 0.0\n10 1 1.0 1.0\n"
+                "5 2 2.0 2.0\n15 2 3.0 3.0\n"
             )
             tracks = load_eth_ucy(path)
             self.assertAlmostEqual(tracks["1"][0].timestamp, 0.0)

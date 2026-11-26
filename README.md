@@ -109,3 +109,25 @@ Work on Harsha's own branch/worktree.
 Treat `pavan-part1-reference/`, if present, as read-only.
 Do not merge, rebase, cherry-pick, commit, push, or modify another person's branch without explicit approval.
 Stop at each phase gate and wait for Harsha's approval.
+
+---
+
+## Simulation Dataset Pipeline (Phase 3 Part 2)
+
+GenEvac simulation recordings are stored separately from real-world ETH/UCY benchmark data under `data/simulation/`.
+
+### Generate & Validate Pilot Dataset
+
+```bash
+python scripts/generate_pilot_dataset.py
+```
+
+Outputs:
+- Raw trajectories & manifests: `data/simulation/raw/v1/`
+- Quality report, windows, splits, and statistics: `data/simulation/processed/v1/`
+
+### Run Simulation Dataset Tests
+
+```bash
+pytest tests/test_simulation_recorder.py tests/test_dataset_pipeline.py -v
+```

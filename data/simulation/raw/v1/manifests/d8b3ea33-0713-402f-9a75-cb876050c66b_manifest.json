@@ -1,0 +1,16 @@
+{
+  "schema_version": "v1",
+  "run_id": "d8b3ea33-0713-402f-9a75-cb876050c66b",
+  "scenario_id": "pilot_evac_01",
+  "layout_id": "pilot_hall_A",
+  "seed": 42,
+  "population": 10,
+  "status": "completed",
+  "total_steps": 150,
+  "evacuated": 0,
+  "start_time": "2026-11-25T03:27:32Z",
+  "end_time": "2026-11-25T03:27:32Z",
+  "trajectory_file": "C:\\Users\\harsh\\projects\\genevac\\data\\simulation\\raw\\v1\\trajectories\\d8b3ea33-0713-402f-9a75-cb876050c66b.jsonl",
+  "events_file": null,
+  "failure_reason": null
+}

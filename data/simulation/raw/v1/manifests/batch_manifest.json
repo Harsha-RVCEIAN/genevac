@@ -1,0 +1,26 @@
+{
+  "schema_version": "v1",
+  "generated_at": "2026-11-25T03:27:32Z",
+  "completed_runs": [
+    "d8b3ea33-0713-402f-9a75-cb876050c66b",
+    "cf2c760b-afec-4e12-aca8-c7502feacfe0",
+    "0cbd1b92-10a3-411d-b52d-b48ce699780f"
+  ],
+  "failed_runs": [],
+  "total_completed": 3,
+  "total_failed": 0,
+  "validation": {
+    "schema_version": "v1",
+    "total_runs": 3,
+    "valid_runs": 3,
+    "invalid_runs": 0,
+    "total_records": 4500,
+    "valid_records": 4500,
+    "invalid_records": 0,
+    "warning_count": 0,
+    "errors": [],
+    "warnings": [],
+    "affected_run_ids": [],
+    "affected_pedestrian_ids": []
+  }
+}
